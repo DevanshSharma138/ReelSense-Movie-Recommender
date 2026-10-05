@@ -11,6 +11,7 @@ import logging
 import os
 from pathlib import Path
 import tempfile
+import time
 from typing import Any, Dict, List, Optional, Set, Union
 
 from src.config import DEFAULT_USER
@@ -113,7 +114,8 @@ def load(path: Optional[Path] = None) -> Dict[str, Any]:
 def save(data: Dict[str, Any], path: Optional[Path] = None) -> bool:
     """
     Atomically save user state to JSON file.
-    Uses write-temp-file -> os.replace to prevent partial/corrupt writes.
+    Uses write-temp-file -> os.replace with retries and direct write fallback
+    to prevent partial/corrupt writes and Windows WinError 32 file-locking issues.
     """
     target_path = Path(path) if path else DEFAULT_STORE_PATH
     target_path.parent.mkdir(parents=True, exist_ok=True)
@@ -134,7 +136,26 @@ def save(data: Dict[str, Any], path: Optional[Path] = None) -> bool:
             f.flush()
             os.fsync(f.fileno())
 
-        os.replace(temp_path, target_path)
+        # Attempt atomic replace with retries to withstand transient Windows file locks
+        replaced = False
+        for attempt in range(5):
+            try:
+                os.replace(temp_path, target_path)
+                replaced = True
+                break
+            except (PermissionError, OSError):
+                time.sleep(0.05 * (attempt + 1))
+
+        if not replaced:
+            # Fallback: direct write if os.replace is blocked by Windows file watchers
+            with open(target_path, "w", encoding="utf-8") as dst:
+                json.dump(serialized, dst, indent=2, ensure_ascii=False)
+            try:
+                if temp_path and temp_path.exists():
+                    temp_path.unlink()
+            except Exception:
+                pass
+
         return True
     except Exception as e:
         logger.error(f"Error saving user store to {target_path}: {e}")

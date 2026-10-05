@@ -53,7 +53,11 @@ def render_ratings_page():
 
     st.markdown(f"<p style='font-size: 1.05rem; font-weight: 700; color: #F4EBDD; margin-bottom: 1rem;'>You have rated {len(ratings_dict)} films:</p>", unsafe_allow_html=True)
 
-    for m_id, user_val in list(ratings_dict.items()):
+    for raw_m_id, user_val in list(ratings_dict.items()):
+        try:
+            m_id = int(raw_m_id)
+        except (ValueError, TypeError):
+            m_id = raw_m_id
         movie = MovieService.get_movie_by_id(m_id)
         if not movie:
             continue
@@ -93,7 +97,7 @@ def render_ratings_page():
             )
             
             if updated_score != user_val:
-                st.session_state.ratings[m_id] = updated_score
+                st.session_state.ratings[m_id] = float(updated_score)
                 user_store.save_ratings(st.session_state.ratings)
                 st.toast(f"Updated rating to {updated_score}⭐", icon="⭐")
                 st.rerun()
@@ -106,7 +110,8 @@ def render_ratings_page():
                     st.rerun()
             with col_b2:
                 if st.button("Remove", key=f"rate_del_btn_{m_id}"):
-                    del st.session_state.ratings[m_id]
+                    if m_id in st.session_state.ratings:
+                        del st.session_state.ratings[m_id]
                     user_store.save_ratings(st.session_state.ratings)
                     st.toast(f"Removed rating for {movie['title']}", icon="🗑️")
                     st.rerun()

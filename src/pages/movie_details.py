@@ -12,14 +12,20 @@ from src.components.movie_card import render_movie_card
 FALLBACK_POSTER = "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop"
 
 def render_movie_details_page():
-    movie_id = st.session_state.get("selected_movie_id")
+    raw_movie_id = st.session_state.get("selected_movie_id")
+    movie_id = None
+    if raw_movie_id is not None:
+        try:
+            movie_id = int(raw_movie_id)
+        except (ValueError, TypeError):
+            movie_id = raw_movie_id
     movie = MovieService.get_movie_by_id(movie_id) if movie_id is not None else None
 
     if not movie:
         all_m = MovieService.get_all_movies()
         if all_m:
             movie = all_m[0]
-            movie_id = movie["id"]
+            movie_id = int(movie["id"])
             st.session_state.selected_movie_id = movie_id
         else:
             st.error("Movie not found in collection.")
@@ -53,7 +59,7 @@ def render_movie_details_page():
     watchlist = st.session_state.get("watchlist", [])
     in_watchlist = movie_id in watchlist
     ratings_dict = st.session_state.get("ratings", {})
-    user_saved_rating = ratings_dict.get(movie_id, 0.0)
+    user_saved_rating = float(ratings_dict.get(movie_id, 0.0))
 
     # Header Card Layout
     col_poster, col_info = st.columns([1, 2.2])
@@ -72,29 +78,23 @@ def render_movie_details_page():
 
     with col_info:
         st.markdown(
-            f"""
-            <div style="background: #201f22; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
-                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
-                    {match_badge_html}
-                    <span style="background: #2a2a2c; color: #e5e1e4; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
-                        ⭐ {rating}/10
-                    </span>
-                    <span style="color: #99907c; font-size: 0.8rem;">• {year}</span>
-                    <span style="color: #99907c; font-size: 0.8rem;">• {runtime}</span>
-                    <span style="color: #99907c; font-size: 0.8rem;">• {movie.get('language', 'English')}</span>
-                </div>
-                <h1 style="font-family: 'Outfit'; font-size: 2.4rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0; line-height: 1.1;">{title}</h1>
-                <p style="font-size: 0.88rem; color: #e7c17c; font-weight: 600; margin-bottom: 1.25rem;">{genres}</p>
-                
-                <h4 style="font-size: 0.85rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;">Logline & Overview</h4>
-                <p style="font-size: 0.95rem; color: #d0c5af; line-height: 1.6; margin-bottom: 1.5rem;">{overview}</p>
-                
-                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem; color: #99907c; margin-bottom: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(77, 70, 53, 0.25);">
-                    <div><strong style="color: #e5e1e4;">Director:</strong> {director}</div>
-                    <div><strong style="color: #e5e1e4;">Principal Cast:</strong> {cast if cast else 'Ensemble Cast'}</div>
-                </div>
-            </div>
-            """,
+            f"""<div style="background: #201f22; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+<div style="display: flex; gap: 8px; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
+{match_badge_html}
+<span style="background: #2a2a2c; color: #e5e1e4; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">⭐ {rating}/10</span>
+<span style="color: #99907c; font-size: 0.8rem;">• {year}</span>
+<span style="color: #99907c; font-size: 0.8rem;">• {runtime}</span>
+<span style="color: #99907c; font-size: 0.8rem;">• {movie.get('language', 'English')}</span>
+</div>
+<h1 style="font-family: 'Outfit'; font-size: 2.4rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0; line-height: 1.1;">{title}</h1>
+<p style="font-size: 0.88rem; color: #e7c17c; font-weight: 600; margin-bottom: 1.25rem;">{genres}</p>
+<h4 style="font-size: 0.85rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;">Logline & Overview</h4>
+<p style="font-size: 0.95rem; color: #d0c5af; line-height: 1.6; margin-bottom: 1.5rem;">{overview}</p>
+<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem; color: #99907c; margin-bottom: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(77, 70, 53, 0.25);">
+<div><strong style="color: #e5e1e4;">Director:</strong> {director}</div>
+<div><strong style="color: #e5e1e4;">Principal Cast:</strong> {cast if cast else 'Ensemble Cast'}</div>
+</div>
+</div>""",
             unsafe_allow_html=True
         )
 
@@ -126,11 +126,41 @@ def render_movie_details_page():
                 key=f"user_rate_slider_{movie_id}",
                 format="⭐ %.1f"
             )
+
+            col_sub1, col_sub2 = st.columns([1, 1])
+            with col_sub1:
+                if st.button("⭐ Save Rating", key=f"save_rate_btn_{movie_id}", use_container_width=True):
+                    if new_user_rating > 0.0:
+                        ratings_dict[movie_id] = float(new_user_rating)
+                        st.session_state.ratings = ratings_dict
+                        user_store.save_ratings(ratings_dict)
+                        st.toast(f"Saved rating {new_user_rating}⭐ for {title}!", icon="⭐")
+                        st.rerun()
+            with col_sub2:
+                if user_saved_rating > 0.0:
+                    if st.button("🗑️ Remove Rating", key=f"del_rate_btn_{movie_id}", use_container_width=True):
+                        if movie_id in ratings_dict:
+                            del ratings_dict[movie_id]
+                        st.session_state.ratings = ratings_dict
+                        user_store.save_ratings(ratings_dict)
+                        st.toast(f"Removed rating for {title}", icon="🗑️")
+                        st.rerun()
+
+            # Automatic save when slider is dragged/changed
             if new_user_rating != user_saved_rating:
-                ratings_dict[movie_id] = new_user_rating
-                st.session_state.ratings = ratings_dict
-                user_store.save_ratings(ratings_dict)
-                st.toast(f"Saved rating {new_user_rating}⭐ for {title}!", icon="⭐")
+                if new_user_rating == 0.0:
+                    if movie_id in ratings_dict:
+                        del ratings_dict[movie_id]
+                    st.session_state.ratings = ratings_dict
+                    user_store.save_ratings(ratings_dict)
+                    st.toast(f"Removed rating for {title}", icon="🗑️")
+                    st.rerun()
+                else:
+                    ratings_dict[movie_id] = float(new_user_rating)
+                    st.session_state.ratings = ratings_dict
+                    user_store.save_ratings(ratings_dict)
+                    st.toast(f"Saved rating {new_user_rating}⭐ for {title}!", icon="⭐")
+                    st.rerun()
 
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
 

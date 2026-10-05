@@ -209,3 +209,50 @@ def test_10_persisted_ratings_activate_hybrid_recommendations():
             real_store.write_text(backup_text, encoding="utf-8")
         elif real_store.exists():
             real_store.unlink()
+
+
+def test_11_movie_details_interactive_rating_flow():
+    """TEST 11: Interactive rating on Movie Details persists to session_state and user_data.json."""
+    real_store = user_store.DEFAULT_STORE_PATH
+    backup_text = real_store.read_text(encoding="utf-8") if real_store.exists() else None
+
+    try:
+        user_store.save({"ratings": {}, "watchlist": [], "not_interested": [], "user_profile": DEFAULT_USER.copy()}, path=real_store)
+
+        at = AppTest.from_file(APP_PATH)
+        at.run(timeout=30)
+        at.session_state.selected_movie_id = 356
+        at.session_state.current_page = "movie_details"
+        at.run(timeout=10)
+
+        # Set slider to 8.5
+        slider = [s for s in at.slider if "user_rate_slider_356" in s.key][0]
+        slider.set_value(8.5).run(timeout=10)
+
+        assert at.session_state.ratings.get(356) == 8.5
+        persisted = user_store.load(real_store)
+        assert persisted["ratings"].get(356) == 8.5
+
+        # Navigate to My Ratings and check movie is listed
+        at.session_state.current_page = "my-ratings"
+        at.run(timeout=10)
+        assert not at.exception
+        assert at.session_state.ratings.get(356) == 8.5
+    finally:
+        if backup_text is not None:
+            real_store.write_text(backup_text, encoding="utf-8")
+        elif real_store.exists():
+            real_store.unlink()
+
+
+def test_12_windows_file_lock_resilience(temp_store):
+    """TEST 12: Saving handles open file handles without crashing or raising WinError 32."""
+    user_store.save({"ratings": {356: 8.0}}, path=temp_store)
+
+    # Open file handle for reading to simulate active file reader / watcher
+    with open(temp_store, "r", encoding="utf-8"):
+        ok = user_store.save({"ratings": {356: 9.5}}, path=temp_store)
+        assert ok is True
+
+    loaded = user_store.load(temp_store)
+    assert loaded["ratings"] == {356: 9.5}
