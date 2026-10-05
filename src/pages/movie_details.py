@@ -1,0 +1,172 @@
+"""
+ReelSense - Movie Details Page Module
+Matching latest Stitch UI Reference (Obsidian & Champagne Gold)
+"""
+
+import streamlit as st
+from src.services.movie_service import MovieService
+from src.services.recommendation_service import RecommendationService
+from src.components.movie_card import render_movie_card
+
+FALLBACK_POSTER = "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop"
+
+def render_movie_details_page():
+    movie_id = st.session_state.get("selected_movie_id")
+    movie = MovieService.get_movie_by_id(movie_id) if movie_id is not None else None
+
+    if not movie:
+        all_m = MovieService.get_all_movies()
+        if all_m:
+            movie = all_m[0]
+            movie_id = movie["id"]
+            st.session_state.selected_movie_id = movie_id
+        else:
+            st.error("Movie not found in collection.")
+            if st.button("← Back to Home"):
+                st.session_state.current_page = "home"
+                st.rerun()
+            return
+
+    # Back Navigation Button
+    col_back, _ = st.columns([3, 7])
+    with col_back:
+        if st.button("← Back to Browse", key="back_to_browse_btn"):
+            st.session_state.current_page = "home"
+            st.rerun()
+
+    st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
+
+    # Hero Backdrop & Poster Header Layout
+    poster_url = movie.get("poster_url") or FALLBACK_POSTER
+    title = movie["title"]
+    year = movie.get("release_year", 2024)
+    rating = movie.get("rating", 8.8)
+    genres = ", ".join(movie.get("genres", ["Cinema"]))
+    runtime = movie.get("runtime", "N/A")
+    director = movie.get("director", "Unknown")
+    cast = ", ".join(movie.get("cast", []))
+    overview = movie.get("overview", "")
+    affinity = movie.get("mood_affinity") or movie.get("vector_match") or 0
+
+    # Session State Watchlist & Ratings
+    watchlist = st.session_state.get("watchlist", [])
+    in_watchlist = movie_id in watchlist
+    ratings_dict = st.session_state.get("ratings", {})
+    user_saved_rating = ratings_dict.get(movie_id, 0.0)
+
+    # Header Card Layout
+    col_poster, col_info = st.columns([1, 2.2])
+
+    with col_poster:
+        st.markdown(
+            f"""
+            <div style="border-radius: 16px; overflow: hidden; border: 1.5px solid rgba(212, 175, 55, 0.4); box-shadow: 0 12px 32px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.15);">
+                <img src="{poster_url}" style="width: 100%; aspect-ratio: 2/3; object-fit: cover;" onerror="this.src='{FALLBACK_POSTER}';"/>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    match_badge_html = f"""<span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid #f2ca50; padding: 3px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">✨ {affinity}% Vector Match</span>""" if affinity > 0 else ""
+
+    with col_info:
+        st.markdown(
+            f"""
+            <div style="background: #201f22; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                    {match_badge_html}
+                    <span style="background: #2a2a2c; color: #e5e1e4; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">
+                        ⭐ {rating}/10
+                    </span>
+                    <span style="color: #99907c; font-size: 0.8rem;">• {year}</span>
+                    <span style="color: #99907c; font-size: 0.8rem;">• {runtime}</span>
+                    <span style="color: #99907c; font-size: 0.8rem;">• {movie.get('language', 'English')}</span>
+                </div>
+                <h1 style="font-family: 'Outfit'; font-size: 2.4rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0; line-height: 1.1;">{title}</h1>
+                <p style="font-size: 0.88rem; color: #e7c17c; font-weight: 600; margin-bottom: 1.25rem;">{genres}</p>
+                
+                <h4 style="font-size: 0.85rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;">Logline & Overview</h4>
+                <p style="font-size: 0.95rem; color: #d0c5af; line-height: 1.6; margin-bottom: 1.5rem;">{overview}</p>
+                
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem; color: #99907c; margin-bottom: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(77, 70, 53, 0.25);">
+                    <div><strong style="color: #e5e1e4;">Director:</strong> {director}</div>
+                    <div><strong style="color: #e5e1e4;">Principal Cast:</strong> {cast if cast else 'Ensemble Cast'}</div>
+                </div>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+        st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
+
+        col_w_btn, col_r_box = st.columns([1.2, 2])
+
+        with col_w_btn:
+            wl_label = "✓ In Watchlist" if in_watchlist else "+ Add to Watchlist"
+            css = "gold-btn" if in_watchlist else ""
+            if css: st.markdown(f'<div class="{css}">', unsafe_allow_html=True)
+            if st.button(wl_label, key=f"det_wl_{movie_id}", use_container_width=True):
+                if in_watchlist:
+                    watchlist.remove(movie_id)
+                else:
+                    watchlist.append(movie_id)
+                st.session_state.watchlist = watchlist
+                st.rerun()
+            if css: st.markdown('</div>', unsafe_allow_html=True)
+
+        with col_r_box:
+            new_user_rating = st.slider(
+                "Your Personal Rating",
+                min_value=0.0,
+                max_value=10.0,
+                value=float(user_saved_rating),
+                step=0.5,
+                key=f"user_rate_slider_{movie_id}",
+                format="⭐ %.1f"
+            )
+            if new_user_rating != user_saved_rating:
+                ratings_dict[movie_id] = new_user_rating
+                st.session_state.ratings = ratings_dict
+                st.toast(f"Saved rating {new_user_rating}⭐ for {title}!", icon="⭐")
+
+    st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
+
+    # Why We Recommend This Section
+    reasons = RecommendationService.get_recommendation_explanation(movie)
+    st.markdown(
+        f"""
+        <div style="background: #1c1b1e; border: 1px solid rgba(77, 70, 53, 0.3); border-radius: 14px; padding: 1.5rem;">
+            <div style="font-family: 'Outfit'; font-size: 1.15rem; font-weight: 700; color: #f2ca50; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
+                <span class="material-symbols-outlined" style="color: #f2ca50;">auto_awesome</span>
+                <span>Why ReelSense Curates "{title}"</span>
+            </div>
+            <ul style="margin: 0; padding-left: 1.25rem; color: #d0c5af; font-size: 0.9rem; line-height: 1.7;">
+                {"".join([f'<li>{r}</li>' for r in reasons])}
+            </ul>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
+
+    # Similar Movies Grid
+    similar_movies = RecommendationService.get_similar_movies(movie, limit=4)
+    st.markdown(
+        f"""
+        <div style="margin-bottom: 1rem;">
+            <h3 style="font-family: 'Outfit'; font-size: 1.4rem; font-weight: 700; color: #e5e1e4; margin: 0;">
+                Thematic & Vector Similar Masterworks
+            </h3>
+            <p style="font-size: 0.85rem; color: #99907c; margin-top: 2px;">
+                Films sharing director aesthetic, color grading, and sonic mood profile.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    cols = st.columns(4)
+    for idx, sim_m in enumerate(similar_movies):
+        with cols[idx]:
+            render_movie_card(sim_m, key_prefix=f"sim_card_{idx}")

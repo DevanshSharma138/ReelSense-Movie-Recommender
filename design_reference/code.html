@@ -1,0 +1,1136 @@
+<!DOCTYPE html>
+<html class="dark" lang="en">
+
+<head>
+  <meta charset="utf-8" />
+  <meta content="width=device-width, initial-scale=1.0" name="viewport" />
+  <title>ReelSense — AI Cinematic Curation &amp; Movie Recommender</title>
+  <meta name="description" content="ReelSense uses a hybrid ML recommendation engine combining collaborative filtering and content-based models to deliver personalized movie picks." />
+
+  <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect" />
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&display=swap" rel="stylesheet" />
+
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script id="tailwind-config">
+    tailwind.config = {
+      darkMode: "class",
+      theme: {
+        extend: {
+          colors: {
+            "on-surface-variant": "#d0c5af","outline": "#99907c","error-container": "#93000a","on-primary": "#3c2f00","error": "#ffb4ab","background": "#131315","primary-fixed-dim": "#e9c349","surface-bright": "#39393b","on-primary-fixed": "#241a00","surface-container-low": "#1c1b1e","on-error-container": "#ffdad6","tertiary": "#f1c97d","on-secondary": "#412d00","inverse-primary": "#735c00","on-secondary-fixed": "#261900","outline-variant": "#4d4635","inverse-on-surface": "#313032","primary-container": "#d4af37","on-primary-fixed-variant": "#574500","secondary-fixed-dim": "#e7c17c","on-tertiary": "#412d00","on-secondary-container": "#d4b06d","primary": "#f2ca50","tertiary-fixed-dim": "#e9c176","on-tertiary-fixed-variant": "#5d4201","tertiary-fixed": "#ffdea5","surface-container-highest": "#353437","surface-dim": "#131315","surface-tint": "#e9c349","tertiary-container": "#d3ad65","on-tertiary-container": "#5b4000","secondary": "#e7c17c","on-surface": "#e5e1e4","on-secondary-fixed-variant": "#5c4308","surface-container-high": "#2a2a2c","primary-fixed": "#ffe088","surface-variant": "#353437","on-primary-container": "#554300","on-background": "#e5e1e4","inverse-surface": "#e5e1e4","on-error": "#690005","surface": "#131315","surface-container-lowest": "#0e0e10","secondary-fixed": "#ffdea4","secondary-container": "#5c4308","surface-container": "#201f22"
+          },
+          spacing: { "gutter": "1.5rem","space-lg": "1.5rem","space-xs": "0.25rem","margin": "3rem","margin-mobile": "1.25rem","space-sm": "0.5rem","gutter-mobile": "1rem","space-md": "1rem","space-xl": "2.5rem" },
+          fontFamily: { "body-lg": ["Plus Jakarta Sans","sans-serif"],"display-md": ["Outfit","sans-serif"],"headline-md": ["Outfit","sans-serif"],"headline-lg": ["Outfit","sans-serif"],"label-lg": ["Plus Jakarta Sans","sans-serif"],"label-md": ["Plus Jakarta Sans","sans-serif"],"label-sm": ["Plus Jakarta Sans","sans-serif"],"display-lg": ["Outfit","sans-serif"],"body-md": ["Plus Jakarta Sans","sans-serif"],"headline-sm": ["Outfit","sans-serif"],"body-sm": ["Plus Jakarta Sans","sans-serif"] }
+        }
+      }
+    };
+  </script>
+
+  <style>
+    @layer base { html,body{margin:0;padding:0;background-color:#0e0e10;color:#e5e1e4;} body{overscroll-behavior:none;} }
+    ::-webkit-scrollbar{display:none;}
+    .hide-scrollbar{-ms-overflow-style:none;scrollbar-width:none;}
+    .view-panel{display:none;}
+    .view-panel.active{display:flex;}
+    .star-btn{cursor:pointer;color:#4d4635;transition:color .15s;font-size:22px;}
+    .star-btn.active,.star-btn:hover{color:#f2ca50;}
+    .mood-card.selected{border-color:#f2ca50 !important;background-color:rgba(242,202,80,0.12) !important;}
+    .mood-card.selected .mood-icon{color:#f2ca50;}
+    .filter-pill.active{background-color:#f2ca50;color:#3c2f00;font-weight:700;}
+    @keyframes shimmer{0%{background-position:-200% 0}100%{background-position:200% 0}}
+    .skeleton{background:linear-gradient(90deg,#1c1b1e 25%,#2a2a2c 50%,#1c1b1e 75%);background-size:200% 100%;animation:shimmer 1.5s infinite;border-radius:12px;}
+    @keyframes ping{75%,100%{transform:scale(2);opacity:0}}
+    .animate-ping{animation:ping 1s cubic-bezier(0,0,.2,1) infinite;}
+    button:focus-visible,a:focus-visible,input:focus-visible{outline:2px solid #f2ca50;outline-offset:2px;}
+    body.modal-open{overflow:hidden;}
+    .notif-dot{position:absolute;top:4px;right:4px;width:8px;height:8px;background:#f2ca50;border-radius:50%;border:2px solid #0e0e10;}
+    #sidebar-overlay{display:none;position:fixed;inset:0;background:rgba(0,0,0,0.6);z-index:40;}
+    #sidebar-overlay.visible{display:block;}
+  </style>
+</head>
+
+<body class="bg-surface-container-lowest font-body-md text-body-md text-on-surface antialiased selection:bg-primary selection:text-on-primary">
+
+  <div id="sidebar-overlay"></div>
+
+  <!-- SIDEBAR -->
+  <aside id="main-sidebar"
+    class="fixed left-0 top-0 h-full w-64 bg-surface-container-lowest z-50 flex flex-col justify-between p-space-md border-r border-outline-variant/30 shadow-[4px_0_24px_rgba(0,0,0,0.6)] transition-transform duration-300 md:translate-x-0 -translate-x-full">
+    <div class="flex flex-col gap-space-lg">
+      <div class="flex items-center gap-space-sm px-space-xs pt-space-xs">
+        <div class="w-9 h-9 rounded-lg bg-gradient-to-br from-primary to-primary-container flex items-center justify-center text-on-primary font-bold shadow-md">
+          <span class="material-symbols-outlined text-[22px]">movie_filter</span>
+        </div>
+        <div class="flex flex-col">
+          <span class="font-headline-sm text-headline-sm text-on-surface tracking-tight leading-none">Reel<span class="text-primary">Sense</span></span>
+          <span class="font-label-sm text-label-sm text-on-surface-variant tracking-wider uppercase opacity-75">Cinematic Curation</span>
+        </div>
+      </div>
+      <nav class="flex flex-col gap-space-xs" id="nav-menu" aria-label="Main navigation">
+        <a class="nav-item flex items-center gap-space-sm px-space-md py-space-sm rounded-lg bg-primary-container text-on-primary-container font-bold shadow-[0_0_16px_rgba(212,175,55,0.25)] transition-all duration-200 group" data-path="discover" href="#" aria-current="page">
+          <span class="material-symbols-outlined text-on-primary-container group-hover:scale-110 transition-transform duration-200">movie</span>
+          <span class="font-label-lg text-label-lg">Discover</span>
+        </a>
+        <a class="nav-item flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 group" data-path="trending" href="#">
+          <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform duration-200">local_fire_department</span>
+          <span class="font-label-lg text-label-lg">Top This Week</span>
+        </a>
+        <a class="nav-item flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 group" data-path="mood-vault" href="#">
+          <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform duration-200">sentiment_satisfied</span>
+          <span class="font-label-lg text-label-lg">Mood Explorer</span>
+        </a>
+        <a class="nav-item flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 group" data-path="watchlist" href="#">
+          <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform duration-200">bookmark</span>
+          <span class="font-label-lg text-label-lg">Watchlist</span>
+          <span id="watchlist-badge" class="ml-auto px-2 py-0.5 rounded-full bg-primary/20 text-primary font-label-sm text-[11px]">0</span>
+        </a>
+        <a class="nav-item flex items-center gap-space-sm px-space-md py-space-sm rounded-lg text-on-surface-variant hover:bg-surface-container-high hover:text-on-surface transition-all duration-200 group" data-path="ratings" href="#">
+          <span class="material-symbols-outlined text-primary group-hover:scale-110 transition-transform duration-200">star</span>
+          <span class="font-label-lg text-label-lg">My Ratings</span>
+        </a>
+      </nav>
+    </div>
+    <div class="flex flex-col gap-space-sm pt-space-md border-t border-outline-variant/30">
+      <div class="bg-surface-container-low/70 rounded-lg p-space-sm flex flex-col gap-space-xs border border-outline-variant/20">
+        <div class="flex items-center justify-between">
+          <span class="font-label-sm text-label-sm text-on-surface-variant uppercase tracking-wider">Runtime Engine</span>
+          <span class="flex h-2 w-2 relative">
+            <span class="animate-ping absolute inline-flex h-full w-full rounded-full bg-primary opacity-75"></span>
+            <span class="relative inline-flex rounded-full h-2 w-2 bg-primary"></span>
+          </span>
+        </div>
+        <div class="flex items-center gap-space-xs">
+          <span class="material-symbols-outlined text-tertiary text-[18px]">terminal</span>
+          <span class="font-body-sm text-body-sm text-on-surface">Hybrid ML Engine</span>
+        </div>
+        <div class="text-[10px] text-outline font-label-sm">Content-Based + Collaborative Filtering</div>
+      </div>
+    </div>
+  </aside>
+
+  <!-- MAIN -->
+  <div class="md:pl-64 flex flex-col min-h-screen">
+    <header class="fixed top-0 left-0 md:left-64 right-0 h-16 bg-surface-container-lowest/80 backdrop-blur-xl border-b border-outline-variant/20 z-40 px-4 md:px-gutter flex items-center justify-between shadow-[0_4px_20px_rgba(0,0,0,0.4)]">
+      <button id="sidebar-toggle" class="md:hidden p-2 text-on-surface-variant hover:text-on-surface mr-2" aria-label="Toggle sidebar" aria-expanded="false">
+        <span class="material-symbols-outlined">menu</span>
+      </button>
+      <div class="relative flex-1 max-w-2xl">
+        <span class="material-symbols-outlined absolute left-space-md top-1/2 -translate-y-1/2 text-outline">search</span>
+        <input id="global-search-input"
+          class="w-full bg-surface-container-low/80 border border-outline-variant/40 rounded-full pl-10 pr-space-md py-space-xs font-body-sm text-body-sm text-on-surface placeholder:text-outline focus:outline-none focus:border-primary focus:ring-1 focus:ring-primary transition-all duration-200"
+          placeholder="Search movies, genres, directors..." type="text" aria-label="Search movies" autocomplete="off" />
+        <div id="search-dropdown" class="absolute top-full left-0 right-0 mt-2 bg-surface-container-low border border-outline-variant/30 rounded-xl shadow-2xl hidden z-50 max-h-80 overflow-y-auto"></div>
+      </div>
+      <div class="flex items-center gap-space-md pl-space-lg">
+        <button id="notification-btn" class="relative p-space-xs text-on-surface-variant hover:text-on-surface transition-colors" aria-label="Notifications">
+          <span class="material-symbols-outlined">notifications</span>
+          <span class="notif-dot"></span>
+        </button>
+        <div class="w-8 h-8 rounded-full bg-gradient-to-tr from-primary to-amber-600 flex items-center justify-center font-bold text-on-primary text-xs ring-1 ring-primary/40 cursor-pointer" title="User profile">RS</div>
+      </div>
+    </header>
+
+    <main class="w-full pt-16 bg-surface-container-lowest min-h-screen pb-20 md:pb-0">
+      <div id="toast-container" class="fixed bottom-24 md:bottom-6 right-6 z-50 flex flex-col gap-2 pointer-events-none" aria-live="polite"></div>
+
+      <!-- DISCOVER -->
+      <div id="view-discover" class="view-panel active flex-col w-full text-on-surface">
+
+        <!-- HERO (reduced height ~580px) -->
+        <section class="relative w-full overflow-hidden bg-surface-container-lowest -mt-16">
+          <div class="absolute top-1/4 -left-32 w-96 h-96 bg-primary/10 rounded-full blur-[140px] pointer-events-none"></div>
+          <div class="relative w-full min-h-[580px] flex items-end pb-space-xl pt-28">
+            <div id="hero-backdrop" class="absolute inset-0 bg-cover bg-center transition-all duration-700"
+              style="background-image: url('https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=1600&auto=format&fit=crop');">
+              <div class="absolute inset-0 bg-gradient-to-t from-surface-container-lowest via-surface-container-lowest/60 to-surface-container-lowest/20"></div>
+              <div class="absolute inset-0 bg-gradient-to-r from-surface-container-lowest via-surface-container-lowest/80 to-transparent w-full md:w-3/4"></div>
+            </div>
+            <div class="relative z-10 w-full px-4 md:px-margin grid grid-cols-12 gap-gutter items-end">
+              <div class="col-span-12 lg:col-span-8 flex flex-col gap-space-md">
+                <div class="flex flex-wrap items-center gap-space-xs">
+                  <span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-primary/15 text-primary text-label-sm font-label-sm uppercase tracking-widest backdrop-blur-md">
+                    <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1">auto_awesome</span> Editor's Pick
+                  </span>
+                  <span class="px-3 py-1 rounded-full bg-surface-container/70 text-on-surface-variant text-label-sm font-label-sm uppercase tracking-wider backdrop-blur-md">Sci-Fi</span>
+                </div>
+                <div class="flex flex-col">
+                  <span class="font-label-md text-label-md text-primary tracking-[0.35em] uppercase font-bold">Recommended For You</span>
+                  <h1 class="font-display-lg text-3xl md:text-display-lg text-on-surface tracking-tighter leading-none mt-1">
+                    INTERSTELLAR <span class="font-light text-primary/90 italic">: Journey</span>
+                  </h1>
+                </div>
+                <p class="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+                  When Earth becomes uninhabitable, a team of researchers pilots a spacecraft through a wormhole to find a new home for humanity.
+                </p>
+                <div class="inline-flex items-start gap-2 px-3 py-2 rounded-lg bg-primary/10 border border-primary/20 max-w-md">
+                  <span class="material-symbols-outlined text-primary text-[16px] mt-0.5">psychology</span>
+                  <span class="font-body-sm text-body-sm text-on-surface-variant"><span class="text-primary font-semibold">Why recommended:</span> Matches your Sci-Fi &amp; Drama preferences · 97% content similarity to your top-rated films</span>
+                </div>
+                <div class="flex flex-wrap items-center gap-space-sm pt-space-xs">
+                  <button id="hero-details-btn" data-id="1"
+                    class="inline-flex items-center gap-2 px-space-xl py-3 rounded-full bg-primary-container text-on-primary-container font-label-lg font-bold shadow-lg hover:bg-secondary transition-all">
+                    <span class="material-symbols-outlined text-[20px]">info</span> View Details
+                  </button>
+                  <button class="bookmark-toggle-btn inline-flex items-center gap-2 px-space-lg py-3 rounded-full bg-surface-container-high/80 hover:bg-surface-bright text-on-surface font-label-lg transition-all" data-id="1" data-title="Interstellar">
+                    <span class="material-symbols-outlined text-[18px]">bookmark_add</span> Save to Watchlist
+                  </button>
+                </div>
+              </div>
+            </div>
+          </div>
+        </section>
+
+        <!-- FILTERS -->
+        <section class="w-full px-4 md:px-margin pt-space-md pb-space-sm">
+          <div class="flex flex-wrap gap-2 items-center">
+            <span class="font-label-sm text-outline uppercase tracking-widest text-[11px]">Filter:</span>
+            <button class="filter-pill active px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/30 hover:border-primary transition-all" data-genre="all">All</button>
+            <button class="filter-pill px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/30 hover:border-primary transition-all" data-genre="Sci-Fi">Sci-Fi</button>
+            <button class="filter-pill px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/30 hover:border-primary transition-all" data-genre="Action">Action</button>
+            <button class="filter-pill px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/30 hover:border-primary transition-all" data-genre="Drama">Drama</button>
+            <button class="filter-pill px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/30 hover:border-primary transition-all" data-genre="Comedy">Comedy</button>
+            <button class="filter-pill px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/30 hover:border-primary transition-all" data-genre="Horror">Horror</button>
+            <button class="filter-pill px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/30 hover:border-primary transition-all" data-genre="Animation">Animation</button>
+            <button class="filter-pill px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/30 hover:border-primary transition-all" data-genre="Romance">Romance</button>
+            <button class="filter-pill px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/30 hover:border-primary transition-all" data-genre="Documentary">Documentary</button>
+            <select id="year-filter" class="ml-2 px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/30 focus:outline-none focus:border-primary transition-all cursor-pointer" aria-label="Filter by year">
+              <option value="all">Any Year</option>
+              <option value="2024">2024</option>
+              <option value="2023">2023</option>
+              <option value="2010s">2010–2019</option>
+              <option value="2000s">2000–2009</option>
+              <option value="classic">Before 2000</option>
+            </select>
+            <select id="lang-filter" class="px-3 py-1.5 rounded-full bg-surface-container text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/30 focus:outline-none focus:border-primary transition-all cursor-pointer" aria-label="Filter by language">
+              <option value="all">Any Language</option>
+              <option value="English">English</option>
+              <option value="Japanese">Japanese</option>
+              <option value="Korean">Korean</option>
+              <option value="French">French</option>
+            </select>
+          </div>
+        </section>
+
+        <!-- RECOMMENDED -->
+        <section class="w-full px-4 md:px-margin py-space-xl flex flex-col gap-space-lg">
+          <div class="flex items-end justify-between flex-wrap gap-space-sm">
+            <div class="flex flex-col">
+              <div class="flex items-center gap-space-xs text-primary">
+                <span class="material-symbols-outlined text-[18px]">psychology</span>
+                <span class="font-label-sm text-label-sm uppercase tracking-widest font-semibold">Recommended For You</span>
+              </div>
+              <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Picked By Your Taste Profile</h2>
+            </div>
+            <div class="flex items-center gap-space-xs">
+              <button class="w-10 h-10 rounded-full bg-surface-container hover:bg-surface-bright flex items-center justify-center text-on-surface-variant transition-all" id="neural-prev" aria-label="Previous">
+                <span class="material-symbols-outlined">chevron_left</span>
+              </button>
+              <button class="w-10 h-10 rounded-full bg-surface-container hover:bg-surface-bright flex items-center justify-center text-on-surface-variant transition-all" id="neural-next" aria-label="Next">
+                <span class="material-symbols-outlined">chevron_right</span>
+              </button>
+            </div>
+          </div>
+          <div class="flex gap-gutter overflow-x-auto pb-4 pt-1 snap-x scroll-smooth hide-scrollbar" id="neural-carousel" role="list"></div>
+        </section>
+
+        <!-- TOP MOVIES THIS WEEK -->
+        <section class="w-full px-4 md:px-margin py-space-xl flex flex-col gap-space-lg bg-surface-container/40">
+          <div class="flex items-end justify-between flex-wrap gap-space-sm">
+            <div class="flex flex-col">
+              <div class="flex items-center gap-space-xs text-primary">
+                <span class="material-symbols-outlined text-[18px]">local_fire_department</span>
+                <span class="font-label-sm text-label-sm uppercase tracking-widest font-semibold">Cold-Start Picks</span>
+              </div>
+              <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Top Movies This Week</h2>
+            </div>
+          </div>
+          <div class="flex gap-gutter overflow-x-auto pb-4 pt-1 snap-x scroll-smooth hide-scrollbar" id="top-week-carousel" role="list"></div>
+        </section>
+
+        <!-- GENRE SECTIONS CONTAINER -->
+        <div id="genre-sections-container"></div>
+
+        <!-- AI ENGINE -->
+        <section id="ai-engine-section" class="w-full px-4 md:px-margin py-space-xl mb-space-xl">
+          <div class="relative w-full rounded-xl bg-surface-container-low p-space-lg lg:p-space-xl overflow-hidden shadow-2xl border border-outline-variant/30">
+            <div class="relative z-10 flex flex-col gap-space-lg">
+              <div class="flex flex-col md:flex-row md:items-center justify-between gap-space-sm pb-space-sm border-b border-outline-variant/20">
+                <div class="flex items-center gap-space-sm">
+                  <div class="w-12 h-12 rounded-xl bg-surface-container-highest flex items-center justify-center text-primary border border-primary/20">
+                    <span class="material-symbols-outlined text-[26px]">terminal</span>
+                  </div>
+                  <div class="flex flex-col">
+                    <h3 class="font-headline-md text-headline-md text-on-surface">ReelSense Hybrid Engine</h3>
+                    <span class="font-body-sm text-body-sm text-outline">Content-Based (TF-IDF + Cosine) · Collaborative (SVD Matrix Factorization)</span>
+                  </div>
+                </div>
+              </div>
+              <div class="w-full relative flex items-center">
+                <span class="material-symbols-outlined absolute left-4 text-primary text-[22px]">smart_toy</span>
+                <input id="prompt-input"
+                  class="w-full bg-surface-container-lowest text-on-surface font-body-md text-body-md pl-12 pr-36 py-3.5 rounded-xl border border-outline-variant/30 focus:border-primary focus:outline-none"
+                  type="text" value="Find a slow-burn mystery with golden cinematography..." aria-label="Query the recommendation engine" />
+                <button id="query-engine-btn"
+                  class="absolute right-2 px-4 py-2 rounded-lg bg-primary-container text-on-primary-container font-label-md font-bold hover:bg-secondary flex items-center gap-1.5 transition-all">
+                  <span>Query</span><span class="material-symbols-outlined text-[16px]">arrow_forward</span>
+                </button>
+              </div>
+              <div class="grid grid-cols-1 md:grid-cols-3 gap-gutter pt-space-xs">
+                <div class="p-space-md rounded-xl bg-surface-container flex flex-col gap-space-xs border border-outline-variant/20">
+                  <div class="flex items-center justify-between">
+                    <span class="font-label-md font-medium text-on-surface">Pacing</span>
+                    <span class="font-label-sm text-primary font-bold" id="val-pacing">28% (Slow-Burn)</span>
+                  </div>
+                  <input id="slider-pacing" class="w-full accent-primary h-1.5 bg-surface-container-highest rounded-lg appearance-none" max="100" min="0" type="range" value="28" />
+                </div>
+                <div class="p-space-md rounded-xl bg-surface-container flex flex-col gap-space-xs border border-outline-variant/20">
+                  <div class="flex items-center justify-between">
+                    <span class="font-label-md font-medium text-on-surface">Cinematography</span>
+                    <span class="font-label-sm text-primary font-bold" id="val-cine">94% (35mm)</span>
+                  </div>
+                  <input id="slider-cine" class="w-full accent-primary h-1.5 bg-surface-container-highest rounded-lg appearance-none" max="100" min="0" type="range" value="94" />
+                </div>
+                <div class="p-space-md rounded-xl bg-surface-container flex flex-col gap-space-xs border border-outline-variant/20">
+                  <div class="flex items-center justify-between">
+                    <span class="font-label-md font-medium text-on-surface">Hybrid Alpha (α)</span>
+                    <span class="font-label-sm text-primary font-bold" id="val-alpha">0.60 (Hybrid)</span>
+                  </div>
+                  <input id="slider-alpha" class="w-full accent-primary h-1.5 bg-surface-container-highest rounded-lg appearance-none" max="100" min="0" type="range" value="60" />
+                </div>
+              </div>
+              <div id="engine-output" class="hidden p-space-md rounded-xl bg-surface-container-lowest border border-primary/20 font-body-sm text-body-sm text-on-surface-variant"></div>
+            </div>
+          </div>
+        </section>
+      </div>
+
+      <!-- TRENDING VIEW -->
+      <div id="view-trending" class="view-panel flex-col w-full text-on-surface p-4 md:p-margin gap-space-lg">
+        <div class="flex flex-col gap-space-xs">
+          <div class="flex items-center gap-space-xs text-primary">
+            <span class="material-symbols-outlined text-[18px]">local_fire_department</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-widest font-semibold">This Week's Charts</span>
+          </div>
+          <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">Top Movies This Week</h1>
+          <p class="font-body-sm text-on-surface-variant">Trending picks across all genres and age groups — perfect for cold-start discovery.</p>
+        </div>
+        <div id="trending-list" class="flex flex-col gap-4"></div>
+      </div>
+
+      <!-- MOOD VAULT -->
+      <div id="view-mood-vault" class="view-panel flex-col w-full text-on-surface p-4 md:p-margin gap-space-xl">
+        <div class="flex flex-col gap-space-xs">
+          <div class="flex items-center gap-space-xs text-primary">
+            <span class="material-symbols-outlined text-[18px]">sentiment_satisfied</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-widest font-semibold">Mood Explorer</span>
+          </div>
+          <h1 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">How Are You Feeling?</h1>
+          <p class="font-body-sm text-on-surface-variant">Pick a mood to see movies tailored to how you feel right now.</p>
+        </div>
+        <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-gutter" id="mood-grid">
+          <button class="mood-card group flex flex-col items-center gap-3 p-space-lg rounded-2xl bg-surface-container border-2 border-outline-variant/20 hover:border-primary/50 transition-all duration-200 cursor-pointer" data-mood="Happy">
+            <span class="mood-icon material-symbols-outlined text-[40px] text-outline group-hover:text-primary transition-colors">sentiment_very_satisfied</span>
+            <span class="font-label-lg font-semibold text-on-surface">Happy</span>
+            <span class="font-body-sm text-outline text-center text-[12px]">Feel-good &amp; uplifting</span>
+          </button>
+          <button class="mood-card group flex flex-col items-center gap-3 p-space-lg rounded-2xl bg-surface-container border-2 border-outline-variant/20 hover:border-primary/50 transition-all duration-200 cursor-pointer" data-mood="Relaxed">
+            <span class="mood-icon material-symbols-outlined text-[40px] text-outline group-hover:text-primary transition-colors">spa</span>
+            <span class="font-label-lg font-semibold text-on-surface">Relaxed</span>
+            <span class="font-body-sm text-outline text-center text-[12px]">Slow cinema &amp; calm</span>
+          </button>
+          <button class="mood-card group flex flex-col items-center gap-3 p-space-lg rounded-2xl bg-surface-container border-2 border-outline-variant/20 hover:border-primary/50 transition-all duration-200 cursor-pointer" data-mood="Mind-blown">
+            <span class="mood-icon material-symbols-outlined text-[40px] text-outline group-hover:text-primary transition-colors">psychology</span>
+            <span class="font-label-lg font-semibold text-on-surface">Mind-Blown</span>
+            <span class="font-body-sm text-outline text-center text-[12px]">Complex &amp; thought-provoking</span>
+          </button>
+          <button class="mood-card group flex flex-col items-center gap-3 p-space-lg rounded-2xl bg-surface-container border-2 border-outline-variant/20 hover:border-primary/50 transition-all duration-200 cursor-pointer" data-mood="Thrilling">
+            <span class="mood-icon material-symbols-outlined text-[40px] text-outline group-hover:text-primary transition-colors">bolt</span>
+            <span class="font-label-lg font-semibold text-on-surface">Thrilled</span>
+            <span class="font-body-sm text-outline text-center text-[12px]">Action &amp; suspense</span>
+          </button>
+          <button class="mood-card group flex flex-col items-center gap-3 p-space-lg rounded-2xl bg-surface-container border-2 border-outline-variant/20 hover:border-primary/50 transition-all duration-200 cursor-pointer" data-mood="Emotional">
+            <span class="mood-icon material-symbols-outlined text-[40px] text-outline group-hover:text-primary transition-colors">favorite</span>
+            <span class="font-label-lg font-semibold text-on-surface">Emotional</span>
+            <span class="font-body-sm text-outline text-center text-[12px]">Deep feelings &amp; drama</span>
+          </button>
+          <button class="mood-card group flex flex-col items-center gap-3 p-space-lg rounded-2xl bg-surface-container border-2 border-outline-variant/20 hover:border-primary/50 transition-all duration-200 cursor-pointer" data-mood="Dark">
+            <span class="mood-icon material-symbols-outlined text-[40px] text-outline group-hover:text-primary transition-colors">dark_mode</span>
+            <span class="font-label-lg font-semibold text-on-surface">Dark</span>
+            <span class="font-body-sm text-outline text-center text-[12px]">Noir &amp; intense drama</span>
+          </button>
+        </div>
+        <div id="mood-cta" class="hidden flex-col items-center gap-space-md text-center">
+          <div class="flex items-center gap-space-sm">
+            <div class="h-px w-16 bg-outline-variant/40"></div>
+            <span id="mood-selected-label" class="font-label-md text-primary font-semibold"></span>
+            <div class="h-px w-16 bg-outline-variant/40"></div>
+          </div>
+          <button id="show-mood-movies-btn" class="inline-flex items-center gap-2 px-8 py-3 rounded-full bg-primary-container text-on-primary-container font-label-lg font-bold shadow-lg hover:bg-secondary transition-all">
+            <span class="material-symbols-outlined text-[20px]">movie</span> Show Movies
+          </button>
+        </div>
+        <div id="mood-results" class="hidden flex-col gap-space-lg">
+          <h2 id="mood-results-title" class="font-headline-lg text-headline-lg text-on-surface tracking-tight"></h2>
+          <div class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-gutter" id="mood-movies-grid"></div>
+        </div>
+      </div>
+
+      <!-- WATCHLIST -->
+      <div id="view-watchlist" class="view-panel flex-col p-4 md:p-margin gap-space-lg">
+        <div class="flex items-center justify-between flex-wrap gap-space-sm">
+          <div>
+            <h1 class="font-headline-lg text-on-surface">Your Watchlist</h1>
+            <p class="font-body-sm text-on-surface-variant">Save movies from any card — your list persists between sessions.</p>
+          </div>
+          <button id="clear-watchlist-btn" class="px-4 py-2 rounded-lg bg-error-container text-on-error-container font-label-sm hover:opacity-90 transition-all">Clear All</button>
+        </div>
+        <div id="watchlist-grid" class="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-4 xl:grid-cols-5 gap-gutter"></div>
+      </div>
+
+      <!-- RATINGS -->
+      <div id="view-ratings" class="view-panel flex-col p-4 md:p-margin gap-space-lg">
+        <div class="flex flex-col gap-space-xs">
+          <div class="flex items-center gap-space-xs text-primary">
+            <span class="material-symbols-outlined text-[18px]">star</span>
+            <span class="font-label-sm text-label-sm uppercase tracking-widest font-semibold">Taste Calibration</span>
+          </div>
+          <h1 class="font-headline-lg text-on-surface tracking-tight">My Ratings</h1>
+          <p class="font-body-sm text-on-surface-variant">Rate movies to improve personalized recommendations. You need at least 3 ratings for collaborative filtering to activate.</p>
+        </div>
+        <div class="flex items-center gap-space-md p-space-md rounded-xl bg-surface-container border border-outline-variant/20">
+          <div class="flex-1">
+            <div class="flex justify-between items-center mb-1">
+              <span class="font-label-sm text-on-surface-variant">Ratings collected</span>
+              <span id="ratings-count-label" class="font-label-sm text-primary font-bold">0 / 3 needed</span>
+            </div>
+            <div class="w-full h-2 bg-surface-container-highest rounded-full overflow-hidden">
+              <div id="ratings-progress-bar" class="h-full bg-primary rounded-full transition-all duration-500" style="width: 0%"></div>
+            </div>
+          </div>
+          <div id="collab-status" class="text-[11px] font-label-sm text-outline px-2 py-1 rounded-full bg-surface-container-highest">Trending fallback active</div>
+        </div>
+        <div id="ratings-grid" class="grid grid-cols-1 md:grid-cols-2 gap-gutter"></div>
+      </div>
+    </main>
+  </div>
+
+  <!-- MOBILE BOTTOM NAV -->
+  <nav class="fixed bottom-0 left-0 right-0 h-16 bg-surface-container-lowest/95 backdrop-blur-xl border-t border-outline-variant/20 z-40 flex items-center justify-around px-2 md:hidden" aria-label="Mobile navigation">
+    <button class="mobile-nav-item active flex flex-col items-center gap-0.5 p-2 rounded-lg flex-1" data-path="discover" aria-label="Discover">
+      <span class="mobile-nav-icon material-symbols-outlined text-[24px] text-primary">movie</span>
+      <span class="mobile-nav-label text-[10px] font-label-sm text-primary">Discover</span>
+    </button>
+    <button class="mobile-nav-item flex flex-col items-center gap-0.5 p-2 rounded-lg flex-1" data-path="trending" aria-label="Top This Week">
+      <span class="mobile-nav-icon material-symbols-outlined text-[24px] text-on-surface-variant">local_fire_department</span>
+      <span class="mobile-nav-label text-[10px] font-label-sm text-on-surface-variant">Top Picks</span>
+    </button>
+    <button class="mobile-nav-item flex flex-col items-center gap-0.5 p-2 rounded-lg flex-1" data-path="mood-vault" aria-label="Mood Explorer">
+      <span class="mobile-nav-icon material-symbols-outlined text-[24px] text-on-surface-variant">sentiment_satisfied</span>
+      <span class="mobile-nav-label text-[10px] font-label-sm text-on-surface-variant">Mood</span>
+    </button>
+    <button class="mobile-nav-item flex flex-col items-center gap-0.5 p-2 rounded-lg flex-1 relative" data-path="watchlist" aria-label="Watchlist">
+      <span class="mobile-nav-icon material-symbols-outlined text-[24px] text-on-surface-variant">bookmark</span>
+      <span class="mobile-nav-label text-[10px] font-label-sm text-on-surface-variant">Watchlist</span>
+      <span id="mobile-watchlist-badge" class="absolute top-1 right-3 w-4 h-4 rounded-full bg-primary text-on-primary text-[9px] font-bold flex items-center justify-center hidden"></span>
+    </button>
+    <button class="mobile-nav-item flex flex-col items-center gap-0.5 p-2 rounded-lg flex-1" data-path="ratings" aria-label="My Ratings">
+      <span class="mobile-nav-icon material-symbols-outlined text-[24px] text-on-surface-variant">star</span>
+      <span class="mobile-nav-label text-[10px] font-label-sm text-on-surface-variant">Ratings</span>
+    </button>
+  </nav>
+
+  <!-- MOVIE DETAIL MODAL -->
+  <div id="movie-modal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden" role="dialog" aria-modal="true" aria-labelledby="modal-title">
+    <div class="relative w-full max-w-3xl rounded-2xl bg-surface-container-low border border-outline-variant/30 shadow-2xl overflow-hidden flex flex-col max-h-[92vh]">
+      <button id="modal-close" class="absolute top-4 right-4 z-20 w-10 h-10 rounded-full bg-black/60 text-on-surface hover:bg-primary flex items-center justify-center transition-all" aria-label="Close">
+        <span class="material-symbols-outlined">close</span>
+      </button>
+      <div class="relative h-60 w-full overflow-hidden flex-shrink-0">
+        <img id="modal-bg" class="w-full h-full object-cover" src="" alt="" />
+        <div class="absolute inset-0 bg-gradient-to-t from-surface-container-low via-surface-container-low/40 to-transparent"></div>
+        <div class="absolute bottom-4 left-6 right-12 flex flex-col">
+          <h2 id="modal-title" class="font-headline-lg text-2xl text-on-surface font-bold leading-tight">Film Title</h2>
+          <div id="modal-meta" class="flex flex-wrap items-center gap-2 mt-1 text-label-sm font-label-sm text-on-surface-variant"></div>
+        </div>
+      </div>
+      <div class="p-6 overflow-y-auto flex flex-col gap-5">
+        <div id="modal-genres" class="flex flex-wrap gap-2"></div>
+        <div>
+          <h3 class="font-label-md font-semibold text-on-surface mb-1">Synopsis</h3>
+          <p id="modal-desc" class="font-body-md text-on-surface-variant leading-relaxed"></p>
+        </div>
+        <div id="modal-why-section" class="p-space-md rounded-xl bg-primary/5 border border-primary/15">
+          <div class="flex items-center gap-2 mb-2">
+            <span class="material-symbols-outlined text-primary text-[18px]" style="font-variation-settings:'FILL' 1">auto_awesome</span>
+            <h3 class="font-label-md font-semibold text-primary">Why This Recommendation?</h3>
+          </div>
+          <ul id="modal-why" class="flex flex-col gap-1.5 list-none"></ul>
+        </div>
+        <div class="flex flex-wrap gap-space-sm pt-space-xs">
+          <button id="modal-watchlist-btn" class="bookmark-toggle-btn flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 px-space-lg py-3 rounded-full bg-primary-container text-on-primary-container font-label-lg font-bold hover:bg-secondary transition-all" data-id="">
+            <span class="material-symbols-outlined text-[18px]">bookmark_add</span> <span id="modal-watchlist-label">Save to Watchlist</span>
+          </button>
+          <button id="modal-rate-btn" class="flex-1 min-w-[140px] inline-flex items-center justify-center gap-2 px-space-lg py-3 rounded-full bg-surface-container hover:bg-surface-bright text-on-surface font-label-lg transition-all" data-id="">
+            <span class="material-symbols-outlined text-[18px]">star</span> Rate This Film
+          </button>
+          <button id="modal-not-interested-btn" class="inline-flex items-center justify-center gap-2 px-space-lg py-3 rounded-full bg-surface-container hover:bg-error-container/30 text-on-surface-variant hover:text-on-error-container font-label-lg transition-all" data-id="">
+            <span class="material-symbols-outlined text-[18px]">thumb_down</span> Not Interested
+          </button>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <!-- RATE MODAL -->
+  <div id="rate-modal" class="fixed inset-0 z-[60] flex items-center justify-center p-4 bg-black/80 backdrop-blur-md hidden" role="dialog" aria-modal="true">
+    <div class="w-full max-w-md rounded-2xl bg-surface-container-low border border-outline-variant/30 shadow-2xl p-6 flex flex-col gap-4">
+      <div class="flex items-center justify-between">
+        <h3 class="font-headline-md text-on-surface">Rate <span id="rate-modal-title" class="text-primary"></span></h3>
+        <button id="rate-modal-close" class="w-8 h-8 rounded-full bg-surface-container flex items-center justify-center text-on-surface-variant hover:text-on-surface" aria-label="Close">
+          <span class="material-symbols-outlined text-[18px]">close</span>
+        </button>
+      </div>
+      <div class="flex items-center justify-center gap-3" id="star-rating-row" role="group" aria-label="Star rating">
+        <button class="star-btn material-symbols-outlined" data-val="1" aria-label="1 star">star</button>
+        <button class="star-btn material-symbols-outlined" data-val="2" aria-label="2 stars">star</button>
+        <button class="star-btn material-symbols-outlined" data-val="3" aria-label="3 stars">star</button>
+        <button class="star-btn material-symbols-outlined" data-val="4" aria-label="4 stars">star</button>
+        <button class="star-btn material-symbols-outlined" data-val="5" aria-label="5 stars">star</button>
+      </div>
+      <p class="text-center font-body-sm text-outline text-[12px]">Your rating helps train the collaborative filtering model.</p>
+      <button id="submit-rating-btn" class="w-full py-3 rounded-full bg-primary-container text-on-primary-container font-label-lg font-bold hover:bg-secondary transition-all" disabled>Submit Rating</button>
+    </div>
+  </div>
+
+  <script>
+  // =============================================================
+  // MOVIE DATABASE
+  // =============================================================
+  const MOVIE_DATABASE = [
+    { id:'1',  title:'Interstellar',          year:2014, rating:8.7, match:97, genres:['Sci-Fi','Drama','Adventure'],    language:'English',  runtime:'169 min', director:'Christopher Nolan',   overview:"When Earth becomes uninhabitable, a team of researchers pilots a spacecraft through a wormhole to find a new home for humanity.", moods:['Mind-blown','Emotional','Thrilling'], ageGroup:'adult', is_trending:true,  trending_rank:1,  trending_growth:'+34% this week',      why:['Matches your Sci-Fi & Drama preferences','Hans Zimmer iconic score','Rated 8.7+ by users with your taste profile'], bg:'https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=800&auto=format&fit=crop' },
+    { id:'2',  title:'Inception',             year:2010, rating:8.8, match:95, genres:['Sci-Fi','Action','Thriller'],    language:'English',  runtime:'148 min', director:'Christopher Nolan',   overview:"A thief who steals corporate secrets through dream-sharing technology is given the task of planting an idea into a CEO's mind.", moods:['Mind-blown','Thrilling'], ageGroup:'adult', is_trending:true,  trending_rank:2,  trending_growth:'+21% this week',      why:['Top-rated Sci-Fi thriller','Intricate dream architecture','95% match with your profile'], bg:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800&auto=format&fit=crop' },
+    { id:'3',  title:'Arrival',               year:2016, rating:7.9, match:91, genres:['Sci-Fi','Mystery','Drama'],      language:'English',  runtime:'116 min', director:'Denis Villeneuve',    overview:"A linguist works with the military to communicate with alien lifeforms after twelve mysterious spacecraft appear around the world.", moods:['Mind-blown','Emotional','Relaxed'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['Recommended for Sci-Fi, mystery elements & thoughtful pacing','High content similarity to Interstellar','Mood match: Mind-blown + Emotional'], bg:'https://images.unsplash.com/photo-1451187580459-43490279c0fa?q=80&w=800&auto=format&fit=crop' },
+    { id:'4',  title:'Blade Runner 2049',     year:2017, rating:8.0, match:96, genres:['Sci-Fi','Mystery','Drama'],      language:'English',  runtime:'164 min', director:'Denis Villeneuve',    overview:"Young Blade Runner K's discovery of a long-buried secret leads him to track down former Blade Runner Rick Deckard.", moods:['Mind-blown','Emotional','Relaxed'], ageGroup:'adult', is_trending:true,  trending_rank:3,  trending_growth:'Soundtrack Special Edition', why:['Iconic visual neon aesthetics','Hans Zimmer & Benjamin Wallfisch score','#3 Global Ranking'], bg:'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=800&auto=format&fit=crop' },
+    { id:'5',  title:'Dune: Part Two',        year:2024, rating:8.6, match:97, genres:['Sci-Fi','Adventure','Action'],   language:'English',  runtime:'166 min', director:'Denis Villeneuve',    overview:"Paul Atreides unites with Chani and the Fremen while seeking revenge against conspirators who destroyed his family.", moods:['Thrilling','Mind-blown'], ageGroup:'adult', is_trending:true,  trending_rank:4,  trending_growth:'Top Pick this week',      why:['Monumental visual scale & sound design','Denis Villeneuve direction','Similar genre/director to Interstellar'], bg:'https://images.unsplash.com/photo-1509198397868-475647b2a1e5?q=80&w=800&auto=format&fit=crop' },
+    { id:'6',  title:'The Matrix',            year:1999, rating:8.7, match:90, genres:['Sci-Fi','Action'],               language:'English',  runtime:'136 min', director:'The Wachowskis',      overview:"A computer programmer discovers the world he lives in is a simulated reality controlled by machines.", moods:['Mind-blown','Thrilling'], ageGroup:'teen', is_trending:true,  trending_rank:5,  trending_growth:'+8% revival',         why:['Genre-defining Sci-Fi Action','Strong match with cyberpunk preferences','Frequently liked by Inception fans'], bg:'https://images.unsplash.com/photo-1518709268805-4e9042af9f23?q=80&w=800&auto=format&fit=crop' },
+    { id:'7',  title:'Mad Max: Fury Road',    year:2015, rating:8.1, match:88, genres:['Action','Adventure','Sci-Fi'],   language:'English',  runtime:'120 min', director:'George Miller',       overview:"In a post-apocalyptic wasteland, a woman rebels against a tyrannical ruler in search of her homeland.", moods:['Thrilling','Adrenaline'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['High action-pacing score','Frequently rated 4+ by Dune fans','Acclaimed visual storytelling'], bg:'https://images.unsplash.com/photo-1578662996442-48f60103fc96?q=80&w=800&auto=format&fit=crop' },
+    { id:'8',  title:'Top Gun: Maverick',     year:2022, rating:8.3, match:85, genres:['Action','Drama'],                language:'English',  runtime:'131 min', director:'Joseph Kosinski',     overview:"After 30+ years of service, Maverick is called back to train a detachment of Top Gun graduates for a specialized mission.", moods:['Thrilling','Happy'], ageGroup:'family', is_trending:true,  trending_rank:6,  trending_growth:'+12% this week',      why:['Highest-rated action film of 2022','Matches high-pacing action preference','Popular among family viewers'], bg:'https://images.unsplash.com/photo-1436491865332-7a61a109cc05?q=80&w=800&auto=format&fit=crop' },
+    { id:'9',  title:'John Wick',             year:2014, rating:7.4, match:80, genres:['Action','Thriller'],             language:'English',  runtime:'101 min', director:'Chad Stahelski',      overview:"An ex-hit-man comes out of retirement to track down the gangsters who killed his dog.", moods:['Thrilling','Adrenaline'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['High action-sequence density','Short runtime — great for a quick watch','Similar fans: Matrix viewers'], bg:'https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?q=80&w=800&auto=format&fit=crop' },
+    { id:'10', title:'Oppenheimer',           year:2023, rating:9.0, match:95, genres:['Biography','Drama','History'],   language:'English',  runtime:'180 min', director:'Christopher Nolan',   overview:"The story of J. Robert Oppenheimer and his role in the development of the atomic bomb during World War II.", moods:['Mind-blown','Emotional','Thrilling'], ageGroup:'adult', is_trending:true,  trending_rank:7,  trending_growth:'+18% this week',      why:['#1 Biography Drama of 2023','Christopher Nolan director preference match','70mm IMAX masterpiece'], bg:'https://images.unsplash.com/photo-1478760329108-5c3ed9d495a0?q=80&w=800&auto=format&fit=crop' },
+    { id:'11', title:'The Shawshank Redemption', year:1994, rating:9.3, match:93, genres:['Drama'],                    language:'English',  runtime:'142 min', director:'Frank Darabont',      overview:"Two imprisoned men bond over several years, finding solace and eventual redemption through acts of common decency.", moods:['Emotional','Happy'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['All-time highest rated Drama','Matches Emotional mood profile','Highly rated by Drama fans in your cohort'], bg:'https://images.unsplash.com/photo-1500099817043-86d46000d58f?q=80&w=800&auto=format&fit=crop' },
+    { id:'12', title:'Parasite',              year:2019, rating:8.5, match:89, genres:['Drama','Thriller','Comedy'],    language:'Korean',   runtime:'132 min', director:'Bong Joon-ho',        overview:"A poor family schemes to become employed by a wealthy family by infiltrating their household.", moods:['Mind-blown','Thrilling','Dark'], ageGroup:'adult', is_trending:false, trending_rank:null, why:["Palme d'Or & Oscar Best Picture winner",'Cross-genre match: Thriller + Drama','Highly rated by Inception fans'], bg:'https://images.unsplash.com/photo-1533488765986-dfa2a9939acd?q=80&w=800&auto=format&fit=crop' },
+    { id:'13', title:'The Grand Budapest Hotel', year:2014, rating:8.1, match:82, genres:['Comedy','Drama','Mystery'], language:'English',  runtime:'100 min', director:'Wes Anderson',        overview:"The adventures of Gustave H., a legendary concierge, and Zero Moustafa, the lobby boy who becomes his trusted friend.", moods:['Happy','Relaxed'], ageGroup:'family', is_trending:false, trending_rank:null, why:['Quirky visual style matches aesthetic preferences','Mood: Happy & Relaxed','Loved by Drama+Comedy crossover fans'], bg:'https://images.unsplash.com/photo-1555685812-4b943f1cb0eb?q=80&w=800&auto=format&fit=crop' },
+    { id:'14', title:'Knives Out',            year:2019, rating:7.9, match:84, genres:['Comedy','Mystery','Thriller'],  language:'English',  runtime:'130 min', director:'Rian Johnson',        overview:"A detective investigates the death of a patriarch of an eccentric, combative family.", moods:['Happy','Thrilling','Mind-blown'], ageGroup:'family', is_trending:false, trending_rank:null, why:['Crowd-pleaser Mystery-Comedy','Great pacing for a lighter watch','Liked by Parasite & Grand Budapest fans'], bg:'https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=800&auto=format&fit=crop' },
+    { id:'15', title:'Superbad',              year:2007, rating:7.6, match:75, genres:['Comedy'],                       language:'English',  runtime:'113 min', director:'Greg Mottola',        overview:"Two co-dependent high school seniors deal with separation anxiety after their plan is disrupted.", moods:['Happy'], ageGroup:'teen', is_trending:false, trending_rank:null, why:['Top-rated teen comedy','Mood match: Happy','Popular among 15-25 age group viewers'], bg:'https://images.unsplash.com/photo-1517604931442-7e0c8ed2963c?q=80&w=800&auto=format&fit=crop' },
+    { id:'16', title:'Get Out',               year:2017, rating:7.7, match:86, genres:['Horror','Thriller','Mystery'],  language:'English',  runtime:'104 min', director:'Jordan Peele',        overview:"A young African-American visits his white girlfriend's parents for the weekend, but learns they have disturbing secrets.", moods:['Thrilling','Dark','Mind-blown'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['Oscar-winning social thriller','Mood: Dark & Mind-blown','Highly rated among Parasite fans'], bg:'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?q=80&w=800&auto=format&fit=crop' },
+    { id:'17', title:'Hereditary',            year:2018, rating:7.3, match:78, genres:['Horror','Drama'],               language:'English',  runtime:'127 min', director:'Ari Aster',           overview:"After their secretive grandmother passes away, the Graham family unravels cryptic and terrifying secrets.", moods:['Dark','Thrilling','Emotional'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['Best-reviewed horror film of 2018','Dark mood match','Frequently recommended with Get Out'], bg:'https://images.unsplash.com/photo-1509347528160-9a9e33742cdb?q=80&w=800&auto=format&fit=crop' },
+    { id:'18', title:'A Quiet Place',         year:2018, rating:7.5, match:80, genres:['Horror','Sci-Fi','Drama'],      language:'English',  runtime:'90 min',  director:'John Krasinski',      overview:"A family struggles to survive in a post-apocalyptic world inhabited by blind monsters with an acute sense of hearing.", moods:['Thrilling','Dark'], ageGroup:'family', is_trending:false, trending_rank:null, why:['High tension-per-minute ratio','Family-friendly horror (PG-13)','Similar fans: Arrival viewers'], bg:'https://images.unsplash.com/photo-1478720568477-152d9b164e26?q=80&w=800&auto=format&fit=crop' },
+    { id:'19', title:'Spirited Away',         year:2001, rating:8.6, match:90, genres:['Animation','Fantasy','Adventure'], language:'Japanese', runtime:'125 min', director:'Hayao Miyazaki',  overview:"A young girl stumbles into a world of spirits and must find a way to free herself and her transformed parents.", moods:['Happy','Mind-blown','Emotional'], ageGroup:'family', is_trending:true,  trending_rank:8,  trending_growth:'+5% classic revival',  why:['Studio Ghibli masterpiece','Oscar Best Animated Feature','Highly rated by all age groups'], bg:'https://images.unsplash.com/photo-1580477667995-2b94f01c9516?q=80&w=800&auto=format&fit=crop' },
+    { id:'20', title:'Spider-Man: Into the Spider-Verse', year:2018, rating:8.4, match:88, genres:['Animation','Action','Adventure'], language:'English', runtime:'117 min', director:'Bob Persichetti', overview:"Teen Miles Morales becomes Spider-Man and must join five spider-powered individuals from other dimensions.", moods:['Happy','Thrilling'], ageGroup:'family', is_trending:true,  trending_rank:9,  trending_growth:'+9% sequel hype',      why:['Revolutionary animation style','Loved across teen & adult demographics','Action-mood match'], bg:'https://images.unsplash.com/photo-1531259683007-016a7b628fc3?q=80&w=800&auto=format&fit=crop' },
+    { id:'21', title:'WALL-E',                year:2008, rating:8.4, match:87, genres:['Animation','Sci-Fi','Romance'],  language:'English',  runtime:'98 min',  director:'Andrew Stanton',     overview:"In the distant future, a small waste-collecting robot embarks on a space journey that will determine the fate of mankind.", moods:['Happy','Emotional','Relaxed'], ageGroup:'family', is_trending:false, trending_rank:null, why:['Beloved all-ages Sci-Fi Romance','Low dialogue — great for a relaxed watch','High emotional resonance score'], bg:'https://images.unsplash.com/photo-1495001258031-d1b407bc1776?q=80&w=800&auto=format&fit=crop' },
+    { id:'22', title:'La La Land',            year:2016, rating:8.0, match:83, genres:['Romance','Drama','Musical'],     language:'English',  runtime:'128 min', director:'Damien Chazelle',    overview:"An aspiring actress and a jazz musician fall in love while chasing their dreams in Los Angeles.", moods:['Happy','Romantic','Emotional'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['Top Romance of the decade','Mood match: Happy + Romantic + Emotional','High affinity with WALL-E fans who rate dramas'], bg:'https://images.unsplash.com/photo-1440404653325-ab127d49abc1?q=80&w=800&auto=format&fit=crop' },
+    { id:'23', title:'Before Sunrise',        year:1995, rating:8.1, match:85, genres:['Romance','Drama'],               language:'English',  runtime:'101 min', director:'Richard Linklater',  overview:"A young man and woman meet on a train and decide to spend the night together in Vienna.", moods:['Romantic','Relaxed','Emotional'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['Classic slow-cinema romance','Relaxed mood match','Frequently recommended after Midnight in Kyoto'], bg:'https://images.unsplash.com/photo-1516205651411-aef33a44f7c2?q=80&w=800&auto=format&fit=crop' },
+    { id:'24', title:'Free Solo',             year:2018, rating:8.2, match:79, genres:['Documentary'],                   language:'English',  runtime:'100 min', director:'Elizabeth Chai Vasarhelyi', overview:"Professional rock climber Alex Honnold attempts to climb El Capitan's 3,000-foot vertical rock face with no ropes.", moods:['Thrilling','Mind-blown'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['Oscar Best Documentary','Real-life tension matches thriller preferences','Under 2 hours'], bg:'https://images.unsplash.com/photo-1464822759023-fed622ff2c3b?q=80&w=800&auto=format&fit=crop' },
+    { id:'25', title:'My Octopus Teacher',    year:2020, rating:8.1, match:77, genres:['Documentary','Nature'],          language:'English',  runtime:'85 min',  director:'Pippa Ehrlich',      overview:"A filmmaker forges an unlikely friendship with an octopus living in a South African kelp forest.", moods:['Relaxed','Emotional'], ageGroup:'family', is_trending:false, trending_rank:null, why:['Oscar Best Documentary 2021','Relaxed mood match','Short runtime — perfect for a calm evening'], bg:'https://images.unsplash.com/photo-1518020382113-a7e8fc38eac9?q=80&w=800&auto=format&fit=crop' },
+    { id:'26', title:'The Lion King',         year:1994, rating:8.5, match:88, genres:['Animation','Drama','Family'],    language:'English',  runtime:'88 min',  director:'Roger Allers',       overview:"Lion prince Simba flees his homeland after the murder of his father and must find the courage to return.", moods:['Happy','Emotional'], ageGroup:'kids', is_trending:false, trending_rank:null, why:['All-time family favourite','Great for 5+ age group','Emotional story arc matches Drama preferences'], bg:'https://images.unsplash.com/photo-1504173010664-32509107de35?q=80&w=800&auto=format&fit=crop' },
+    { id:'27', title:'Toy Story',             year:1995, rating:8.3, match:84, genres:['Animation','Comedy','Family'],   language:'English',  runtime:'81 min',  director:'John Lasseter',      overview:"A cowboy toy is profoundly threatened when a new spaceman toy supplants him as top toy in a boy's room.", moods:['Happy'], ageGroup:'kids', is_trending:false, trending_rank:null, why:['Pixar classic — universally loved','Short runtime for younger viewers','Frequently saved alongside Spirited Away'], bg:'https://images.unsplash.com/photo-1578632292335-df3abbb0d586?q=80&w=800&auto=format&fit=crop' },
+    { id:'28', title:'Coco',                  year:2017, rating:8.4, match:86, genres:['Animation','Family','Musical'],  language:'English',  runtime:'105 min', director:'Lee Unkrich',        overview:"Aspiring musician Miguel unravels his family's musical ban in the Land of the Dead.", moods:['Happy','Emotional'], ageGroup:'kids', is_trending:false, trending_rank:null, why:['Oscar Best Animated Feature','High emotional resonance for families','Mood match: Happy + Emotional'], bg:'https://images.unsplash.com/photo-1551963831-b3b1ca40c98e?q=80&w=800&auto=format&fit=crop' },
+    { id:'29', title:'Harry Potter & the Prisoner of Azkaban', year:2004, rating:7.9, match:82, genres:['Fantasy','Adventure','Family'], language:'English', runtime:'142 min', director:'Alfonso Cuarón', overview:"Harry Potter, Ron and Hermione return to Hogwarts for their third year, encountering a dangerous prisoner escaped from Azkaban.", moods:['Happy','Thrilling','Mind-blown'], ageGroup:'teen', is_trending:false, trending_rank:null, why:['Best-reviewed HP film','Fantasy match for teen viewers','Beloved by the 13-17 age group'], bg:'https://images.unsplash.com/photo-1559738954-2e5e99b6fdad?q=80&w=800&auto=format&fit=crop' },
+    { id:'30', title:'Whiplash',              year:2014, rating:8.5, match:91, genres:['Drama','Music'],                 language:'English',  runtime:'107 min', director:'Damien Chazelle',    overview:"A young jazz drummer enrolls at a prestigious music academy and encounters a ruthlessly demanding instructor.", moods:['Thrilling','Emotional','Mind-blown'], ageGroup:'teen', is_trending:false, trending_rank:null, why:['Top-rated Music Drama','Pacing: intense & gripping','High match with users who liked La La Land'], bg:'https://images.unsplash.com/photo-1514320291840-2e0a9bf2a9ae?q=80&w=800&auto=format&fit=crop' },
+    { id:'31', title:'Chinatown',             year:1974, rating:8.2, match:87, genres:['Mystery','Thriller','Noir'],    language:'English',  runtime:'130 min', director:'Roman Polanski',      overview:"A private detective hired to expose an adulterer finds himself in a murder investigation enmeshed in corruption.", moods:['Dark','Mind-blown','Thrilling'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['Definitive neo-noir mystery','Genre similarity to Shadow Cipher','Recommended for fans of Dark mood films'], bg:'https://images.unsplash.com/photo-1519972064555-542444e71b54?q=80&w=800&auto=format&fit=crop' },
+    { id:'32', title:'Zodiac',                year:2007, rating:7.7, match:84, genres:['Mystery','Thriller','Crime'],   language:'English',  runtime:'157 min', director:'David Fincher',       overview:"A San Francisco cartoonist becomes an amateur detective obsessed with unmasking the Zodiac Killer.", moods:['Dark','Thrilling','Mind-blown'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['David Fincher direction — matches your taste','Real-crime mystery with high tension','Frequent companion pick with Get Out'], bg:'https://images.unsplash.com/photo-1533488765986-dfa2a9939acd?q=80&w=800&auto=format&fit=crop' },
+    { id:'33', title:'Midnight in Kyoto',     year:2023, rating:8.6, match:93, genres:['Drama','Slow Cinema'],          language:'Japanese',  runtime:'114 min', director:'Hirokazu Kore-eda',  overview:"Along narrow bamboo alleyways illuminated by warm paper lanterns, an aging craftsman reflects on love, lost time, and the art of lantern making.", moods:['Emotional','Romantic','Happy','Relaxed'], ageGroup:'adult', is_trending:true,  trending_rank:10, trending_growth:'Curator Favorite',       why:['Poetic Japanese neo-realism','Relaxed + Emotional mood match','Atmospheric slow cinema — perfect wind-down watch'], bg:'https://images.unsplash.com/photo-1579783902614-a3fb3927b675?q=80&w=800&auto=format&fit=crop' },
+    { id:'34', title:'Amelie',                year:2001, rating:8.3, match:86, genres:['Romance','Comedy','Fantasy'],   language:'French',   runtime:'122 min', director:'Jean-Pierre Jeunet', overview:"Amelie is an introverted young woman who decides to change the lives of people around her for the better while neglecting her own needs.", moods:['Happy','Romantic','Relaxed'], ageGroup:'adult', is_trending:false, trending_rank:null, why:['Beloved French romantic comedy','Relaxed + Happy mood match','High content similarity with La La Land & Before Sunrise'], bg:'https://images.unsplash.com/photo-1502602898657-3e91760cbb34?q=80&w=800&auto=format&fit=crop' },
+  ];
+
+  // =============================================================
+  // STATE
+  // =============================================================
+  let userWatchlist = new Set(JSON.parse(localStorage.getItem('rs_watchlist') || '[]'));
+  let userRatings   = JSON.parse(localStorage.getItem('rs_ratings')   || '{}');
+  let hiddenMovies  = new Set(JSON.parse(localStorage.getItem('rs_hidden')   || '[]'));
+  let selectedMood  = null;
+  let currentRatingMovieId = null;
+  let selectedStarVal = 0;
+  let activeGenreFilter = 'all';
+  let activeYearFilter  = 'all';
+  let activeLangFilter  = 'all';
+
+  // =============================================================
+  // PERSISTENCE
+  // =============================================================
+  function saveWatchlist(){ localStorage.setItem('rs_watchlist', JSON.stringify([...userWatchlist])); }
+  function saveRatings()  { localStorage.setItem('rs_ratings',   JSON.stringify(userRatings)); }
+  function saveHidden()   { localStorage.setItem('rs_hidden',    JSON.stringify([...hiddenMovies])); }
+
+  // =============================================================
+  // TOAST
+  // =============================================================
+  function showToast(message, type='info'){
+    const c = document.getElementById('toast-container');
+    const t = document.createElement('div');
+    const icon = type==='success'?'check_circle': type==='error'?'error':'info';
+    const col  = type==='success'?'text-green-400':type==='error'?'text-red-400':'text-primary';
+    t.className='flex items-center gap-2 bg-surface-container-high text-on-surface px-4 py-3 rounded-xl border border-outline-variant/30 shadow-xl pointer-events-auto transition-all duration-300';
+    t.innerHTML=`<span class="material-symbols-outlined ${col}" style="font-variation-settings:'FILL' 1">${icon}</span><span>${message}</span>`;
+    c.appendChild(t);
+    setTimeout(()=>{t.style.opacity='0'; setTimeout(()=>t.remove(),300);},3000);
+  }
+
+  // =============================================================
+  // FILTERS
+  // =============================================================
+  function matchesFilters(m){
+    const genreOk = activeGenreFilter==='all' || m.genres.includes(activeGenreFilter);
+    let yearOk=true;
+    if(activeYearFilter==='2024')    yearOk=m.year===2024;
+    else if(activeYearFilter==='2023')    yearOk=m.year===2023;
+    else if(activeYearFilter==='2010s')   yearOk=m.year>=2010&&m.year<=2019;
+    else if(activeYearFilter==='2000s')   yearOk=m.year>=2000&&m.year<=2009;
+    else if(activeYearFilter==='classic') yearOk=m.year<2000;
+    const langOk = activeLangFilter==='all'||m.language===activeLangFilter;
+    return genreOk&&yearOk&&langOk;
+  }
+
+  // =============================================================
+  // CARD HELPERS
+  // =============================================================
+  function isInWatchlist(id){ return userWatchlist.has(String(id)); }
+
+  function movieCardHorizontal(m, opts={}){
+    const { showRank=false, showWhy=false } = opts;
+    const saved = isInWatchlist(m.id);
+    const rated = userRatings[m.id];
+    const rankBadge = showRank&&m.trending_rank ? `<div class="absolute top-2 left-2 w-6 h-6 rounded-full bg-primary text-on-primary font-bold text-[10px] flex items-center justify-center shadow">#${m.trending_rank}</div>` : '';
+    const ratedBadge = rated ? `<div class="absolute bottom-2 left-2 flex items-center gap-0.5 px-1.5 py-0.5 bg-black/60 rounded-full text-primary text-[10px]"><span class="material-symbols-outlined text-[11px]" style="font-variation-settings:'FILL' 1">star</span>${rated}</div>` : '';
+    const whyHtml = showWhy&&m.why ? `<div class="mt-1.5 px-2 py-1.5 rounded-lg bg-primary/8 border border-primary/15"><p class="font-body-sm text-[10px] text-on-surface-variant leading-snug line-clamp-2">${m.why[0]}</p></div>` : '';
+    return `
+    <div class="movie-card min-w-[190px] max-w-[190px] flex-shrink-0 snap-start flex flex-col group cursor-pointer" data-id="${m.id}" role="listitem" tabindex="0" aria-label="${m.title}">
+      <div class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-lg group-hover:scale-105 transition-transform duration-300">
+        <img class="w-full h-full object-cover" src="${m.bg}" alt="${m.title} poster" loading="lazy"/>
+        ${rankBadge}
+        <div class="absolute ${showRank&&m.trending_rank?'top-2 left-9':'top-2 left-2'} px-1.5 py-0.5 bg-black/60 rounded-full text-primary font-bold text-[9px]">${m.match}%</div>
+        ${ratedBadge}
+        <button class="bookmark-btn absolute top-2 right-2 w-7 h-7 rounded-full ${saved?'bg-primary text-on-primary':'bg-black/60 text-white'} flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all" data-id="${m.id}" aria-pressed="${saved}" aria-label="${saved?'Remove from watchlist':'Save to watchlist'}">
+          <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' ${saved?1:0}">bookmark</span>
+        </button>
+        <button class="not-interested-btn absolute bottom-2 right-2 w-6 h-6 rounded-full bg-black/50 text-white/60 flex items-center justify-center hover:bg-error-container/80 hover:text-on-error-container transition-all opacity-0 group-hover:opacity-100" data-id="${m.id}" aria-label="Not interested in ${m.title}">
+          <span class="material-symbols-outlined text-[12px]">thumb_down</span>
+        </button>
+      </div>
+      <h3 class="font-headline-sm mt-1.5 line-clamp-1 text-on-surface text-[13px]">${m.title}</h3>
+      <div class="flex items-center gap-1.5 mt-0.5">
+        <span class="text-[10px] text-outline">${m.year}</span>
+        <span class="text-outline text-[10px]">·</span>
+        <span class="text-[10px] text-outline">${m.genres[0]}</span>
+        <span class="text-outline text-[10px]">·</span>
+        <span class="flex items-center gap-0.5 text-[10px] text-primary"><span class="material-symbols-outlined text-[11px]" style="font-variation-settings:'FILL' 1">star</span>${m.rating}</span>
+      </div>
+      ${whyHtml}
+    </div>`;
+  }
+
+  function movieCardGrid(m){
+    const saved = isInWatchlist(m.id);
+    const rated = userRatings[m.id];
+    return `
+    <div class="movie-card flex flex-col group cursor-pointer" data-id="${m.id}" role="listitem" tabindex="0" aria-label="${m.title}">
+      <div class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-lg group-hover:scale-[1.02] transition-transform duration-300">
+        <img class="w-full h-full object-cover" src="${m.bg}" alt="${m.title} poster" loading="lazy"/>
+        <div class="absolute top-2 left-2 px-1.5 py-0.5 bg-black/60 rounded-full text-primary font-bold text-[9px]">${m.match}%</div>
+        ${rated?`<div class="absolute bottom-2 left-2 flex items-center gap-0.5 px-1.5 py-0.5 bg-black/60 rounded-full text-primary text-[10px]"><span class="material-symbols-outlined text-[11px]" style="font-variation-settings:'FILL' 1">star</span>${rated}</div>`:''}
+        <button class="bookmark-btn absolute top-2 right-2 w-7 h-7 rounded-full ${saved?'bg-primary text-on-primary':'bg-black/60 text-white'} flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all" data-id="${m.id}" aria-pressed="${saved}" aria-label="${saved?'Remove from watchlist':'Save to watchlist'}">
+          <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' ${saved?1:0}">bookmark</span>
+        </button>
+      </div>
+      <h3 class="font-headline-sm mt-1.5 line-clamp-1 text-on-surface text-[13px]">${m.title}</h3>
+      <div class="flex items-center gap-1.5 mt-0.5">
+        <span class="text-[10px] text-outline">${m.year}</span>
+        <span class="text-outline text-[10px]">·</span>
+        <span class="flex items-center gap-0.5 text-[10px] text-primary"><span class="material-symbols-outlined text-[11px]" style="font-variation-settings:'FILL' 1">star</span>${m.rating}</span>
+      </div>
+    </div>`;
+  }
+
+  // =============================================================
+  // RENDER SECTIONS
+  // =============================================================
+  function renderCarouselInto(containerId, movies, opts={}){
+    const el = document.getElementById(containerId); if(!el) return;
+    const visible = movies.filter(m=>!hiddenMovies.has(String(m.id)));
+    el.innerHTML = visible.length ? visible.map(m=>movieCardHorizontal(m,opts)).join('') :
+      '<div class="text-on-surface-variant font-body-sm py-8">No movies match your filters.</div>';
+  }
+
+  function renderRecommendedCarousel(){
+    let movies = MOVIE_DATABASE.filter(m=>!hiddenMovies.has(String(m.id))&&matchesFilters(m))
+      .sort((a,b)=>b.match-a.match);
+    renderCarouselInto('neural-carousel', movies.slice(0,14), {showWhy:true});
+  }
+
+  function renderTopWeekCarousel(){
+    const trending = MOVIE_DATABASE.filter(m=>m.is_trending&&!hiddenMovies.has(String(m.id)))
+      .sort((a,b)=>(a.trending_rank||999)-(b.trending_rank||999));
+    renderCarouselInto('top-week-carousel', trending, {showRank:true});
+  }
+
+  function renderGenreSections(){
+    const el = document.getElementById('genre-sections-container'); if(!el) return;
+    const GENRES=['Action','Comedy','Drama','Horror','Animation','Romance','Documentary'];
+    let html='';
+    for(const genre of GENRES){
+      const movies=MOVIE_DATABASE.filter(m=>m.genres.includes(genre)&&!hiddenMovies.has(String(m.id)));
+      if(!movies.length) continue;
+      html+=`<section class="w-full px-4 md:px-margin py-space-xl flex flex-col gap-space-lg">
+        <h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">${genre}</h2>
+        <div class="flex gap-gutter overflow-x-auto pb-4 pt-1 snap-x scroll-smooth hide-scrollbar" role="list">
+          ${movies.slice(0,10).map(m=>movieCardHorizontal(m)).join('')}
+        </div>
+      </section>`;
+    }
+    const kids  = MOVIE_DATABASE.filter(m=>m.ageGroup==='kids'  &&!hiddenMovies.has(String(m.id)));
+    const teens = MOVIE_DATABASE.filter(m=>m.ageGroup==='teen'  &&!hiddenMovies.has(String(m.id)));
+    if(kids.length) html+=`<section class="w-full px-4 md:px-margin py-space-xl flex flex-col gap-space-lg bg-surface-container/20">
+      <div class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">child_care</span><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">For the Kids</h2></div>
+      <div class="flex gap-gutter overflow-x-auto pb-4 pt-1 snap-x scroll-smooth hide-scrollbar" role="list">${kids.map(m=>movieCardHorizontal(m)).join('')}</div>
+    </section>`;
+    if(teens.length) html+=`<section class="w-full px-4 md:px-margin py-space-xl flex flex-col gap-space-lg">
+      <div class="flex items-center gap-2"><span class="material-symbols-outlined text-primary text-[18px]">school</span><h2 class="font-headline-lg text-headline-lg text-on-surface tracking-tight">For Teens</h2></div>
+      <div class="flex gap-gutter overflow-x-auto pb-4 pt-1 snap-x scroll-smooth hide-scrollbar" role="list">${teens.map(m=>movieCardHorizontal(m)).join('')}</div>
+    </section>`;
+    el.innerHTML=html;
+  }
+
+  function renderTrendingList(){
+    const trending=MOVIE_DATABASE.filter(m=>m.is_trending).sort((a,b)=>(a.trending_rank||999)-(b.trending_rank||999));
+    const el=document.getElementById('trending-list');
+    el.innerHTML=trending.map(m=>{
+      const saved=isInWatchlist(m.id);
+      return `<div class="movie-card flex items-center gap-4 p-4 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-primary/30 transition-all group cursor-pointer" data-id="${m.id}" role="listitem">
+        <div class="font-display-md text-[28px] font-bold text-primary/30 w-10 text-center flex-shrink-0">${m.trending_rank}</div>
+        <div class="relative w-14 h-20 rounded-lg overflow-hidden flex-shrink-0">
+          <img class="w-full h-full object-cover group-hover:scale-105 transition-transform duration-300" src="${m.bg}" alt="${m.title}" loading="lazy"/>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h3 class="font-headline-sm text-on-surface line-clamp-1">${m.title}</h3>
+          <div class="flex flex-wrap items-center gap-2 mt-0.5">
+            <span class="text-[11px] text-outline">${m.year}</span>
+            ${m.genres.slice(0,2).map(g=>`<span class="px-2 py-0.5 rounded-full bg-surface-container-highest text-on-surface-variant text-[10px]">${g}</span>`).join('')}
+            <span class="flex items-center gap-0.5 text-[11px] text-primary"><span class="material-symbols-outlined text-[12px]" style="font-variation-settings:'FILL' 1">star</span>${m.rating}</span>
+          </div>
+          ${m.trending_growth?`<div class="text-[11px] text-primary mt-1 font-semibold">${m.trending_growth}</div>`:''}
+          <p class="text-[11px] text-on-surface-variant mt-1 line-clamp-1">${m.why[0]}</p>
+        </div>
+        <button class="bookmark-btn w-9 h-9 rounded-full ${saved?'bg-primary text-on-primary':'bg-surface-container-highest text-on-surface-variant'} flex items-center justify-center hover:bg-primary hover:text-on-primary transition-all flex-shrink-0" data-id="${m.id}" aria-pressed="${saved}" aria-label="${saved?'Remove from watchlist':'Save to watchlist'}">
+          <span class="material-symbols-outlined text-[18px]" style="font-variation-settings:'FILL' ${saved?1:0}">bookmark</span>
+        </button>
+      </div>`;
+    }).join('');
+  }
+
+  function renderMoodMovies(mood){
+    const movies=MOVIE_DATABASE.filter(m=>m.moods&&m.moods.includes(mood)&&!hiddenMovies.has(String(m.id)));
+    document.getElementById('mood-results-title').textContent=`${mood} Picks (${movies.length} films)`;
+    document.getElementById('mood-movies-grid').innerHTML=movies.map(m=>movieCardGrid(m)).join('');
+    document.getElementById('mood-results').style.display='flex';
+  }
+
+  function renderWatchlist(){
+    const grid=document.getElementById('watchlist-grid');
+    const items=[...userWatchlist];
+    if(!items.length){
+      grid.innerHTML=`<div class="col-span-full flex flex-col items-center gap-4 py-16 text-center">
+        <span class="material-symbols-outlined text-[56px] text-outline">bookmark_border</span>
+        <p class="font-headline-sm text-on-surface-variant">Your watchlist is empty.</p>
+        <p class="font-body-sm text-outline max-w-xs">Browse Discover or Top This Week and click the <span class="material-symbols-outlined text-[14px] align-middle">bookmark</span> button to save films here.</p>
+      </div>`;
+      return;
+    }
+    grid.innerHTML=items.map(id=>{
+      const m=MOVIE_DATABASE.find(x=>String(x.id)===String(id)); if(!m) return '';
+      return `<div class="movie-card flex flex-col group cursor-pointer" data-id="${m.id}">
+        <div class="relative aspect-[2/3] rounded-xl overflow-hidden shadow-lg group-hover:scale-[1.02] transition-transform duration-300">
+          <img class="w-full h-full object-cover" src="${m.bg}" alt="${m.title}" loading="lazy"/>
+          <button class="bookmark-btn absolute top-2 right-2 w-7 h-7 rounded-full bg-primary text-on-primary flex items-center justify-center hover:bg-error-container hover:text-on-error-container transition-all" data-id="${m.id}" aria-pressed="true" aria-label="Remove from watchlist">
+            <span class="material-symbols-outlined text-[14px]" style="font-variation-settings:'FILL' 1">bookmark</span>
+          </button>
+        </div>
+        <h3 class="font-headline-sm mt-1.5 line-clamp-1 text-on-surface text-[13px]">${m.title}</h3>
+        <span class="text-[10px] text-outline">${m.year} · ${m.genres[0]}</span>
+      </div>`;
+    }).join('');
+  }
+
+  function renderRatingsView(){
+    const count=Object.keys(userRatings).length;
+    const needed=Math.max(0,3-count);
+    document.getElementById('ratings-count-label').textContent=`${count} / 3 needed`;
+    document.getElementById('ratings-progress-bar').style.width=`${Math.min(100,(count/3)*100)}%`;
+    const statusEl=document.getElementById('collab-status');
+    if(count>=3){
+      statusEl.textContent='✓ Collaborative filtering active';
+      statusEl.className='text-[11px] font-label-sm text-green-400 px-2 py-1 rounded-full bg-green-400/10';
+    } else {
+      statusEl.textContent=`Trending fallback (${needed} more needed)`;
+      statusEl.className='text-[11px] font-label-sm text-outline px-2 py-1 rounded-full bg-surface-container-highest';
+    }
+    const grid=document.getElementById('ratings-grid');
+    grid.innerHTML=MOVIE_DATABASE.map(m=>{
+      const r=userRatings[m.id];
+      const stars=[1,2,3,4,5].map(v=>`<button class="rating-star-inline material-symbols-outlined" data-val="${v}" data-movie-id="${m.id}" aria-label="${v} star" style="font-size:18px;color:${r&&r>=v?'#f2ca50':'#4d4635'};cursor:pointer;transition:color .15s">star</button>`).join('');
+      return `<div class="flex items-center gap-4 p-4 rounded-xl bg-surface-container border border-outline-variant/20 hover:border-primary/30 transition-all">
+        <div class="relative w-10 h-14 rounded-lg overflow-hidden flex-shrink-0 cursor-pointer movie-card" data-id="${m.id}">
+          <img class="w-full h-full object-cover" src="${m.bg}" alt="${m.title}" loading="lazy"/>
+        </div>
+        <div class="flex-1 min-w-0">
+          <h3 class="font-label-lg font-semibold text-on-surface line-clamp-1">${m.title}</h3>
+          <div class="text-[10px] text-outline mb-1">${m.year} · ${m.genres[0]}</div>
+          <div class="flex items-center gap-0.5" role="group" aria-label="Rate ${m.title}">${stars}</div>
+          ${r?`<div class="text-[10px] text-primary mt-0.5 font-semibold">Your rating: ${r}/5</div>`:'<div class="text-[10px] text-outline mt-0.5">Not yet rated</div>'}
+        </div>
+      </div>`;
+    }).join('');
+  }
+
+  // =============================================================
+  // SEARCH DROPDOWN
+  // =============================================================
+  function renderSearchDropdown(query){
+    const dd=document.getElementById('search-dropdown');
+    if(!query.trim()){dd.classList.add('hidden');return;}
+    const q=query.toLowerCase();
+    const results=MOVIE_DATABASE.filter(m=>
+      m.title.toLowerCase().includes(q)||
+      m.genres.some(g=>g.toLowerCase().includes(q))||
+      (m.director&&m.director.toLowerCase().includes(q))
+    ).slice(0,8);
+    dd.innerHTML=results.length?results.map(m=>`
+      <div class="search-result flex items-center gap-3 px-4 py-2 hover:bg-surface-container cursor-pointer transition-colors" data-id="${m.id}" tabindex="0" role="option" aria-label="${m.title}">
+        <div class="w-8 h-12 rounded-lg overflow-hidden flex-shrink-0">
+          <img class="w-full h-full object-cover" src="${m.bg}" alt="" loading="lazy"/>
+        </div>
+        <div class="flex-1 min-w-0">
+          <div class="font-label-lg font-semibold text-on-surface text-[13px] line-clamp-1">${m.title}</div>
+          <div class="text-[10px] text-outline">${m.year} · ${m.genres.join(', ')}</div>
+          <div class="flex items-center gap-0.5 text-[10px] text-primary"><span class="material-symbols-outlined text-[11px]" style="font-variation-settings:'FILL' 1">star</span>${m.rating}</div>
+        </div>
+      </div>`).join('')
+      :'<div class="p-4 text-on-surface-variant font-body-sm">No results found.</div>';
+    dd.classList.remove('hidden');
+  }
+
+  // =============================================================
+  // MODAL
+  // =============================================================
+  function openMovieModal(id){
+    const m=MOVIE_DATABASE.find(x=>String(x.id)===String(id)); if(!m) return;
+    document.getElementById('modal-bg').src=m.bg;
+    document.getElementById('modal-bg').alt=m.title;
+    document.getElementById('modal-title').textContent=m.title;
+    document.getElementById('modal-meta').innerHTML=`
+      <span>${m.year}</span><span>·</span><span>${m.runtime}</span><span>·</span><span>${m.language}</span>
+      <span>·</span><span class="flex items-center gap-0.5"><span class="material-symbols-outlined text-[13px] text-primary" style="font-variation-settings:'FILL' 1">star</span>${m.rating}</span>`;
+    document.getElementById('modal-desc').textContent=m.overview;
+    document.getElementById('modal-genres').innerHTML=m.genres.map(g=>
+      `<span class="px-3 py-1 rounded-full bg-surface-container-high text-on-surface-variant text-label-sm font-label-sm border border-outline-variant/20">${g}</span>`
+    ).join('');
+    document.getElementById('modal-why').innerHTML=(m.why||[]).map(w=>
+      `<li class="flex items-start gap-2 font-body-sm text-body-sm text-on-surface-variant"><span class="material-symbols-outlined text-primary text-[15px] mt-0.5 flex-shrink-0" style="font-variation-settings:'FILL' 1">check_circle</span>${w}</li>`
+    ).join('');
+    const saved=isInWatchlist(m.id);
+    const wBtn=document.getElementById('modal-watchlist-btn');
+    document.getElementById('modal-watchlist-label').textContent=saved?'Remove from Watchlist':'Save to Watchlist';
+    wBtn.setAttribute('data-id',m.id);
+    document.getElementById('modal-rate-btn').setAttribute('data-id',m.id);
+    document.getElementById('modal-not-interested-btn').setAttribute('data-id',m.id);
+    document.getElementById('movie-modal').classList.remove('hidden');
+    document.body.classList.add('modal-open');
+  }
+  function closeMovieModal(){ document.getElementById('movie-modal').classList.add('hidden'); document.body.classList.remove('modal-open'); }
+
+  function openRateModal(id){
+    const m=MOVIE_DATABASE.find(x=>String(x.id)===String(id)); if(!m) return;
+    currentRatingMovieId=id;
+    selectedStarVal=userRatings[id]||0;
+    document.getElementById('rate-modal-title').textContent=m.title;
+    updateStarDisplay(selectedStarVal);
+    document.getElementById('submit-rating-btn').disabled=selectedStarVal===0;
+    document.getElementById('rate-modal').classList.remove('hidden');
+  }
+  function closeRateModal(){ document.getElementById('rate-modal').classList.add('hidden'); currentRatingMovieId=null; selectedStarVal=0; }
+
+  function updateStarDisplay(val){
+    document.querySelectorAll('#star-rating-row .star-btn').forEach(btn=>{
+      btn.style.color=parseInt(btn.getAttribute('data-val'))<=val?'#f2ca50':'#4d4635';
+    });
+  }
+
+  // =============================================================
+  // WATCHLIST TOGGLE
+  // =============================================================
+  function toggleWatchlist(id){
+    const sid=String(id);
+    if(userWatchlist.has(sid)){userWatchlist.delete(sid);showToast('Removed from Watchlist');}
+    else{userWatchlist.add(sid);showToast('Saved to Watchlist ✓','success');}
+    saveWatchlist();
+    updateWatchlistBadge();
+    updateAllBookmarkButtons(sid);
+    // Refresh watchlist view if active
+    if(document.getElementById('view-watchlist').classList.contains('active')) renderWatchlist();
+  }
+
+  function updateWatchlistBadge(){
+    const n=userWatchlist.size;
+    document.getElementById('watchlist-badge').textContent=n;
+    const mb=document.getElementById('mobile-watchlist-badge');
+    if(n>0){mb.textContent=n;mb.classList.remove('hidden');}else mb.classList.add('hidden');
+  }
+
+  function updateAllBookmarkButtons(id){
+    const saved=userWatchlist.has(String(id));
+    document.querySelectorAll(`.bookmark-btn[data-id="${id}"]`).forEach(btn=>{
+      btn.classList.toggle('bg-primary',saved); btn.classList.toggle('text-on-primary',saved);
+      btn.classList.toggle('bg-black/60',!saved); btn.classList.toggle('text-white',!saved);
+      const ic=btn.querySelector('.material-symbols-outlined');
+      if(ic) ic.style.fontVariationSettings=`'FILL' ${saved?1:0}`;
+      btn.setAttribute('aria-pressed',String(saved));
+    });
+    const mBtn=document.getElementById('modal-watchlist-btn');
+    if(mBtn&&mBtn.getAttribute('data-id')===String(id))
+      document.getElementById('modal-watchlist-label').textContent=saved?'Remove from Watchlist':'Save to Watchlist';
+  }
+
+  // =============================================================
+  // VIEW SWITCHING
+  // =============================================================
+  function switchView(path){
+    document.querySelectorAll('.view-panel').forEach(p=>p.classList.remove('active'));
+    const map={discover:'view-discover',trending:'view-trending','mood-vault':'view-mood-vault',watchlist:'view-watchlist',ratings:'view-ratings'};
+    const target=map[path]||'view-discover';
+    document.getElementById(target).classList.add('active');
+
+    document.querySelectorAll('.nav-item').forEach(item=>{
+      const active=item.getAttribute('data-path')===path;
+      item.classList.toggle('bg-primary-container',active);
+      item.classList.toggle('text-on-primary-container',active);
+      item.classList.toggle('font-bold',active);
+      item.classList.toggle('shadow-[0_0_16px_rgba(212,175,55,0.25)]',active);
+      item.classList.toggle('text-on-surface-variant',!active);
+      item.setAttribute('aria-current',active?'page':'false');
+    });
+
+    document.querySelectorAll('.mobile-nav-item').forEach(item=>{
+      const active=item.getAttribute('data-path')===path;
+      const icon=item.querySelector('.mobile-nav-icon');
+      const label=item.querySelector('.mobile-nav-label');
+      if(icon){icon.style.color=active?'#f2ca50':'';icon.classList.toggle('text-primary',active);icon.classList.toggle('text-on-surface-variant',!active);}
+      if(label){label.style.color=active?'#f2ca50':'';label.classList.toggle('text-primary',active);label.classList.toggle('text-on-surface-variant',!active);}
+    });
+
+    if(path==='watchlist') renderWatchlist();
+    if(path==='ratings')   renderRatingsView();
+    if(path==='trending')  renderTrendingList();
+    closeSidebar();
+    window.scrollTo(0,0);
+  }
+
+  // =============================================================
+  // SIDEBAR
+  // =============================================================
+  function openSidebar(){ document.getElementById('main-sidebar').classList.remove('-translate-x-full'); document.getElementById('sidebar-overlay').classList.add('visible'); document.getElementById('sidebar-toggle').setAttribute('aria-expanded','true'); }
+  function closeSidebar(){ document.getElementById('main-sidebar').classList.add('-translate-x-full'); document.getElementById('sidebar-overlay').classList.remove('visible'); document.getElementById('sidebar-toggle').setAttribute('aria-expanded','false'); }
+
+  // =============================================================
+  // INIT
+  // =============================================================
+  document.addEventListener('DOMContentLoaded',()=>{
+    renderRecommendedCarousel();
+    renderTopWeekCarousel();
+    renderGenreSections();
+    updateWatchlistBadge();
+
+    // Sidebar
+    document.getElementById('sidebar-toggle').addEventListener('click',()=>{
+      document.getElementById('main-sidebar').classList.contains('-translate-x-full')?openSidebar():closeSidebar();
+    });
+    document.getElementById('sidebar-overlay').addEventListener('click',closeSidebar);
+
+    // Navigation
+    document.querySelectorAll('.nav-item').forEach(item=>{
+      item.addEventListener('click',e=>{e.preventDefault();switchView(item.getAttribute('data-path'));});
+    });
+    document.querySelectorAll('.mobile-nav-item').forEach(item=>{
+      item.addEventListener('click',()=>switchView(item.getAttribute('data-path')));
+    });
+
+    // Hero button
+    document.getElementById('hero-details-btn').addEventListener('click',()=>openMovieModal('1'));
+
+    // Filters
+    document.querySelectorAll('.filter-pill').forEach(pill=>{
+      pill.addEventListener('click',()=>{
+        document.querySelectorAll('.filter-pill').forEach(p=>p.classList.remove('active'));
+        pill.classList.add('active');
+        activeGenreFilter=pill.getAttribute('data-genre');
+        renderRecommendedCarousel();
+      });
+    });
+    document.getElementById('year-filter').addEventListener('change',e=>{activeYearFilter=e.target.value;renderRecommendedCarousel();});
+    document.getElementById('lang-filter').addEventListener('change',e=>{activeLangFilter=e.target.value;renderRecommendedCarousel();});
+
+    // Carousel scroll
+    document.getElementById('neural-prev').addEventListener('click',()=>document.getElementById('neural-carousel').scrollBy({left:-440,behavior:'smooth'}));
+    document.getElementById('neural-next').addEventListener('click',()=>document.getElementById('neural-carousel').scrollBy({left:440,behavior:'smooth'}));
+
+    // Global click delegation
+    document.addEventListener('click',e=>{
+      // Bookmark
+      const bBtn=e.target.closest('.bookmark-btn,.bookmark-toggle-btn');
+      if(bBtn){e.stopPropagation();toggleWatchlist(bBtn.getAttribute('data-id'));return;}
+
+      // Not interested
+      const niBtn=e.target.closest('.not-interested-btn');
+      if(niBtn){
+        e.stopPropagation();
+        hiddenMovies.add(String(niBtn.getAttribute('data-id')));
+        saveHidden();
+        showToast('Marked as not interested');
+        renderRecommendedCarousel();renderTopWeekCarousel();renderGenreSections();
+        return;
+      }
+
+      // Movie card → modal
+      const card=e.target.closest('.movie-card');
+      if(card&&card.getAttribute('data-id')){openMovieModal(card.getAttribute('data-id'));return;}
+
+      // Search result
+      const sr=e.target.closest('.search-result');
+      if(sr){
+        openMovieModal(sr.getAttribute('data-id'));
+        document.getElementById('search-dropdown').classList.add('hidden');
+        document.getElementById('global-search-input').value='';
+        return;
+      }
+    });
+
+    // Keyboard
+    document.addEventListener('keydown',e=>{
+      if(e.key==='Enter'){const c=document.activeElement.closest('.movie-card');if(c)openMovieModal(c.getAttribute('data-id'));}
+      if(e.key==='Escape'){closeMovieModal();closeRateModal();}
+    });
+
+    // Modal close
+    document.getElementById('modal-close').addEventListener('click',closeMovieModal);
+    document.getElementById('movie-modal').addEventListener('click',e=>{if(e.target===document.getElementById('movie-modal'))closeMovieModal();});
+
+    // Modal: Not Interested
+    document.getElementById('modal-not-interested-btn').addEventListener('click',()=>{
+      const id=document.getElementById('modal-not-interested-btn').getAttribute('data-id');
+      hiddenMovies.add(String(id));saveHidden();closeMovieModal();showToast('Marked as not interested');
+      renderRecommendedCarousel();renderTopWeekCarousel();renderGenreSections();
+    });
+
+    // Modal: Rate
+    document.getElementById('modal-rate-btn').addEventListener('click',()=>{
+      const id=document.getElementById('modal-rate-btn').getAttribute('data-id');
+      closeMovieModal();openRateModal(id);
+    });
+
+    // Star rating
+    document.getElementById('star-rating-row').addEventListener('click',e=>{
+      const btn=e.target.closest('.star-btn');
+      if(btn){selectedStarVal=parseInt(btn.getAttribute('data-val'));updateStarDisplay(selectedStarVal);document.getElementById('submit-rating-btn').disabled=false;}
+    });
+    document.getElementById('star-rating-row').addEventListener('mouseover',e=>{const btn=e.target.closest('.star-btn');if(btn)updateStarDisplay(parseInt(btn.getAttribute('data-val')));});
+    document.getElementById('star-rating-row').addEventListener('mouseleave',()=>updateStarDisplay(selectedStarVal));
+
+    document.getElementById('submit-rating-btn').addEventListener('click',()=>{
+      if(!currentRatingMovieId||selectedStarVal===0) return;
+      userRatings[currentRatingMovieId]=selectedStarVal;saveRatings();
+      const m=MOVIE_DATABASE.find(x=>String(x.id)===String(currentRatingMovieId));
+      showToast(`Rated "${m?m.title:'film'}" ${selectedStarVal}/5 ★`,'success');
+      closeRateModal();
+      if(document.getElementById('view-ratings').classList.contains('active')) renderRatingsView();
+    });
+    document.getElementById('rate-modal-close').addEventListener('click',closeRateModal);
+    document.getElementById('rate-modal').addEventListener('click',e=>{if(e.target===document.getElementById('rate-modal'))closeRateModal();});
+
+    // Inline stars (ratings page)
+    document.addEventListener('click',e=>{
+      const inlineStar=e.target.closest('.rating-star-inline');
+      if(inlineStar){
+        e.stopPropagation();
+        const mid=inlineStar.getAttribute('data-movie-id');
+        const val=parseInt(inlineStar.getAttribute('data-val'));
+        userRatings[mid]=val;saveRatings();renderRatingsView();showToast(`Rated ${val}/5 ★`,'success');
+      }
+    });
+
+    // Clear watchlist
+    document.getElementById('clear-watchlist-btn').addEventListener('click',()=>{
+      if(!userWatchlist.size){showToast('Watchlist is already empty');return;}
+      userWatchlist.clear();saveWatchlist();updateWatchlistBadge();renderWatchlist();showToast('Watchlist cleared');
+    });
+
+    // Search
+    let searchTimeout;
+    const searchInput=document.getElementById('global-search-input');
+    searchInput.addEventListener('input',e=>{clearTimeout(searchTimeout);searchTimeout=setTimeout(()=>renderSearchDropdown(e.target.value),200);});
+    searchInput.addEventListener('focus',e=>{if(e.target.value.trim())renderSearchDropdown(e.target.value);});
+    document.addEventListener('click',e=>{
+      if(!e.target.closest('#global-search-input')&&!e.target.closest('#search-dropdown'))
+        document.getElementById('search-dropdown').classList.add('hidden');
+    });
+
+    // Sliders
+    document.getElementById('slider-pacing').addEventListener('input',e=>{
+      const v=e.target.value;const label=v<33?'Slow-Burn':v<66?'Medium':'Fast-Paced';
+      document.getElementById('val-pacing').textContent=`${v}% (${label})`;
+    });
+    document.getElementById('slider-cine').addEventListener('input',e=>{
+      const v=e.target.value;const label=v<33?'Digital':v<66?'HD':'35mm';
+      document.getElementById('val-cine').textContent=`${v}% (${label})`;
+    });
+    document.getElementById('slider-alpha').addEventListener('input',e=>{
+      const v=(e.target.value/100).toFixed(2);
+      document.getElementById('val-alpha').textContent=`${v} (${v<0.33?'Collaborative':v<0.66?'Hybrid':'Content-Based'})`;
+    });
+
+    // Engine query
+    document.getElementById('query-engine-btn').addEventListener('click',()=>{
+      const query=document.getElementById('prompt-input').value.trim();if(!query) return;
+      const out=document.getElementById('engine-output');out.classList.remove('hidden');
+      out.innerHTML=`<span class="text-primary font-semibold">Query:</span> "${query}"<br/><span class="text-outline text-[11px] mt-1 block">Searching ${MOVIE_DATABASE.length} films with TF-IDF + SVD…</span>`;
+      setTimeout(()=>{
+        const q=query.toLowerCase();
+        const results=MOVIE_DATABASE.filter(m=>m.genres.some(g=>g.toLowerCase().includes(q))||m.overview.toLowerCase().includes(q)||m.title.toLowerCase().includes(q)).slice(0,3);
+        out.innerHTML+=results.length
+          ?`<div class="mt-2 font-body-sm text-on-surface-variant">Top matches: <span class="text-primary">${results.map(r=>r.title).join(', ')}</span></div>`
+          :`<div class="mt-2 text-outline">No strong matches found. Try different keywords.</div>`;
+        showToast('Recommendation engine updated','success');
+      },900);
+    });
+
+    // Notification
+    document.getElementById('notification-btn').addEventListener('click',()=>showToast('No new notifications'));
+
+    // Mood
+    document.querySelectorAll('.mood-card').forEach(card=>{
+      card.addEventListener('click',()=>{
+        document.querySelectorAll('.mood-card').forEach(c=>c.classList.remove('selected'));
+        card.classList.add('selected');
+        selectedMood=card.getAttribute('data-mood');
+        document.getElementById('mood-selected-label').textContent=`${selectedMood} vibes selected`;
+        const cta=document.getElementById('mood-cta');cta.style.display='flex';
+        document.getElementById('mood-results').style.display='none';
+      });
+    });
+    document.getElementById('show-mood-movies-btn').addEventListener('click',()=>{
+      if(selectedMood){renderMoodMovies(selectedMood);document.getElementById('mood-results').scrollIntoView({behavior:'smooth',block:'start'});}
+    });
+  });
+  </script>
+</body>
+</html>
