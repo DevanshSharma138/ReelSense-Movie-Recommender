@@ -6,6 +6,7 @@ Matching latest Stitch UI Reference (Obsidian & Champagne Gold)
 import streamlit as st
 from src.services.movie_service import MovieService
 from src.services.recommendation_service import RecommendationService
+from src.services import user_store
 from src.components.movie_card import render_movie_card
 
 FALLBACK_POSTER = "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop"
@@ -111,6 +112,7 @@ def render_movie_details_page():
                 else:
                     watchlist.append(movie_id)
                 st.session_state.watchlist = watchlist
+                user_store.save_watchlist(watchlist)
                 st.rerun()
             if css: st.markdown('</div>', unsafe_allow_html=True)
 
@@ -127,6 +129,7 @@ def render_movie_details_page():
             if new_user_rating != user_saved_rating:
                 ratings_dict[movie_id] = new_user_rating
                 st.session_state.ratings = ratings_dict
+                user_store.save_ratings(ratings_dict)
                 st.toast(f"Saved rating {new_user_rating}⭐ for {title}!", icon="⭐")
 
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)

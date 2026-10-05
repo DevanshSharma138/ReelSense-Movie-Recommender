@@ -22,6 +22,7 @@ htmlcov/
 .DS_Store
 Thumbs.db
 
-# Local environment / secrets
+# Local environment / secrets / user runtime data
 .env
 *.local
+data/user_data.json

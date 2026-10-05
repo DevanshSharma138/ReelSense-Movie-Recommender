@@ -4,6 +4,7 @@ ReelSense - My Ratings Page Module
 
 import streamlit as st
 from src.services.movie_service import MovieService
+from src.services import user_store
 
 FALLBACK_POSTER = "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop"
 
@@ -93,6 +94,7 @@ def render_ratings_page():
             
             if updated_score != user_val:
                 st.session_state.ratings[m_id] = updated_score
+                user_store.save_ratings(st.session_state.ratings)
                 st.toast(f"Updated rating to {updated_score}⭐", icon="⭐")
                 st.rerun()
 
@@ -105,6 +107,7 @@ def render_ratings_page():
             with col_b2:
                 if st.button("Remove", key=f"rate_del_btn_{m_id}"):
                     del st.session_state.ratings[m_id]
+                    user_store.save_ratings(st.session_state.ratings)
                     st.toast(f"Removed rating for {movie['title']}", icon="🗑️")
                     st.rerun()
 

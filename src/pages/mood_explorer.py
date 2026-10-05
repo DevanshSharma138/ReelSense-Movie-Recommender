@@ -7,6 +7,7 @@ import streamlit as st
 from src.config import MOODS
 from src.services.movie_service import MovieService
 from src.services.recommendation_service import RecommendationService
+from src.services import user_store
 
 GENRE_OPTIONS = ["Surrealism", "Cyberpunk", "Mystery", "Drama", "Thriller", "Romance"]
 
@@ -479,6 +480,7 @@ def render_mood_explorer_page():
                 if m["id"] not in current_wl:
                     current_wl.append(m["id"])
             st.session_state.watchlist = current_wl
+            user_store.save_watchlist(current_wl)
             st.toast("Saved 4 calibrated films to your Vault Watchlist! 🔖")
         st.markdown('</div>', unsafe_allow_html=True)
 

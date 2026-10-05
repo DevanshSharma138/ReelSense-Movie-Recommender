@@ -4,6 +4,7 @@ ReelSense - My Watchlist Page Module
 
 import streamlit as st
 from src.services.movie_service import MovieService
+from src.services import user_store
 from src.components.movie_card import render_movie_card
 
 def render_watchlist_page():
@@ -81,6 +82,7 @@ def render_watchlist_page():
                 render_movie_card(movie, key_prefix=f"wl_grid_{movie['id']}")
                 if st.button("🗑️ Remove", key=f"wl_remove_{movie['id']}"):
                     st.session_state.watchlist.remove(movie["id"])
+                    user_store.save_watchlist(st.session_state.watchlist)
                     st.toast(f"Removed {movie['title']} from Watchlist", icon="🗑️")
                     st.rerun()
         st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)

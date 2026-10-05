@@ -5,6 +5,7 @@ ReelSense - My Profile Page Module
 import streamlit as st
 from src.config import DEFAULT_USER
 from src.services.movie_service import MovieService
+from src.services import user_store
 
 def render_profile_page():
     st.markdown(
@@ -95,13 +96,15 @@ def render_profile_page():
     # Save Preferences Button
     st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
     if st.button("💾 Save Preferences", key="save_profile_btn"):
-        st.session_state.user_profile = {
+        updated_profile = {
             "name": profile_name,
             "favorite_genres": fav_genres,
             "preferred_language": pref_language,
             "preferred_era": pref_era,
             "min_rating_pref": min_rating_pref
         }
+        st.session_state.user_profile = updated_profile
+        user_store.save_profile(updated_profile)
         st.success("✅ Preferences updated successfully! Recommendations have been adjusted.")
         st.rerun()
     st.markdown('</div>', unsafe_allow_html=True)

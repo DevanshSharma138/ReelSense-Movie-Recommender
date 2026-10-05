@@ -4,6 +4,7 @@ Matching latest Stitch UI Reference (Obsidian & Champagne Gold)
 """
 
 import streamlit as st
+from src.services import user_store
 
 FALLBACK_POSTER = "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=600&auto=format&fit=crop"
 
@@ -83,4 +84,5 @@ def render_movie_card(movie, key_prefix="card"):
             else:
                 watchlist.append(m_id)
             st.session_state.watchlist = watchlist
+            user_store.save_watchlist(watchlist)
             st.rerun()

@@ -3,6 +3,7 @@ ReelSense - Featured Movie Hero Banner & Spotlight Component
 """
 
 import streamlit as st
+from src.services import user_store
 
 def render_hero_banner(featured_movie, cycle_movies=None):
     if not featured_movie:
@@ -66,6 +67,7 @@ def render_hero_banner(featured_movie, cycle_movies=None):
                 else:
                     watchlist.append(m_id)
                 st.session_state.watchlist = watchlist
+                user_store.save_watchlist(watchlist)
                 st.rerun()
 
         with col_c3:

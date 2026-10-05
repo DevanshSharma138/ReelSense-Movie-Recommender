@@ -6,6 +6,7 @@ Main Entry Point (app.py)
 import os
 import streamlit as st
 from src.config import APP_NAME, APP_TAGLINE, DEFAULT_USER
+from src.services import user_store
 from src.components.sidebar import render_sidebar
 from src.components.topbar import render_topbar
 
@@ -34,7 +35,15 @@ if os.path.exists(CSS_PATH):
         custom_css = f.read()
         st.markdown(f"<style>{custom_css}</style>", unsafe_allow_html=True)
 
-# 3. Initialize Session State Variables
+# 3. Initialize Session State Variables from UserStore
+if "user_store_initialized" not in st.session_state:
+    persisted_state = user_store.load()
+    st.session_state.ratings = persisted_state["ratings"]
+    st.session_state.watchlist = persisted_state["watchlist"]
+    st.session_state.not_interested = persisted_state["not_interested"]
+    st.session_state.user_profile = persisted_state["user_profile"]
+    st.session_state.user_store_initialized = True
+
 if "current_page" not in st.session_state:
     st.session_state.current_page = "home"
 
