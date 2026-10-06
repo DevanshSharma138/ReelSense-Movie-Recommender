@@ -76,6 +76,11 @@ def render_movie_details_page():
 
     match_badge_html = f"""<span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid #f2ca50; padding: 3px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">✨ {affinity}% Vector Match</span>""" if affinity > 0 else ""
 
+    runtime_pill = f"<span style='color: #99907c; font-size: 0.8rem;'>• {runtime}</span>" if runtime and runtime != "N/A" else ""
+    dir_cell = f"<div><strong style='color: #e5e1e4;'>Director:</strong> {director}</div>" if director and director != "Unknown" else ""
+    cast_cell = f"<div><strong style='color: #e5e1e4;'>Principal Cast:</strong> {cast}</div>" if cast else ""
+    meta_row = f"""<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem; color: #99907c; margin-bottom: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(77, 70, 53, 0.25);">{dir_cell}{cast_cell}</div>""" if (dir_cell or cast_cell) else ""
+
     with col_info:
         st.markdown(
             f"""<div style="background: #201f22; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
@@ -83,17 +88,14 @@ def render_movie_details_page():
 {match_badge_html}
 <span style="background: #2a2a2c; color: #e5e1e4; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">⭐ {rating}/10</span>
 <span style="color: #99907c; font-size: 0.8rem;">• {year}</span>
-<span style="color: #99907c; font-size: 0.8rem;">• {runtime}</span>
+{runtime_pill}
 <span style="color: #99907c; font-size: 0.8rem;">• {movie.get('language', 'English')}</span>
 </div>
 <h1 style="font-family: 'Outfit'; font-size: 2.4rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0; line-height: 1.1;">{title}</h1>
 <p style="font-size: 0.88rem; color: #e7c17c; font-weight: 600; margin-bottom: 1.25rem;">{genres}</p>
 <h4 style="font-size: 0.85rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;">Logline & Overview</h4>
 <p style="font-size: 0.95rem; color: #d0c5af; line-height: 1.6; margin-bottom: 1.5rem;">{overview}</p>
-<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem; color: #99907c; margin-bottom: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(77, 70, 53, 0.25);">
-<div><strong style="color: #e5e1e4;">Director:</strong> {director}</div>
-<div><strong style="color: #e5e1e4;">Principal Cast:</strong> {cast if cast else 'Ensemble Cast'}</div>
-</div>
+{meta_row}
 </div>""",
             unsafe_allow_html=True
         )

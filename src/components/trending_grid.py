@@ -19,7 +19,7 @@ def render_trending_grid(ranked_movies):
                 </div>
                 <div style="background: #201f22; border: 1px solid rgba(153, 144, 124, 0.3); border-radius: 9999px; padding: 4px 12px; font-size: 0.75rem; color: #d0c5af; display: flex; align-items: center; gap: 6px;">
                     <span style="width: 8px; height: 8px; border-radius: 50%; background: #f2ca50;"></span>
-                    Live Stream Analytics
+                    Community Velocity
                 </div>
             </div>
         """,
@@ -32,8 +32,9 @@ def render_trending_grid(ranked_movies):
         rank_num = f"0{idx + 1}"
         m_id = movie["id"]
         title = movie["title"]
-        director = movie.get("director", "Cinema Masterwork")
-        growth = movie.get("trending_growth", "+25% this week")
+        director = movie.get("director", "")
+        growth = movie.get("trending_growth") or f"⭐ {movie.get('rating', 8.5)}/10"
+        dir_text = f"Dir. {director}" if director and director != "Cinema Masterwork" else str(movie.get("release_year", ""))
         poster_url = movie.get("poster_url", "")
 
         with cols[idx]:
@@ -50,7 +51,7 @@ def render_trending_grid(ranked_movies):
                 f"""
                         <div style="margin-top: 6px; display: flex; flex-direction: column;">
                             <span style="font-size: 0.72rem; color: #f2ca50; font-weight: 700;">{growth}</span>
-                            <span style="font-size: 0.76rem; color: #99907c;">Dir. {director}</span>
+                            <span style="font-size: 0.76rem; color: #99907c;">{dir_text}</span>
                         </div>
                     </div>
                 </div>

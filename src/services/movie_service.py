@@ -26,7 +26,7 @@ class MovieService:
         return sorted(set(m.get("language", "English") for m in get_catalog()))
 
     @staticmethod
-    def filter_movies(query="", selected_genres=None, year_range=(1990, 2026),
+    def filter_movies(query="", selected_genres=None, year_range=(1930, 2026),
                       min_rating=0.0, language="All", sort_by="Rating (High to Low)"):
         results = list(get_catalog())
 

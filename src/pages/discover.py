@@ -87,9 +87,9 @@ def render_discover_page():
         with col_year:
             year_range = st.slider(
                 "Release Year Range",
-                min_value=1990,
+                min_value=1930,
                 max_value=2026,
-                value=(1990, 2026),
+                value=(1930, 2026),
                 step=1
             )
 
