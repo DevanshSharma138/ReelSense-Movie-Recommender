@@ -1,0 +1,59 @@
+"""
+ReelSense - Onboarding Banner Component (Phase 3)
+Lightweight, dismissible banner shown when the user has fewer than 3 ratings.
+Directs the user toward movies they can rate to unlock hybrid recommendations.
+"""
+import streamlit as st
+
+
+def render_onboarding_banner():
+    ratings = st.session_state.get("ratings", {})
+    n_ratings = len(ratings)
+
+    # Automatically hide if the user has unlocked personalized hybrid recommendations (>= 3 ratings)
+    if n_ratings >= 3:
+        return
+
+    # Respect user dismissal
+    if st.session_state.get("onboarding_dismissed", False):
+        return
+
+    needed = 3 - n_ratings
+    plural = "s" if needed != 1 else ""
+
+    col_content, col_actions = st.columns([8.2, 3.8])
+
+    with col_content:
+        st.markdown(
+            f"""
+            <div style="background: linear-gradient(135deg, rgba(32, 31, 34, 0.95), rgba(42, 40, 46, 0.95)); border: 1.5px solid rgba(242, 202, 80, 0.4); border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
+                    <span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid rgba(242, 202, 80, 0.3); padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">
+                        ✨ First-Time Curation
+                    </span>
+                    <span style="font-size: 0.8rem; color: #99907c; font-weight: 600;">{n_ratings} of 3 Rated</span>
+                </div>
+                <h3 style="font-family: 'Outfit'; font-size: 1.35rem; font-weight: 700; color: #e5e1e4; margin: 0 0 6px 0;">
+                    Rate 3 movies to unlock personalized picks
+                </h3>
+                <p style="font-size: 0.9rem; color: #d0c5af; line-height: 1.5; margin: 0;">
+                    ReelSense blends TF-IDF content similarity with SVD collaborative filtering. Rate <strong>{needed} more film{plural}</strong> to activate your personalized neural recommendation vectors.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
+    with col_actions:
+        st.markdown("<div style='margin-top: 24px;'></div>", unsafe_allow_html=True)
+        col_btn1, col_btn2 = st.columns([2.4, 1.6])
+        with col_btn1:
+            st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
+            if st.button("🌟 Rate Films", key="onboard_browse_btn", use_container_width=True):
+                st.session_state.current_page = "discover-movies"
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+        with col_btn2:
+            if st.button("✕ Dismiss", key="onboard_dismiss_btn", use_container_width=True):
+                st.session_state.onboarding_dismissed = True
+                st.rerun()

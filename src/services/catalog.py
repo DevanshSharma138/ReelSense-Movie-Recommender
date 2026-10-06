@@ -10,6 +10,8 @@ import pandas as pd
 
 from data.loader import load_movies, load_ratings, DATA_DIR
 
+from src.utils.image_utils import generate_fallback_poster, generate_fallback_backdrop
+
 CATALOG_SIZE = 600                      # most-rated movies shown in the app
 META_FILE = DATA_DIR / "tmdb_metadata.json"
 TMDB = "https://image.tmdb.org/t/p/"
@@ -72,9 +74,25 @@ def get_catalog():
         title = _clean_title(row.title)
         genres = [g for g in row.genres.split("|") if g]
         moods = [m for m, gs in GENRE_MOODS.items() if gs & set(genres)] or ["Emotional"]
+        primary_genre = genres[0] if genres else "Cinema"
+        rel_year = int(row.year) if pd.notna(row.year) else None
+
+        # Tiered image hierarchy: 1. real poster -> 2. real backdrop -> 3. attractive SVG -> 4. placeholder
+        if md.get("poster"):
+            poster = f"{TMDB}w500{md['poster']}"
+        elif md.get("backdrop"):
+            poster = f"{TMDB}w780{md['backdrop']}"
+        else:
+            poster = generate_fallback_poster(title, year=rel_year, genre=primary_genre)
+
+        if md.get("backdrop"):
+            backdrop = f"{TMDB}w1280{md['backdrop']}"
+        elif md.get("poster"):
+            backdrop = f"{TMDB}w780{md['poster']}"
+        else:
+            backdrop = generate_fallback_backdrop(title, year=rel_year, genre=primary_genre)
+
         rank = trend_ids.index(i) + 1 if i in trend_ids else None
-        poster = f"{TMDB}w500{md['poster']}" if md.get("poster") else _placeholder(title)
-        backdrop = f"{TMDB}w1280{md['backdrop']}" if md.get("backdrop") else _placeholder(title, "1600x900")
         out.append({
             "id": int(i), "title": title,
             "release_year": int(row.year) if pd.notna(row.year) else 0,

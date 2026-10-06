@@ -5,6 +5,7 @@ ReelSense - Discover Page Module
 import streamlit as st
 from src.services.movie_service import MovieService
 from src.components.movie_card import render_movie_card
+from src.components.onboarding_banner import render_onboarding_banner
 
 def render_discover_page():
     st.markdown(
@@ -24,6 +25,9 @@ def render_discover_page():
         """,
         unsafe_allow_html=True
     )
+
+    # First-Time User Onboarding Guide
+    render_onboarding_banner()
 
     # Search Bar
     search_query = st.text_input(

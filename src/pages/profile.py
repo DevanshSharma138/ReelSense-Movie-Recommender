@@ -110,3 +110,199 @@ def render_profile_page():
     st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
+
+    # ---------------------------------------------------------
+    # 2. TASTE PROFILE (Calculated from Actual Ratings)
+    # ---------------------------------------------------------
+    ratings = st.session_state.get("ratings", {})
+    n_rated = len(ratings)
+
+    st.markdown(
+        """
+        <div style="margin-bottom: 1rem;">
+            <div style="font-size: 0.75rem; color: #f2ca50; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;">
+                Mathematical Aesthetic Signature
+            </div>
+            <h2 style="font-family: 'Outfit'; font-size: 1.5rem; font-weight: 700; color: #e5e1e4; margin: 0;">
+                Your Taste Profile
+            </h2>
+            <p style="font-size: 0.85rem; color: #99907c; margin: 2px 0 0 0;">
+                Derived in real-time from your actual subjective film evaluations and MovieLens feature vectors.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown('<div style="background: #202020; border: 1px solid #363636; border-radius: 12px; padding: 2rem; max-width: 800px;">', unsafe_allow_html=True)
+
+    if n_rated == 0:
+        st.markdown(
+            """
+            <div style="text-align: center; padding: 2rem 1rem;">
+                <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📊</div>
+                <h4 style="font-size: 1.1rem; color: #e5e1e4; margin-bottom: 0.5rem;">No Evaluation Data Recorded Yet</h4>
+                <p style="font-size: 0.85rem; color: #99907c; max-width: 450px; margin: 0 auto 1.5rem auto;">
+                    Rate 3 films across the catalog to generate your weighted genre preference distribution and activate hybrid collaborative filtering.
+                </p>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+        col_c, _ = st.columns([4, 6])
+        with col_c:
+            st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
+            if st.button("🔍 Discover Films to Rate", key="prof_empty_rate_btn"):
+                st.session_state.current_page = "discover-movies"
+                st.rerun()
+            st.markdown('</div>', unsafe_allow_html=True)
+    else:
+        avg_rating = sum(ratings.values()) / n_rated
+
+        # Weight genre preference using actual user ratings
+        genre_weights = {}
+        genre_counts = {}
+        for mid, score in ratings.items():
+            m = MovieService.get_movie_by_id(mid)
+            if m:
+                for g in m.get("genres", []):
+                    genre_weights[g] = genre_weights.get(g, 0.0) + float(score)
+                    genre_counts[g] = genre_counts.get(g, 0) + 1
+
+        top_genre = max(genre_weights, key=genre_weights.get) if genre_weights else "Diverse"
+
+        # Summary Metrics
+        m1, m2, m3 = st.columns(3)
+        with m1:
+            st.markdown(
+                f"""
+                <div style="background: #18171a; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 10px; padding: 1rem; text-align: center;">
+                    <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Rated Titles</div>
+                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #f2ca50; margin-top: 4px;">{n_rated}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        with m2:
+            st.markdown(
+                f"""
+                <div style="background: #18171a; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 10px; padding: 1rem; text-align: center;">
+                    <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Mean Rating</div>
+                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #f2ca50; margin-top: 4px;">⭐ {avg_rating:.1f}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+        with m3:
+            st.markdown(
+                f"""
+                <div style="background: #18171a; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 10px; padding: 1rem; text-align: center;">
+                    <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Dominant Genre</div>
+                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #f2ca50; margin-top: 4px;">{top_genre}</div>
+                </div>
+                """,
+                unsafe_allow_html=True
+            )
+
+        st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<h4 style='font-size: 0.95rem; font-weight: 700; color: #e5e1e4; margin-bottom: 0.8rem;'>Genre Preference Strength (Weighted by Ratings)</h4>", unsafe_allow_html=True)
+
+        if genre_weights:
+            max_w = max(genre_weights.values())
+            sorted_genres = sorted(genre_weights.items(), key=lambda x: x[1], reverse=True)[:6]
+
+            for g, total_score in sorted_genres:
+                c = genre_counts.get(g, 0)
+                pct = int(round((total_score / max_w) * 100))
+                bar_chars = "█" * max(1, int(round((total_score / max_w) * 12)))
+
+                st.markdown(
+                    f"""
+                    <div style="margin-bottom: 0.75rem;">
+                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                            <span style="font-weight: 600; color: #e5e1e4; font-size: 0.88rem;">{g} <span style="font-family: monospace; color: #f2ca50; font-size: 0.8rem; margin-left: 6px;">{bar_chars}</span></span>
+                            <span style="font-size: 0.78rem; color: #99907c;">{total_score:.1f} pts ({c} film{'s' if c != 1 else ''})</span>
+                        </div>
+                        <div style="width: 100%; height: 6px; background: #2a2a2d; border-radius: 3px; overflow: hidden;">
+                            <div style="width: {pct}%; height: 100%; background: linear-gradient(90deg, #f2ca50, #d4af37);"></div>
+                        </div>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
+
+    # ---------------------------------------------------------
+    # 3. NOT INTERESTED EXCLUSIONS MANAGEMENT
+    # ---------------------------------------------------------
+    not_interested_set = set(st.session_state.get("not_interested", set()))
+    n_hidden = len(not_interested_set)
+
+    st.markdown(
+        f"""
+        <div style="margin-bottom: 1rem;">
+            <div style="font-size: 0.75rem; color: #f2ca50; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;">
+                Negative Feedback Filter
+            </div>
+            <h2 style="font-family: 'Outfit'; font-size: 1.5rem; font-weight: 700; color: #e5e1e4; margin: 0;">
+                Excluded Films ({n_hidden})
+            </h2>
+            <p style="font-size: 0.85rem; color: #99907c; margin: 2px 0 0 0;">
+                Films marked as "Not Interested" are strictly excluded from all personalized recommendations and carousels.
+            </p>
+        </div>
+        """,
+        unsafe_allow_html=True
+    )
+
+    st.markdown('<div style="background: #202020; border: 1px solid #363636; border-radius: 12px; padding: 1.5rem; max-width: 800px;">', unsafe_allow_html=True)
+
+    if n_hidden == 0:
+        st.markdown(
+            """
+            <p style="color: #99907c; font-size: 0.88rem; margin: 0;">
+                No films are currently excluded. Click the <strong>🚫</strong> button on any movie card or details page to hide titles you don't wish to see.
+            </p>
+            """,
+            unsafe_allow_html=True
+        )
+    else:
+        for hid in sorted(list(not_interested_set)):
+            hm = MovieService.get_movie_by_id(hid)
+            h_title = hm["title"] if hm else f"Movie #{hid}"
+            h_year = hm.get("release_year", "") if hm else ""
+            h_genres = ", ".join(hm.get("genres", [])) if hm else ""
+
+            col_info, col_act = st.columns([8, 2])
+            with col_info:
+                st.markdown(
+                    f"""
+                    <div style="padding: 6px 0;">
+                        <span style="font-weight: 600; color: #e5e1e4; font-size: 0.9rem;">{h_title}</span>
+                        <span style="color: #99907c; font-size: 0.8rem; margin-left: 6px;">({h_year}) · {h_genres}</span>
+                    </div>
+                    """,
+                    unsafe_allow_html=True
+                )
+            with col_act:
+                if st.button("↩️ Restore", key=f"restore_hidden_{hid}", use_container_width=True):
+                    not_interested_set.remove(hid)
+                    st.session_state.not_interested = not_interested_set
+                    user_store.save_not_interested(not_interested_set)
+                    st.toast(f"Restored '{h_title}' to recommendations", icon="↩️")
+                    st.rerun()
+
+        st.markdown("<div style='margin-top: 1.25rem; border-top: 1px solid #2e2e32; padding-top: 1rem;'></div>", unsafe_allow_html=True)
+        if st.button("🔄 Reset All Excluded Films", key="reset_all_not_interested_btn"):
+            st.session_state.not_interested = set()
+            user_store.save_not_interested(set())
+            st.toast("Reset all exclusions. All films restored.", icon="🔄")
+            st.rerun()
+
+    st.markdown('</div>', unsafe_allow_html=True)
+

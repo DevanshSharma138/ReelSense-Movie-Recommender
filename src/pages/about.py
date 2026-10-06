@@ -137,11 +137,11 @@ def render_about_page():
             <ul style="color: #F4EBDD; font-size: 0.9rem; line-height: 1.7; margin-bottom: 1rem;">
                 <td><strong>Frontend Interface:</strong> Python, Streamlit, Custom Vanilla CSS</td>
                 <td><strong>Data Processing & Analytics:</strong> Pandas, NumPy</td>
-                <td><strong>ML & Recommendation Engine:</strong> Scikit-Learn (TF-IDF, Cosine Sim, NearestNeighbors)</td>
-                <td><strong>Dataset:</strong> Benchmark subset of 25+ curated films with rich metadata schema</td>
+                <td><strong>ML & Recommendation Engine:</strong> Scikit-Learn (TF-IDF Content Vectorizer, TruncatedSVD Collaborative Filtering, Hybrid Ensemble)</td>
+                <td><strong>Dataset:</strong> MovieLens ml-latest-small (600 active curated catalog films, 100,000+ real ratings, 610 users)</td>
             </ul>
             <div style="background: rgba(214, 173, 96, 0.08); border: 1px dashed #D6AD60; border-radius: 8px; padding: 10px 14px; font-size: 0.82rem; color: #D6AD60;">
-                📌 <strong>Academic Note:</strong> The current frontend is wired to a modular service layer (`src/services/recommendation_service.py`). Custom Scikit-learn or PyTorch models trained on TMDB 5000 / MovieLens datasets can be dropped directly into the service functions without modifying any frontend code.
+                📌 <strong>Live System Note:</strong> ReelSense runs an active hybrid recommender combining content-based TF-IDF cosine similarity with collaborative filtering matrix factorization. User ratings dynamically calibrate personalized recommendations, persistent taste profiles, and real-time movie exclusion.
             </div>
         </div>
         """,

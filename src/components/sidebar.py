@@ -82,7 +82,7 @@ def render_sidebar():
             </div>
             <div style="display: flex; align-items: center; justify-content: space-between; padding: 0.6rem 0.25rem 0.2rem 0.25rem; font-size: 0.72rem;">
                 <span style="color: #99907c;">ReelSense Core Engine</span>
-                <span style="color: #f2ca50; font-weight: 700;">v1.0 (Phase 1)</span>
+                <span style="color: #f2ca50; font-weight: 700;">v1.3 (Phase 3)</span>
             </div>
             <style>
             @keyframes ping {{

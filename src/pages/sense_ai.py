@@ -8,11 +8,11 @@ from src.services.recommendation_service import RecommendationService
 from src.components.movie_card import render_movie_card
 
 PRESET_PROMPTS = [
-    "Deep space sci-fi with Denis Villeneuve cinematography & heavy atmosphere",
-    "70mm IMAX neo-noir psychological mystery with rain-slicked streets",
-    "Poetic Japanese slow cinema set in Kyoto with warm paper lanterns",
-    "Mind-bending temporal loops, quantum paradoxes, and plot twists",
-    "Visceral edge-of-seat percussive action thriller with high stakes"
+    "slow sci-fi",
+    "emotional drama",
+    "funny movie",
+    "action movie",
+    "mind-bending thriller"
 ]
 
 def render_sense_ai_page():
@@ -24,10 +24,10 @@ def render_sense_ai_page():
                 <span>Sense AI Vector Alignment</span>
             </div>
             <h1 class="mood-page-title">
-                Sense AI / <span>About the AI</span>
+                Sense AI / <span>Natural Language Search</span>
             </h1>
             <p class="mood-page-sub">
-                Describe the exact visual atmosphere, emotional resonance, lighting style, or director aesthetic you are craving. Our vector embeddings will match your prompt to curated films.
+                Describe a mood, theme, genre, or vibe (e.g., <em>emotional drama</em>, <em>slow sci-fi</em>, <em>funny movie</em>). ReelSense matches your prompt against plot summaries, genres, and movie tags using TF-IDF feature vectors and cosine similarity.
             </p>
         </div>
         """,
@@ -42,7 +42,7 @@ def render_sense_ai_page():
         user_prompt = st.text_input(
             "Sense AI Query",
             value=current_prompt,
-            placeholder="e.g., Anxious neo-noir thriller in a rain-slicked futuristic city with warm amber sodium lights...",
+            placeholder="e.g., slow sci-fi, emotional drama, funny movie...",
             label_visibility="collapsed",
             key="sense_ai_input_field"
         )
@@ -59,7 +59,7 @@ def render_sense_ai_page():
     preset_cols = st.columns(len(PRESET_PROMPTS))
     for idx, preset in enumerate(PRESET_PROMPTS):
         with preset_cols[idx]:
-            if st.button(preset[:32] + "...", key=f"preset_btn_{idx}", help=preset):
+            if st.button(preset, key=f"preset_btn_{idx}", help=preset):
                 st.session_state.sense_ai_prompt = preset
                 st.rerun()
 
@@ -67,7 +67,9 @@ def render_sense_ai_page():
 
     # Search Results
     query = st.session_state.get("sense_ai_prompt", user_prompt)
-    matched_movies = RecommendationService.search_by_prompt(query, limit=12)
+    raw_matched = RecommendationService.search_by_prompt(query, limit=16)
+    hidden_ids = set(st.session_state.get("not_interested", set()))
+    matched_movies = [m for m in raw_matched if m["id"] not in hidden_ids][:12]
 
     st.markdown(
         f"""

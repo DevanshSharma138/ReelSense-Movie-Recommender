@@ -55,7 +55,8 @@ def render_mood_explorer_page():
     stat_acoustic = current_mood_data.get("acoustic", "Dynamic Ambient")
     stat_luminance = current_mood_data.get("luminance", "Low Key Noir")
     stat_pacing = current_mood_data.get("pacing", "Deliberate")
-    stat_matches = current_mood_data.get("count", "1,482 Available")
+    mood_match_cnt = RecommendationService.get_mood_count(selected_mood_id)
+    stat_matches = f"{mood_match_cnt:,} Available"
 
     c1, c2, c3, c4 = st.columns(4)
     with c1:
@@ -185,7 +186,7 @@ def render_mood_explorer_page():
                                 <div class="audio-bar bar-4"></div>
                                 <div class="audio-bar bar-5"></div>
                             </div>
-                            <span class="sensory-freq">Frequency: {m['frequency']}</span>
+                            <span class="sensory-freq">{RecommendationService.get_mood_count(m_id):,} Curated Films</span>
                         </div>
                     </div>
                     """,
@@ -315,10 +316,13 @@ def render_mood_explorer_page():
 
     # Query matching films from RecommendationService
     all_movies = MovieService.get_all_movies()
+    hidden_ids = set(st.session_state.get("not_interested", set()))
     filtered_movies = []
 
-    # Filter films matching active mood or fallback
+    # Filter films matching active mood or fallback (excluding not_interested)
     for m in all_movies:
+        if m["id"] in hidden_ids:
+            continue
         has_mood = selected_mood_id in m.get("moods", [])
         has_genre = any(g in m.get("genres", []) for g in st.session_state.mood_selected_genres)
         rating_ok = m.get("rating", 0) >= (st.session_state.mood_min_rating - 0.5)
@@ -332,14 +336,8 @@ def render_mood_explorer_page():
     else:
         filtered_movies.sort(key=lambda x: x.get("mood_affinity", x.get("vector_match", 88)), reverse=True)
 
-    # Ensure 4 prime candidates from Stitch reference if Mind-blown
-    if selected_mood_id == "Mind-blown":
-        stitch_ids = [110, 105, 111, 112]
-        stitch_movies = [MovieService.get_movie_by_id(i) for i in stitch_ids if MovieService.get_movie_by_id(i)]
-        if len(stitch_movies) == 4:
-            filtered_movies = stitch_movies + [m for m in filtered_movies if m["id"] not in stitch_ids]
-
-    results_to_display = filtered_movies[:4] if len(filtered_movies) >= 4 else (filtered_movies + all_movies[:4])[:4]
+    available_catalog = [m for m in all_movies if m["id"] not in hidden_ids]
+    results_to_display = filtered_movies[:4] if len(filtered_movies) >= 4 else (filtered_movies + available_catalog[:4])[:4]
 
     col_res_title, col_res_sort = st.columns([7, 5])
     with col_res_title:
@@ -469,7 +467,7 @@ def render_mood_explorer_page():
     c_act1, c_act2 = st.columns([2, 2])
     with c_act1:
         if st.button("Export Calibration", key="btn_export_calibration", use_container_width=True):
-            st.info(f"Calibration exported: {selected_mood_id} ({stat_frequency if 'stat_frequency' in locals() else 'Active'}, {len(st.session_state.mood_selected_genres)} genres, {st.session_state.mood_min_rating}★ min)")
+            st.info(f"Calibration exported: {selected_mood_id} ({stat_matches}, {len(st.session_state.mood_selected_genres)} genres, {st.session_state.mood_min_rating}★ min)")
 
     with c_act2:
         st.markdown('<div class="gold-btn">', unsafe_allow_html=True)

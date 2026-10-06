@@ -71,7 +71,57 @@ class RecommendationService:
         return get_model().similar(movie.get("id"), limit)
 
     @staticmethod
-    def get_recommendation_explanation(movie):
+    def get_recommendation_explanation(movie, user_ratings=None):
         if not movie:
             return []
-        return movie.get("why_recommended") or [f"Rated {movie.get('rating', 0)}/10 by {movie.get('n_ratings', 0)} viewers"]
+        if movie.get("why_recommended"):
+            return movie["why_recommended"]
+
+        # Build dynamic signals from real data
+        reasons = []
+        ratings = user_ratings or {}
+        cat_by_id = {m["id"]: m for m in get_catalog()}
+
+        # 1. Real rating overlap signal
+        if ratings:
+            high_rated_ids = [int(k) for k, v in ratings.items() if float(v) >= 7.0]
+            shared_found = False
+            for hid in high_rated_ids:
+                hm = cat_by_id.get(hid)
+                if hm and hm["id"] != movie.get("id"):
+                    shared = set(movie.get("genres", [])) & set(hm.get("genres", []))
+                    if shared:
+                        reasons.append(f"Because you rated '{hm['title']}' highly (Shared genres: {', '.join(sorted(shared))})")
+                        shared_found = True
+                        break
+            if not shared_found and high_rated_ids:
+                hm = cat_by_id.get(high_rated_ids[0])
+                if hm:
+                    reasons.append(f"Calibrated with your preference for '{hm['title']}'")
+
+        # 2. Trending or Gem signal
+        if movie.get("is_trending") and movie.get("trending_rank"):
+            reasons.append(f"Trending #{movie['trending_rank']} among active community viewers")
+        elif movie.get("is_hidden_gem"):
+            reasons.append("Curator Hidden Gem with exceptional review scores")
+
+        # 3. Community rating signal
+        if movie.get("n_ratings", 0) > 0:
+            reasons.append(f"Rated ⭐ {movie.get('rating', 0)}/10 across {movie.get('n_ratings')} MovieLens viewers")
+        elif movie.get("genres"):
+            reasons.append(f"Strong genre affinity in {', '.join(movie['genres'][:2])}")
+
+        return reasons or ["Curated title from the MovieLens master library"]
+
+    @staticmethod
+    def get_mood_count(mood_id):
+        return sum(1 for m in get_catalog() if mood_id in m.get("moods", []))
+
+    @staticmethod
+    def get_all_mood_counts():
+        cat = get_catalog()
+        counts = {}
+        for m in cat:
+            for mood in m.get("moods", []):
+                counts[mood] = counts.get(mood, 0) + 1
+        return counts

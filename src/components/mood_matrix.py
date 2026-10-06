@@ -4,6 +4,7 @@ ReelSense - Sensory Spectrum Mood Vault Matrix Component
 
 import streamlit as st
 from src.config import MOODS
+from src.services.recommendation_service import RecommendationService
 
 def render_mood_matrix():
     st.markdown(
@@ -30,7 +31,8 @@ def render_mood_matrix():
         m_id = mood["id"]
         label = mood["label"]
         icon = mood["icon"]
-        count = mood.get("count", "100+ Films")
+        mood_cnt = RecommendationService.get_mood_count(m_id)
+        count = f"{mood_cnt:,} Films"
         tagline = mood["tagline"]
         tags = mood.get("tags", [])
 

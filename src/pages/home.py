@@ -9,8 +9,26 @@ from src.components.hero_banner import render_hero_banner
 from src.components.movie_carousel import render_movie_carousel
 from src.components.trending_grid import render_trending_grid
 from src.components.mood_matrix import render_mood_matrix
+from src.components.onboarding_banner import render_onboarding_banner
 
 def render_home_page():
+    # 0. First-Time User Onboarding Guide (< 3 ratings)
+    render_onboarding_banner()
+
+    user_ratings = st.session_state.get("ratings", {})
+    n_ratings = len(user_ratings)
+    if n_ratings >= 3:
+        st.markdown(
+            f"""
+            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 1rem;">
+                <span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid rgba(242, 202, 80, 0.35); padding: 4px 14px; border-radius: 9999px; font-size: 0.8rem; font-weight: 700;">
+                    ✨ Personalized Picks Active · {n_ratings} Ratings Calibrated
+                </span>
+            </div>
+            """,
+            unsafe_allow_html=True
+        )
+
     # 1. Featured Hero Spotlight Banner
     trending = RecommendationService.get_trending_movies(limit=5)
     all_movies = MovieService.get_all_movies()

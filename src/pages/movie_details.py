@@ -116,6 +116,22 @@ def render_movie_details_page():
                 st.rerun()
             if css: st.markdown('</div>', unsafe_allow_html=True)
 
+            # Not Interested Toggle
+            not_interested = set(st.session_state.get("not_interested", set()))
+            is_hidden = movie_id in not_interested
+            hide_label = "↩️ Restore to Picks" if is_hidden else "🚫 Not Interested"
+            st.markdown("<div style='margin-top: 8px;'></div>", unsafe_allow_html=True)
+            if st.button(hide_label, key=f"det_hide_{movie_id}", use_container_width=True, help="Exclude this film from your personalized recommendations"):
+                if is_hidden:
+                    not_interested.remove(movie_id)
+                    st.toast(f"Restored '{title}' to recommendations", icon="↩️")
+                else:
+                    not_interested.add(movie_id)
+                    st.toast(f"Marked '{title}' as Not Interested. Excluded from recommendations.", icon="🚫")
+                st.session_state.not_interested = not_interested
+                user_store.save_not_interested(not_interested)
+                st.rerun()
+
         with col_r_box:
             new_user_rating = st.slider(
                 "Your Personal Rating",
@@ -164,8 +180,9 @@ def render_movie_details_page():
 
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
 
-    # Why We Recommend This Section
-    reasons = RecommendationService.get_recommendation_explanation(movie)
+    # Why We Recommend This Section (Dynamic Signals)
+    user_ratings = st.session_state.get("ratings", {})
+    reasons = RecommendationService.get_recommendation_explanation(movie, user_ratings=user_ratings)
     st.markdown(
         f"""
         <div style="background: #1c1b1e; border: 1px solid rgba(77, 70, 53, 0.3); border-radius: 14px; padding: 1.5rem;">

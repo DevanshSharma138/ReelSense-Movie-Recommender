@@ -19,13 +19,18 @@ def render_movie_card(movie, key_prefix="card"):
     match_pct = movie.get("mood_affinity") or movie.get("vector_match") or 0
     genres = movie.get("genres", ["Drama"])
     genre_str = " / ".join(genres[:2])
-    runtime = movie.get("runtime", "2h 00m")
-    director = movie.get("director", "Cinema Masterwork")
+    director_val = movie.get("director", "")
+    director = director_val if director_val else (genres[0] if genres else "Cinema")
+    runtime_val = movie.get("runtime", "")
+    runtime = runtime_val if runtime_val and runtime_val != "N/A" else str(year)
     poster_url = movie.get("poster_url") or FALLBACK_POSTER
 
     watchlist = st.session_state.get("watchlist", [])
     in_watchlist = m_id in watchlist
     bookmark_icon = "✓ Saved" if in_watchlist else "+ Vault"
+
+    not_interested = set(st.session_state.get("not_interested", set()))
+    in_not_interested = m_id in not_interested
 
     affinity_html = f"""
                 <div class="film-badge-affinity">
@@ -33,12 +38,18 @@ def render_movie_card(movie, key_prefix="card"):
                     <span>{match_pct}% Match</span>
                 </div>""" if match_pct > 0 else ""
 
+    hidden_tag = """
+                <div style="position: absolute; top: 10px; left: 10px; background: rgba(220, 53, 69, 0.85); color: white; padding: 2px 8px; border-radius: 4px; font-size: 0.65rem; font-weight: 700; z-index: 3;">
+                    NOT INTERESTED
+                </div>""" if in_not_interested else ""
+
     # Poster Card HTML matching Stitch design
     st.markdown(
         f"""
-        <div class="film-card">
+        <div class="film-card" style="{'opacity: 0.55;' if in_not_interested else ''}">
             <div class="film-poster-container">
                 <img src="{poster_url}" class="film-poster-img" alt="{title}" onerror="this.src='{FALLBACK_POSTER}';"/>
+                {hidden_tag}
                 {affinity_html}
                 <div class="film-badge-rating">
                     <span class="material-symbols-outlined" style="font-size: 14px; color: #f2ca50;">star</span>
@@ -66,8 +77,8 @@ def render_movie_card(movie, key_prefix="card"):
         unsafe_allow_html=True
     )
 
-    # Action buttons below card
-    col1, col2 = st.columns([3.5, 2.5])
+    # Action buttons below card: Inspect, Bookmark, and Not Interested
+    col1, col2, col3 = st.columns([3.0, 2.0, 1.4])
 
     with col1:
         st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
@@ -85,4 +96,18 @@ def render_movie_card(movie, key_prefix="card"):
                 watchlist.append(m_id)
             st.session_state.watchlist = watchlist
             user_store.save_watchlist(watchlist)
+            st.rerun()
+
+    with col3:
+        hide_btn_icon = "↩️" if in_not_interested else "🚫"
+        hide_help = "Restore to recommendations" if in_not_interested else "Mark Not Interested (exclude from picks)"
+        if st.button(hide_btn_icon, key=f"{key_prefix}_hide_{m_id}", help=hide_help, use_container_width=True):
+            if in_not_interested:
+                not_interested.remove(m_id)
+                st.toast(f"Restored '{title}' to recommendations", icon="↩️")
+            else:
+                not_interested.add(m_id)
+                st.toast(f"Marked '{title}' as Not Interested", icon="🚫")
+            st.session_state.not_interested = not_interested
+            user_store.save_not_interested(not_interested)
             st.rerun()

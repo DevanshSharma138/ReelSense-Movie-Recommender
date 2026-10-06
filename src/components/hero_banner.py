@@ -23,6 +23,11 @@ def render_hero_banner(featured_movie, cycle_movies=None):
     in_watchlist = m_id in watchlist
     watchlist_text = "✓ In Vault" if in_watchlist else "+ Add to Vault"
 
+    genres = featured_movie.get("genres", [])
+    genre_badges = "".join([f'<span class="hero-badge-tag">{g}</span>' for g in genres[:2]])
+    runtime_badge = f'<span class="hero-badge-tag">{runtime}</span>' if runtime and runtime != "N/A" else ""
+    director_badge = f'<span style="font-size: 0.76rem; color: #99907c; margin-left: 4px;">Dir. {director}</span>' if director else ""
+
     # Main Hero Spotlight Container
     col_hero_content, col_switcher = st.columns([8.5, 3.5])
 
@@ -33,11 +38,11 @@ def render_hero_banner(featured_movie, cycle_movies=None):
                 <div class="hero-spotlight-overlay">
                     <div class="hero-tag-row">
                         <span class="hero-badge-match">✨ {match_pct}% ReelSense Match</span>
-                        <span class="hero-badge-tag">4K Ultra HD</span>
-                        <span class="hero-badge-tag">IMAX Enhanced</span>
-                        <span class="hero-badge-tag">{runtime}</span>
-                        <span class="hero-badge-tag">PG-13</span>
-                        <span style="font-size: 0.76rem; color: #99907c; margin-left: 4px;">Dir. {director}</span>
+                        <span class="hero-badge-tag">{year}</span>
+                        <span class="hero-badge-tag">⭐ {rating:.1f}/10</span>
+                        {runtime_badge}
+                        {genre_badges}
+                        {director_badge}
                     </div>
                     <div style="font-size: 0.8rem; font-weight: 700; color: #f2ca50; text-transform: uppercase; letter-spacing: 0.2em; margin-bottom: 2px;">
                         Curator Premiere Spotlight
@@ -54,7 +59,7 @@ def render_hero_banner(featured_movie, cycle_movies=None):
         col_c1, col_c2, col_c3 = st.columns([3, 3, 4])
         with col_c1:
             st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
-            if st.button("▶ Stream Now", key=f"hero_stream_{m_id}"):
+            if st.button("🎬 Inspect Movie", key=f"hero_stream_{m_id}"):
                 st.session_state.selected_movie_id = m_id
                 st.session_state.current_page = "movie_details"
                 st.rerun()
