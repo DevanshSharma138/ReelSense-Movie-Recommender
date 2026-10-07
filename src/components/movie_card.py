@@ -3,11 +3,12 @@ ReelSense - Reusable Movie Poster Card Component
 Matching latest Stitch UI Reference (Obsidian & Champagne Gold)
 """
 
-import textwrap
 import streamlit as st
 from src.services import user_store
+from src.utils.ui_helpers import render_html
 
 FALLBACK_POSTER = "https://images.unsplash.com/photo-1506703719100-a0f3a48c0f86?q=80&w=600&auto=format&fit=crop"
+
 
 def render_movie_card(movie, key_prefix="card"):
     if not movie:
@@ -16,7 +17,9 @@ def render_movie_card(movie, key_prefix="card"):
     m_id = movie["id"]
     title = movie["title"]
     year = movie.get("release_year", 2024)
-    rating = movie.get("rating", 8.5)
+    raw_rating = movie.get("rating", 8.5)
+    # Normalize displayed rating to 0-5 scale
+    star_rating = raw_rating / 2.0 if raw_rating > 5.0 else raw_rating
     match_pct = movie.get("mood_affinity") or movie.get("vector_match") or 0
     genres = movie.get("genres", ["Drama"])
     genre_str = " / ".join(genres[:2])
@@ -47,66 +50,91 @@ def render_movie_card(movie, key_prefix="card"):
 
     card_opacity = "opacity: 0.55;" if in_not_interested else ""
 
-    # Poster Card HTML matching Stitch design (Dedent to prevent markdown code block parsing)
-    card_html = textwrap.dedent(f"""
-<div class="film-card" style="{card_opacity}">
-<div class="film-poster-container">
-<img src="{poster_url}" class="film-poster-img" alt="{title}" onerror="this.src='{FALLBACK_POSTER}';"/>
-{hidden_tag}
-{affinity_html}
-<div class="film-badge-rating">
-<span class="material-symbols-outlined" style="font-size: 14px; color: #f2ca50;">star</span>
-<span>{rating:.1f}</span>
-</div>
-<div class="film-poster-meta-bottom">
-<span class="film-runtime-pill">{runtime}</span>
-<span class="film-genre-text">{genre_str}</span>
-</div>
-</div>
-<div class="film-card-content">
-<div>
-<h3 class="film-title" title="{title}">{title}</h3>
-</div>
-<div class="film-footer-row">
-<div style="display: flex; align-items: center; gap: 4px; color: #99907c;">
-<span class="material-symbols-outlined" style="font-size: 16px;">person</span>
-<span>{director[:15]}</span>
-</div>
-<span style="font-size: 0.72rem; color: #99907c;">{year}</span>
-</div>
-</div>
-</div>
-""").strip()
+    # Poster Card HTML matching Stitch design
+    card_html = f"""
+    <div class="film-card" style="{card_opacity}">
+        <div class="film-poster-container">
+            <img src="{poster_url}" class="film-poster-img" alt="{title}" onerror="this.src='{FALLBACK_POSTER}';"/>
+            {hidden_tag}
+            {affinity_html}
+            <div class="film-badge-rating">
+                <span class="material-symbols-outlined" style="font-size: 14px; color: #f2ca50;">star</span>
+                <span>{star_rating:.1f}</span>
+            </div>
+            <div class="film-poster-meta-bottom">
+                <span class="film-runtime-pill">{runtime}</span>
+                <span class="film-genre-text">{genre_str}</span>
+            </div>
+        </div>
+        <div class="film-card-content">
+            <div>
+                <h3 class="film-title" title="{title}">{title}</h3>
+            </div>
+            <div class="film-footer-row">
+                <div style="display: flex; align-items: center; gap: 4px; color: #99907c;">
+                    <span class="material-symbols-outlined" style="font-size: 16px;">person</span>
+                    <span>{director[:15]}</span>
+                </div>
+                <span style="font-size: 0.72rem; color: #99907c;">{year}</span>
+            </div>
+        </div>
+    </div>
+    """
+
+    def _on_card_click(target_id, origin_page):
+        st.session_state.previous_page = origin_page
+        st.session_state.selected_movie_id = target_id
+        st.session_state.current_page = "movie_details"
+
+    def _on_watchlist_toggle(target_id):
+        wl = list(st.session_state.get("watchlist", []))
+        if target_id in wl:
+            wl.remove(target_id)
+        else:
+            wl.append(target_id)
+        st.session_state.watchlist = wl
+        user_store.save_watchlist(wl)
+
+    def _on_hide_toggle(target_id):
+        ni = set(st.session_state.get("not_interested", set()))
+        if target_id in ni:
+            ni.remove(target_id)
+        else:
+            ni.add(target_id)
+        st.session_state.not_interested = ni
+        user_store.save_not_interested(ni)
 
     # Clickable Movie Card Container (Direct interaction without separate Inspect button)
     with st.container(key=f"card_box_{key_prefix}_{m_id}"):
-        st.markdown(card_html, unsafe_allow_html=True)
-        if st.button(f"View {title}", key=f"{key_prefix}_card_{m_id}", help=f"View details for {title}", use_container_width=True):
-            st.session_state.selected_movie_id = m_id
-            st.session_state.current_page = "movie_details"
-            st.rerun()
+        render_html(card_html)
+        st.button(
+            f"View {title}",
+            key=f"{key_prefix}_card_{m_id}",
+            help=f"View details for {title}",
+            use_container_width=True,
+            on_click=_on_card_click,
+            args=(m_id, st.session_state.get("current_page", "home"))
+        )
 
     col_bm, col_hide = st.columns(2)
     with col_bm:
-        if st.button(bookmark_icon, key=f"{key_prefix}_bm_{m_id}", help="Toggle Watchlist", use_container_width=True):
-            if in_watchlist:
-                watchlist.remove(m_id)
-            else:
-                watchlist.append(m_id)
-            st.session_state.watchlist = watchlist
-            user_store.save_watchlist(watchlist)
-            st.rerun()
+        st.button(
+            bookmark_icon,
+            key=f"{key_prefix}_bm_{m_id}",
+            help="Toggle Watchlist",
+            use_container_width=True,
+            on_click=_on_watchlist_toggle,
+            args=(m_id,)
+        )
 
     with col_hide:
         hide_btn_label = "↩️ Restore" if in_not_interested else "🚫 Hide"
         hide_help = "Restore to recommendations" if in_not_interested else "Mark Not Interested (exclude from picks)"
-        if st.button(hide_btn_label, key=f"{key_prefix}_hide_{m_id}", help=hide_help, use_container_width=True):
-            if in_not_interested:
-                not_interested.remove(m_id)
-                st.toast(f"Restored '{title}' to recommendations", icon="↩️")
-            else:
-                not_interested.add(m_id)
-                st.toast(f"Marked '{title}' as Not Interested", icon="🚫")
-            st.session_state.not_interested = not_interested
-            user_store.save_not_interested(not_interested)
-            st.rerun()
+        st.button(
+            hide_btn_label,
+            key=f"{key_prefix}_hide_{m_id}",
+            help=hide_help,
+            use_container_width=True,
+            on_click=_on_hide_toggle,
+            args=(m_id,)
+        )

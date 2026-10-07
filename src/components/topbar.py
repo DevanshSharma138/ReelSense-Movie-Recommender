@@ -4,12 +4,12 @@ Obsidian (#0e0e10 / #141316) & Champagne Gold (#f2ca50 / #d4af37)
 Completely replaces the vertical left sidebar with a sleek, compact, responsive top navigation bar.
 """
 
-import textwrap
 import streamlit as st
+from src.utils.ui_helpers import render_html
 
 TOP_NAV_ITEMS = [
-    {"id": "home", "label": "🎬 Home", "route": "home"},
-    {"id": "discover-movies", "label": "🧭 Discover", "route": "discover-movies"},
+    {"id": "home", "label": "🏠 Home", "route": "home"},
+    {"id": "discover-movies", "label": "⏰ Discover", "route": "discover-movies"},
     {"id": "mood-explorer", "label": "🎭 Mood Explorer", "route": "mood-explorer"},
     {"id": "my-watchlist", "label": "🔖 Vault", "route": "my-watchlist"},
     {"id": "my-ratings", "label": "⭐ Ratings", "route": "my-ratings"},
@@ -26,6 +26,7 @@ PAGE_ALIASES = {
     "collections": "discover-movies",
     "mood": "mood-explorer",
     "mood-explorer": "mood-explorer",
+    "mood_explorer": "mood-explorer",
     "watchlist": "my-watchlist",
     "my-watchlist": "my-watchlist",
     "ratings": "my-ratings",
@@ -38,7 +39,20 @@ PAGE_ALIASES = {
     "about": "about",
     "architecture": "about",
     "capstone": "about",
+    "movie_details": "movie_details",
 }
+
+
+def _on_nav_route_click(route):
+    st.session_state.current_page = route
+
+
+def _on_topbar_search_callback():
+    q = st.session_state.get("topbar_search_input", "").strip()
+    st.session_state.global_search = q
+    st.session_state.discover_search = q
+    st.session_state.disc_search_input = q
+    st.session_state.current_page = "discover-movies"
 
 
 def render_topbar():
@@ -56,14 +70,13 @@ def render_topbar():
         # ROW 1: BRAND HEADER + SEARCH BAR + CURATOR AI + PROFILE
         # =========================================================================
         col_brand, col_search, col_curator, col_user = st.columns(
-            [2.6, 5.2, 1.8, 1.5],
+            [2.4, 5.2, 1.8, 1.6],
             vertical_alignment="center"
         )
 
         with col_brand:
-            # Cinematic Brand Display with inline SVG Reel Icon
-            st.markdown(
-                textwrap.dedent("""
+            with st.container(key="top_brand_container"):
+                render_html("""
                 <div class="reelsense-top-brand">
                     <svg class="brand-reel-icon" width="28" height="28" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <circle cx="12" cy="12" r="10" stroke="url(#goldGrad)" stroke-width="2"/>
@@ -84,41 +97,50 @@ def render_topbar():
                         <div class="reelsense-brand-sub">Cinematic Curation</div>
                     </div>
                 </div>
-                """).strip(),
-                unsafe_allow_html=True
-            )
-            # Functional brand home button (tested via key="top_brand_home_btn", styled as invisible overlay)
-            if st.button("ReelSense Home", key="top_brand_home_btn", help="Return to Home"):
-                st.session_state.current_page = "home"
-                st.rerun()
+                """)
+                st.button("ReelSense Home", key="top_brand_home_btn", help="Return to Home", on_click=_on_nav_route_click, args=("home",))
 
         with col_search:
-            current_search = st.session_state.get("global_search", "")
-            search_input = st.text_input(
-                "Quick Search",
-                value=current_search,
-                placeholder="🔍 Search films, directors, genres, moods...",
-                label_visibility="collapsed",
-                key="topbar_global_search_input"
-            )
-            if search_input != current_search:
-                st.session_state.global_search = search_input
-                st.session_state.discover_search = search_input
-                st.session_state.disc_search_input = search_input
-                if search_input.strip():
-                    st.session_state.current_page = "discover-movies"
-                    st.rerun()
+            col_s_box, col_s_btn = st.columns([4.2, 1.2], vertical_alignment="center")
+            with col_s_box:
+                st.text_input(
+                    "Quick Search",
+                    value=st.session_state.get("discover_search", ""),
+                    placeholder="🔍 Search films, directors, genres (e.g. Matrix, Toy Story)...",
+                    label_visibility="collapsed",
+                    key="topbar_search_input",
+                    on_change=_on_topbar_search_callback
+                )
+            with col_s_btn:
+                st.button(
+                    "Search",
+                    key="topbar_search_submit_btn",
+                    use_container_width=True,
+                    help="Search MovieLens Catalog",
+                    on_click=_on_topbar_search_callback,
+                    type="primary"
+                )
 
         with col_curator:
-            if st.button("✨ Curator AI", key="topbar_curator_ai_btn", use_container_width=True, help="Explore Sense AI Vector Matching"):
-                st.session_state.current_page = "about-the-ai"
-                st.rerun()
+            st.button(
+                "✨ Curator AI",
+                key="topbar_curator_ai_btn",
+                use_container_width=True,
+                help="Explore Sense AI Vector Matching",
+                on_click=_on_nav_route_click,
+                args=("about-the-ai",)
+            )
 
         with col_user:
             profile_label = f"👤 {user_name[:12]}"
-            if st.button(profile_label, key="topbar_user_profile_btn", use_container_width=True, help=f"Curator Profile: {user_name}"):
-                st.session_state.current_page = "my-profile"
-                st.rerun()
+            st.button(
+                profile_label,
+                key="topbar_user_profile_btn",
+                use_container_width=True,
+                help=f"Curator Profile: {user_name}",
+                on_click=_on_nav_route_click,
+                args=("my-profile",)
+            )
 
         # =========================================================================
         # DIVIDER: SUBTLE LUXURY GOLDEN GRADIENT HAIRLINE
@@ -136,7 +158,8 @@ def render_topbar():
             item_id = item["id"]
             base_label = item["label"]
             route = item["route"]
-            is_active = (active_normalized == item_id)
+            target_canonical = PAGE_ALIASES.get(route, route)
+            is_active = (active_normalized == target_canonical)
 
             # Dynamic badge annotations
             if item_id == "my-watchlist" and watchlist_count > 0:
@@ -147,13 +170,13 @@ def render_topbar():
                 display_label = base_label
 
             with nav_cols[idx]:
-                if st.button(
+                st.button(
                     display_label,
                     key=f"top_nav_{item_id}",
                     use_container_width=True,
-                    type="primary" if is_active else "secondary"
-                ):
-                    st.session_state.current_page = route
-                    st.rerun()
+                    type="primary" if is_active else "secondary",
+                    on_click=_on_nav_route_click,
+                    args=(route,)
+                )
 
         st.markdown('</div>', unsafe_allow_html=True)

@@ -3,13 +3,13 @@ ReelSense - Mood Explorer: Sensory & Emotional Resonance
 Faithful implementation of latest Stitch UI Reference (screen.png & code.html)
 """
 
-import textwrap
 import streamlit as st
 from src.config import MOODS
 from src.services.movie_service import MovieService
 from src.services.recommendation_service import RecommendationService
 from src.services import user_store
 from src.components.movie_card import render_movie_card
+from src.utils.ui_helpers import render_html
 
 MOOD_EMOJIS = {
     "Mind-blown": "🌀",
@@ -22,11 +22,12 @@ MOOD_EMOJIS = {
 
 GENRE_OPTIONS = ["Surrealism", "Cyberpunk", "Mystery", "Drama", "Thriller", "Romance"]
 
+
 def _reset_mood_filters_callback():
     st.session_state.selected_mood = "Mind-blown"
     st.session_state.mood_selected_genres = ["Surrealism", "Cyberpunk"]
-    st.session_state.mood_min_rating = 8.5
-    st.session_state.mood_score_slider = 8.5
+    st.session_state.mood_min_rating = 4.2
+    st.session_state.mood_score_slider = 4.2
     st.session_state.mood_sort_by = "Affinity Score"
 
 
@@ -39,7 +40,9 @@ def render_mood_explorer_page():
         st.session_state.mood_selected_genres = ["Surrealism", "Cyberpunk"]
 
     if "mood_min_rating" not in st.session_state:
-        st.session_state.mood_min_rating = 8.5
+        st.session_state.mood_min_rating = 4.2
+    elif float(st.session_state.mood_min_rating) > 5.0:
+        st.session_state.mood_min_rating = round(float(st.session_state.mood_min_rating) / 2.0, 1)
 
     if "mood_sort_by" not in st.session_state:
         st.session_state.mood_sort_by = "Affinity Score"
@@ -50,23 +53,20 @@ def render_mood_explorer_page():
     # ---------------------------------------------------------
     # PAGE HEADER
     # ---------------------------------------------------------
-    st.markdown(
-        textwrap.dedent(f"""
-        <div class="mood-page-header">
-            <div class="mood-spectrum-badge">
-                <span class="material-symbols-outlined" style="font-size: 16px;">tune</span>
-                <span>Atmospheric Spectrum Calibration</span>
-            </div>
-            <h1 class="mood-page-title">
-                Mood Explorer: <span>Sensory & Emotional Resonance</span>
-            </h1>
-            <p class="mood-page-sub">
-                Choose the exact emotional texture you want to experience tonight. ReelSense maps emotional vectors directly to cinematic compositions, tempo signatures, and color grading palettes.
-            </p>
+    render_html(f"""
+    <div class="mood-page-header">
+        <div class="mood-spectrum-badge">
+            <span class="material-symbols-outlined" style="font-size: 16px;">tune</span>
+            <span>Atmospheric Spectrum Calibration</span>
         </div>
-        """).strip(),
-        unsafe_allow_html=True
-    )
+        <h1 class="mood-page-title">
+            Mood Explorer: <span>Sensory & Emotional Resonance</span>
+        </h1>
+        <p class="mood-page-sub">
+            Choose the exact emotional texture you want to experience tonight. ReelSense maps emotional vectors directly to cinematic compositions, tempo signatures, and color grading palettes.
+        </p>
+    </div>
+    """)
 
     # ---------------------------------------------------------
     # ACTIVE MOOD QUICK STATS ROW
@@ -79,57 +79,45 @@ def render_mood_explorer_page():
 
     c1, c2, c3, c4 = st.columns(4)
     with c1:
-        st.markdown(
-            textwrap.dedent(f"""
-            <div class="stat-card">
-                <div>
-                    <div class="stat-card-label">Acoustic Vector</div>
-                    <div class="stat-card-val">{stat_acoustic}</div>
-                </div>
-                <span class="material-symbols-outlined" style="color: #e7c17c; font-size: 24px;">graphic_eq</span>
+        render_html(f"""
+        <div class="stat-card">
+            <div>
+                <div class="stat-card-label">Acoustic Vector</div>
+                <div class="stat-card-val">{stat_acoustic}</div>
             </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+            <span class="material-symbols-outlined" style="color: #e7c17c; font-size: 24px;">graphic_eq</span>
+        </div>
+        """)
     with c2:
-        st.markdown(
-            textwrap.dedent(f"""
-            <div class="stat-card">
-                <div>
-                    <div class="stat-card-label">Luminance Bias</div>
-                    <div class="stat-card-val">{stat_luminance}</div>
-                </div>
-                <span class="material-symbols-outlined" style="color: #e7c17c; font-size: 24px;">contrast</span>
+        render_html(f"""
+        <div class="stat-card">
+            <div>
+                <div class="stat-card-label">Luminance Bias</div>
+                <div class="stat-card-val">{stat_luminance}</div>
             </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+            <span class="material-symbols-outlined" style="color: #e7c17c; font-size: 24px;">contrast</span>
+        </div>
+        """)
     with c3:
-        st.markdown(
-            textwrap.dedent(f"""
-            <div class="stat-card">
-                <div>
-                    <div class="stat-card-label">Pacing Ratio</div>
-                    <div class="stat-card-val">{stat_pacing}</div>
-                </div>
-                <span class="material-symbols-outlined" style="color: #e7c17c; font-size: 24px;">speed</span>
+        render_html(f"""
+        <div class="stat-card">
+            <div>
+                <div class="stat-card-label">Pacing Ratio</div>
+                <div class="stat-card-val">{stat_pacing}</div>
             </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+            <span class="material-symbols-outlined" style="color: #e7c17c; font-size: 24px;">speed</span>
+        </div>
+        """)
     with c4:
-        st.markdown(
-            textwrap.dedent(f"""
-            <div class="stat-card">
-                <div>
-                    <div class="stat-card-label">Curated Matches</div>
-                    <div class="stat-card-val highlight">{stat_matches}</div>
-                </div>
-                <span class="material-symbols-outlined" style="color: #f2ca50; font-size: 24px;">auto_awesome</span>
+        render_html(f"""
+        <div class="stat-card">
+            <div>
+                <div class="stat-card-label">Curated Matches</div>
+                <div class="stat-card-val highlight">{stat_matches}</div>
             </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+            <span class="material-symbols-outlined" style="color: #f2ca50; font-size: 24px;">auto_awesome</span>
+        </div>
+        """)
 
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
 
@@ -138,28 +126,22 @@ def render_mood_explorer_page():
     # ---------------------------------------------------------
     col_label, col_badge = st.columns([8, 4])
     with col_label:
-        st.markdown(
-            textwrap.dedent("""
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span style="font-size: 0.95rem; font-weight: 700; color: #e5e1e4; text-transform: uppercase; letter-spacing: 0.08em;">
-                    1. Select Dominant Sensory State
-                </span>
-                <span style="font-size: 0.85rem; color: #99907c;">(Single selection required)</span>
-            </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+        render_html("""
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span style="font-size: 0.95rem; font-weight: 700; color: #e5e1e4; text-transform: uppercase; letter-spacing: 0.08em;">
+                1. Select Dominant Sensory State
+            </span>
+            <span style="font-size: 0.85rem; color: #99907c;">(Single selection required)</span>
+        </div>
+        """)
     with col_badge:
-        st.markdown(
-            textwrap.dedent(f"""
-            <div style="display: flex; justify-content: flex-end;">
-                <span style="background: rgba(242, 202, 80, 0.12); color: #f2ca50; border-radius: 9999px; padding: 4px 14px; font-size: 0.8rem; font-weight: 700;">
-                    Active Mood: <strong>{selected_mood_id}</strong>
-                </span>
-            </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+        render_html(f"""
+        <div style="display: flex; justify-content: flex-end;">
+            <span style="background: rgba(242, 202, 80, 0.12); color: #f2ca50; border-radius: 9999px; padding: 4px 14px; font-size: 0.8rem; font-weight: 700;">
+                Active Mood: <strong>{selected_mood_id}</strong>
+            </span>
+        </div>
+        """)
 
     # 2 rows of 3 columns
     row1 = MOODS[:3]
@@ -181,168 +163,125 @@ def render_mood_explorer_page():
                 </div>
                 """ if is_active else '<div style="width: 26px; height: 26px;"></div>'
 
-                st.markdown(
-                    textwrap.dedent(f"""
-                    <div class="{card_class}">
-                        <div>
-                            <div class="sensory-card-header">
-                                <div style="display: flex; align-items: center; gap: 12px;">
-                                    <div class="sensory-icon-box">
-                                        <span class="material-symbols-outlined" style="font-size: 24px;">{m_icon}</span>
-                                        <span style="font-size: 18px; margin-left: 2px;">{m_emoji}</span>
-                                    </div>
-                                    <div>
-                                        <div class="sensory-tier">{m['tier']}</div>
-                                        <h3 class="sensory-name">{m['label']}</h3>
-                                    </div>
+                render_html(f"""
+                <div class="{card_class}">
+                    <div>
+                        <div class="sensory-card-header">
+                            <div style="display: flex; align-items: center; gap: 12px;">
+                                <div class="sensory-icon-box">
+                                    <span class="material-symbols-outlined" style="font-size: 24px;">{m_icon}</span>
+                                    <span style="font-size: 18px; margin-left: 2px;">{m_emoji}</span>
                                 </div>
-                                {check_html}
+                                <div>
+                                    <div class="sensory-tier">{m['tier']}</div>
+                                    <h3 class="sensory-name">{m['label']}</h3>
+                                </div>
                             </div>
-                            <p class="sensory-desc">{m['tagline']}</p>
+                            {check_html}
                         </div>
-                        <div class="sensory-footer">
-                            <div class="audio-wave">
-                                <div class="audio-bar bar-1"></div>
-                                <div class="audio-bar bar-2"></div>
-                                <div class="audio-bar bar-3"></div>
-                                <div class="audio-bar bar-4"></div>
-                                <div class="audio-bar bar-5"></div>
-                            </div>
-                            <span class="sensory-freq">{RecommendationService.get_mood_count(m_id):,} Curated Films</span>
-                        </div>
+                        <p class="sensory-desc">{m['tagline']}</p>
                     </div>
-                    """).strip(),
-                    unsafe_allow_html=True
-                )
-                
+                    <div class="sensory-footer">
+                        <div class="audio-wave">
+                            <div class="audio-bar bar-1"></div>
+                            <div class="audio-bar bar-2"></div>
+                            <div class="audio-bar bar-3"></div>
+                            <div class="audio-bar bar-4"></div>
+                            <div class="audio-bar bar-5"></div>
+                        </div>
+                        <span class="sensory-freq">{RecommendationService.get_mood_count(m_id):,} Curated Films</span>
+                    </div>
+                </div>
+                """)
+
                 # Selection Button
                 btn_text = f"● Active: {m['label']}" if is_active else f"Select {m['label']}"
                 if is_active:
-                    st.markdown('<div class="gold-btn" style="margin-top: 6px; margin-bottom: 1.5rem;">', unsafe_allow_html=True)
-                    st.button(btn_text, key=f"btn_mood_{m_id}", use_container_width=True, disabled=True)
-                    st.markdown('</div>', unsafe_allow_html=True)
+                    st.button(btn_text, key=f"btn_mood_{m_id}", use_container_width=True, disabled=True, type="primary")
                 else:
-                    st.markdown('<div style="margin-top: 6px; margin-bottom: 1.5rem;">', unsafe_allow_html=True)
-                    if st.button(btn_text, key=f"btn_mood_{m_id}", use_container_width=True):
-                        st.session_state.selected_mood = m_id
-                        st.rerun()
-                    st.markdown('</div>', unsafe_allow_html=True)
+                    def _on_select_mood_handler(target_m_id=m_id):
+                        st.session_state.selected_mood = target_m_id
+
+                    st.button(btn_text, key=f"btn_mood_{m_id}", use_container_width=True, on_click=_on_select_mood_handler)
 
     # ---------------------------------------------------------
     # 2. CALIBRATION & GENRE VECTORS TOOLBAR
     # ---------------------------------------------------------
-    st.markdown('<div class="calibration-box">', unsafe_allow_html=True)
-    
-    col_t1, col_t2 = st.columns([8, 4])
-    with col_t1:
-        st.markdown(
-            textwrap.dedent("""
-            <div style="display: flex; align-items: center; gap: 8px;">
-                <span class="material-symbols-outlined" style="color: #f2ca50; font-size: 20px;">filter_alt</span>
-                <span style="font-size: 0.95rem; font-weight: 700; color: #e5e1e4; text-transform: uppercase; letter-spacing: 0.08em;">
-                    2. Calibration & Genre Vectors
-                </span>
-            </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
-    with col_t2:
-        st.markdown('<div style="display: flex; justify-content: flex-end;">', unsafe_allow_html=True)
-        st.button("↺ Reset All", key="mood_reset_filters_btn", on_click=_reset_mood_filters_callback)
-        st.markdown('</div>', unsafe_allow_html=True)
+    render_html("""
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem;">
+        <div style="display: flex; align-items: center; gap: 8px;">
+            <span class="material-symbols-outlined" style="color: #f2ca50; font-size: 20px;">filter_alt</span>
+            <span style="font-size: 0.95rem; font-weight: 700; color: #e5e1e4; text-transform: uppercase; letter-spacing: 0.08em;">
+                2. Calibration & Genre Vectors
+            </span>
+        </div>
+    </div>
+    """)
 
-    col_genres, col_slider = st.columns([7, 5])
+    def _on_toggle_mood_genre_handler(target_genre):
+        curr = list(st.session_state.mood_selected_genres)
+        if target_genre in curr:
+            if len(curr) > 1:
+                curr.remove(target_genre)
+        else:
+            curr.append(target_genre)
+        st.session_state.mood_selected_genres = curr
+
+    def _on_mood_slider_change_handler():
+        st.session_state.mood_min_rating = float(st.session_state.get("mood_score_slider", 4.2))
+
+    col_t_btn, col_genres, col_slider = st.columns([2, 5, 5])
+    with col_t_btn:
+        st.markdown("<div style='margin-top: 24px;'></div>", unsafe_allow_html=True)
+        st.button("↺ Reset All", key="mood_reset_filters_btn", on_click=_reset_mood_filters_callback)
 
     with col_genres:
-        st.markdown("<div style='font-size: 0.72rem; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 8px;'>Compatible Genres (Multi-Select)</div>", unsafe_allow_html=True)
-        
+        st.markdown("<div style='font-size: 0.72rem; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700; margin-bottom: 8px;'>Compatible Genres</div>", unsafe_allow_html=True)
         selected_genres = st.session_state.mood_selected_genres
         genre_cols = st.columns(len(GENRE_OPTIONS))
-        
         for g_idx, genre in enumerate(GENRE_OPTIONS):
             is_genre_active = genre in selected_genres
             btn_label = f"✓ {genre}" if is_genre_active else genre
-            
             with genre_cols[g_idx]:
-                css_class = "gold-btn" if is_genre_active else ""
-                if css_class:
-                    st.markdown(f'<div class="{css_class}">', unsafe_allow_html=True)
-                if st.button(btn_label, key=f"chip_genre_{genre}", use_container_width=True):
-                    if is_genre_active:
-                        if len(selected_genres) > 1:
-                            selected_genres.remove(genre)
-                    else:
-                        selected_genres.append(genre)
-                    st.session_state.mood_selected_genres = selected_genres
-                    st.rerun()
-                if css_class:
-                    st.markdown('</div>', unsafe_allow_html=True)
+                st.button(
+                    btn_label,
+                    key=f"chip_genre_{genre}",
+                    use_container_width=True,
+                    type="primary" if is_genre_active else "secondary",
+                    on_click=_on_toggle_mood_genre_handler,
+                    args=(genre,)
+                )
 
     with col_slider:
-        current_slider_val = st.session_state.mood_min_rating
-        st.markdown(
-            textwrap.dedent(f"""
-            <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
-                <span style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">Minimum Critical Score</span>
-                <span style="font-size: 0.88rem; color: #f2ca50; font-weight: 800; display: flex; align-items: center; gap: 4px;">
-                    <span class="material-symbols-outlined" style="font-size: 16px; color: #f2ca50;">star</span>
-                    {current_slider_val:.1f}★
-                </span>
-            </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+        current_slider_val = float(st.session_state.mood_min_rating)
         slider_val = st.slider(
-            "Minimum Critical Score",
-            min_value=7.0,
-            max_value=9.5,
-            value=float(current_slider_val),
+            "Minimum Critical Score (0-5 Scale)",
+            min_value=3.0,
+            max_value=5.0,
+            value=float(min(5.0, max(3.0, current_slider_val))),
             step=0.1,
-            label_visibility="collapsed",
-            key="mood_score_slider"
+            format="⭐ %.1f / 5",
+            key="mood_score_slider",
+            on_change=_on_mood_slider_change_handler
         )
-        if slider_val != current_slider_val:
-            st.session_state.mood_min_rating = slider_val
-            st.rerun()
 
-    # Toolbar Bottom Action Row
-    st.markdown("<div style='margin-top: 1rem; padding-top: 1rem; border-top: 1px solid rgba(77, 70, 53, 0.25); display: flex; align-items: center; justify-content: space-between;'>", unsafe_allow_html=True)
-    c_status, c_find = st.columns([8, 4])
-    with c_status:
-        st.markdown(
-            textwrap.dedent("""
-            <div style="display: flex; align-items: center; gap: 8px; color: #d0c5af; font-size: 0.85rem; height: 100%; padding-top: 8px;">
-                <span class="material-symbols-outlined" style="color: #f2ca50; font-size: 18px;">psychology_alt</span>
-                <span>Sense Neural Filter ready for recalculation</span>
-            </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
-    with c_find:
-        st.markdown('<div class="gold-btn" style="display: flex; justify-content: flex-end;">', unsafe_allow_html=True)
-        if st.button("🎬 Find Movies", key="btn_find_calibrated_movies", use_container_width=True):
-            st.toast(f"Recalibrated neural vectors for {selected_mood_id} resonance!")
-        st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
-    st.markdown('</div>', unsafe_allow_html=True)
+    st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
 
     # ---------------------------------------------------------
     # 3. VECTOR ALIGNMENTS DYNAMIC RESULTS
     # ---------------------------------------------------------
-    st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
-
-    # Query matching films from RecommendationService
     all_movies = MovieService.get_all_movies()
     hidden_ids = set(st.session_state.get("not_interested", set()))
     filtered_movies = []
 
     # Filter films matching active mood or fallback (excluding not_interested)
+    target_catalog_score = (st.session_state.mood_min_rating - 0.25) * 2.0
     for m in all_movies:
         if m["id"] in hidden_ids:
             continue
         has_mood = selected_mood_id in m.get("moods", [])
         has_genre = any(g in m.get("genres", []) for g in st.session_state.mood_selected_genres)
-        rating_ok = m.get("rating", 0) >= (st.session_state.mood_min_rating - 0.5)
+        rating_ok = m.get("rating", 0) >= target_catalog_score
 
         if has_mood or (has_genre and rating_ok):
             filtered_movies.append(m)
@@ -358,75 +297,49 @@ def render_mood_explorer_page():
 
     col_res_title, col_res_sort = st.columns([7, 5])
     with col_res_title:
-        st.markdown(
-            textwrap.dedent(f"""
-            <div>
-                <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
-                    <span style="width: 8px; height: 8px; border-radius: 50%; background: #f2ca50; display: inline-block;"></span>
-                    <span style="font-size: 0.72rem; color: #f2ca50; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Vector Alignments</span>
-                </div>
-                <h2 style="font-family: 'Outfit'; font-size: 1.5rem; font-weight: 700; color: #e5e1e4; margin: 0;">
-                    Matches for <span style="color: #f2ca50; font-style: italic;">{selected_mood_id}</span> Resonance
-                </h2>
+        render_html(f"""
+        <div>
+            <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
+                <span style="width: 8px; height: 8px; border-radius: 50%; background: #f2ca50; display: inline-block;"></span>
+                <span style="font-size: 0.72rem; color: #f2ca50; text-transform: uppercase; letter-spacing: 0.1em; font-weight: 700;">Vector Alignments</span>
             </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+            <h2 style="font-family: 'Outfit'; font-size: 1.5rem; font-weight: 700; color: #e5e1e4; margin: 0;">
+                Matches for <span style="color: #f2ca50; font-style: italic;">{selected_mood_id}</span> Resonance
+            </h2>
+        </div>
+        """)
     with col_res_sort:
-        st.markdown(
-            textwrap.dedent(f"""
-            <div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px; height: 100%;">
-                <span style="font-size: 0.8rem; color: #99907c;">{len(results_to_display)} Curated Screenings Found</span>
-            </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
-        c_s1, c_s2 = st.columns(2)
-        with c_s1:
-            is_aff = st.session_state.mood_sort_by == "Affinity Score"
-            css = "gold-btn" if is_aff else ""
-            if css: st.markdown(f'<div class="{css}">', unsafe_allow_html=True)
-            if st.button("Affinity Score", key="sort_affinity"):
-                st.session_state.mood_sort_by = "Affinity Score"
-                st.rerun()
-            if css: st.markdown('</div>', unsafe_allow_html=True)
-        with c_s2:
-            is_crit = st.session_state.mood_sort_by == "Critical Acclaim"
-            css = "gold-btn" if is_crit else ""
-            if css: st.markdown(f'<div class="{css}">', unsafe_allow_html=True)
-            if st.button("Critical Acclaim", key="sort_critical"):
-                st.session_state.mood_sort_by = "Critical Acclaim"
-                st.rerun()
-            if css: st.markdown('</div>', unsafe_allow_html=True)
+        render_html(f"""
+        <div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px; height: 100%;">
+            <span style="font-size: 0.8rem; color: #99907c;">{len(results_to_display)} Curated Screenings Found</span>
+        </div>
+        """)
 
     st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
 
-    # 4 Film Cards Grid (Reusing consistent movie card component with poster fallbacks & actions)
+    # 4 Film Cards Grid
     if results_to_display:
         grid_cols = st.columns(len(results_to_display))
         for idx, movie in enumerate(results_to_display):
             with grid_cols[idx]:
                 render_movie_card(movie, key_prefix=f"mood_film_{movie['id']}_{idx}")
     else:
-        st.markdown(
-            textwrap.dedent("""
-            <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 3rem 1.5rem; text-align: center; margin-top: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
-                <div style="font-size: 2.8rem; margin-bottom: 0.5rem;">🎭</div>
-                <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0;">No Available Films for this Mood Calibration</h3>
-                <p style="font-size: 0.88rem; color: #99907c; max-width: 480px; margin: 0 auto; line-height: 1.6;">
-                    All titles matching this mood may have been marked as Not Interested or the rating threshold is set too high. Try lowering the Minimum Critical Score or resetting your filters.
-                </p>
-            </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+        render_html("""
+        <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 3rem 1.5rem; text-align: center; margin-top: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+            <div style="font-size: 2.8rem; margin-bottom: 0.5rem;">🎭</div>
+            <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0;">No Available Films for this Mood Calibration</h3>
+            <p style="font-size: 0.88rem; color: #99907c; max-width: 480px; margin: 0 auto; line-height: 1.6;">
+                All titles matching this mood may have been marked as Not Interested or the rating threshold is set too high. Try lowering the Minimum Critical Score or resetting your filters.
+            </p>
+        </div>
+        """)
 
     # ---------------------------------------------------------
     # 4. CURATION RATIONALE FOOTER
     # ---------------------------------------------------------
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
-    st.markdown(
-        textwrap.dedent("""
+    with st.container(key="mood_rationale_container"):
+        render_html("""
         <div class="rationale-box">
             <div style="display: flex; align-items: center; gap: 16px; flex: 1; min-width: 320px;">
                 <div class="rationale-icon">
@@ -439,26 +352,29 @@ def render_mood_explorer_page():
                     </p>
                 </div>
             </div>
-        """).strip(),
-        unsafe_allow_html=True
-    )
+        </div>
+        """)
 
-    c_act1, c_act2 = st.columns([2, 2])
-    with c_act1:
-        if st.button("Export Calibration", key="btn_export_calibration", use_container_width=True):
-            st.info(f"Calibration exported: {selected_mood_id} ({stat_matches}, {len(st.session_state.mood_selected_genres)} genres, {st.session_state.mood_min_rating}★ min)")
+        def _on_export_calibration_click():
+            st.session_state["mood_calibration_exported"] = f"Calibration exported: {selected_mood_id} ({stat_matches}, {len(st.session_state.mood_selected_genres)} genres, {st.session_state.mood_min_rating}★ min)"
 
-    with c_act2:
-        st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
-        if st.button("Save Selection Rail", key="btn_save_selection_rail", use_container_width=True):
-            # Save all 4 films to user's watchlist
-            current_wl = st.session_state.get("watchlist", [])
-            for m in results_to_display:
-                if m["id"] not in current_wl:
-                    current_wl.append(m["id"])
+        def _on_save_selection_rail_click(film_ids):
+            current_wl = list(st.session_state.get("watchlist", []))
+            for fid in film_ids:
+                if fid not in current_wl:
+                    current_wl.append(fid)
             st.session_state.watchlist = current_wl
             user_store.save_watchlist(current_wl)
-            st.toast("Saved 4 calibrated films to your Vault Watchlist! 🔖")
-        st.markdown('</div>', unsafe_allow_html=True)
+            st.session_state["mood_rail_saved_toast"] = True
 
-    st.markdown("</div>", unsafe_allow_html=True)
+        c_act1, c_act2 = st.columns([2, 2])
+        with c_act1:
+            st.button("Export Calibration", key="btn_export_calibration", use_container_width=True, on_click=_on_export_calibration_click)
+            if st.session_state.get("mood_calibration_exported"):
+                st.info(st.session_state["mood_calibration_exported"])
+
+        with c_act2:
+            rail_ids = [m["id"] for m in results_to_display]
+            st.button("Save Selection Rail", key="btn_save_selection_rail", use_container_width=True, type="primary", on_click=_on_save_selection_rail_click, args=(rail_ids,))
+            if st.session_state.pop("mood_rail_saved_toast", False):
+                st.toast("Saved 4 calibrated films to your Vault Watchlist! 🔖")

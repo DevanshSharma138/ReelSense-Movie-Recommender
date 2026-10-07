@@ -90,7 +90,7 @@ if active_page in ["home", "home-discover"]:
     render_home_page()
 elif active_page in ["discover-movies", "discover", "collections"]:
     render_discover_page()
-elif active_page in ["mood-explorer", "mood"]:
+elif active_page in ["mood-explorer", "mood", "mood_explorer"]:
     render_mood_explorer_page()
 elif active_page in ["my-watchlist", "watchlist"]:
     render_watchlist_page()

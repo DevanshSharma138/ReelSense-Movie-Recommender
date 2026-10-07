@@ -2,15 +2,16 @@
 ReelSense - Numbered Editorial Rankings Component (01 to 05 Trending Grid)
 """
 
-import textwrap
 import streamlit as st
 from src.components.movie_card import render_movie_card
+from src.utils.ui_helpers import render_html
+
 
 def render_trending_grid(ranked_movies):
     if not ranked_movies:
         return
 
-    header_html = textwrap.dedent("""
+    render_html("""
     <div style="margin-top: 2rem; margin-bottom: 1.25rem;">
         <div style="display: flex; align-items: flex-end; justify-content: space-between; flex-wrap: wrap; gap: 8px;">
             <div>
@@ -23,8 +24,7 @@ def render_trending_grid(ranked_movies):
             </div>
         </div>
     </div>
-    """).strip()
-    st.markdown(header_html, unsafe_allow_html=True)
+    """)
 
     n_items = min(len(ranked_movies), 5)
     cols = st.columns(n_items if n_items > 0 else 1)
@@ -32,11 +32,10 @@ def render_trending_grid(ranked_movies):
     for idx, movie in enumerate(ranked_movies[:n_items]):
         rank_num = f"0{idx + 1}"
         with cols[idx]:
-            card_top_html = textwrap.dedent(f"""
+            render_html(f"""
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 6px;">
                 <span style="font-family: 'Outfit', sans-serif; font-size: 1.35rem; font-weight: 800; color: #f2ca50; line-height: 1;">{rank_num}</span>
                 <span style="font-size: 0.72rem; color: #99907c; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">Rank</span>
             </div>
-            """).strip()
-            st.markdown(card_top_html, unsafe_allow_html=True)
+            """)
             render_movie_card(movie, key_prefix=f"trend_rank_{idx}")

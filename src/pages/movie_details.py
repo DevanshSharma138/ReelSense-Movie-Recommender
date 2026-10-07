@@ -3,15 +3,16 @@ ReelSense - Movie Details Page Module
 Matching latest Stitch UI Reference (Obsidian & Champagne Gold)
 """
 
-import textwrap
 import streamlit as st
 from src.services.movie_service import MovieService
 from src.services.recommendation_service import RecommendationService
 from src.services.taste_service import TasteService
 from src.services import user_store
 from src.components.movie_card import render_movie_card
+from src.utils.ui_helpers import render_html
 
 FALLBACK_POSTER = "https://images.unsplash.com/photo-1485846234645-a62644f84728?q=80&w=600&auto=format&fit=crop"
+
 
 def render_movie_details_page():
     raw_movie_id = st.session_state.get("selected_movie_id")
@@ -36,12 +37,31 @@ def render_movie_details_page():
                 st.rerun()
             return
 
+    def _on_back_to_browse():
+        st.session_state.current_page = st.session_state.get("previous_page", "home")
+
+    def _on_wl_toggle_details(m_id):
+        wl = list(st.session_state.get("watchlist", []))
+        if m_id in wl:
+            wl.remove(m_id)
+        else:
+            wl.append(m_id)
+        st.session_state.watchlist = wl
+        user_store.save_watchlist(wl)
+
+    def _on_hide_toggle_details(m_id):
+        ni = set(st.session_state.get("not_interested", set()))
+        if m_id in ni:
+            ni.remove(m_id)
+        else:
+            ni.add(m_id)
+        st.session_state.not_interested = ni
+        user_store.save_not_interested(ni)
+
     # Back Navigation Button
     col_back, _ = st.columns([3, 7])
     with col_back:
-        if st.button("← Back to Browse", key="back_to_browse_btn"):
-            st.session_state.current_page = "home"
-            st.rerun()
+        st.button("← Back to Browse", key="back_to_browse_btn", on_click=_on_back_to_browse)
 
     st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
 
@@ -67,14 +87,11 @@ def render_movie_details_page():
     col_poster, col_info = st.columns([1, 2.2])
 
     with col_poster:
-        st.markdown(
-            textwrap.dedent(f"""
-            <div style="border-radius: 16px; overflow: hidden; border: 1.5px solid rgba(212, 175, 55, 0.4); box-shadow: 0 12px 32px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.15);">
-                <img src="{poster_url}" style="width: 100%; aspect-ratio: 2/3; object-fit: cover;" onerror="this.src='{FALLBACK_POSTER}';"/>
-            </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+        render_html(f"""
+        <div style="border-radius: 16px; overflow: hidden; border: 1.5px solid rgba(212, 175, 55, 0.4); box-shadow: 0 12px 32px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.15);">
+            <img src="{poster_url}" style="width: 100%; aspect-ratio: 2/3; object-fit: cover;" onerror="this.src='{FALLBACK_POSTER}';"/>
+        </div>
+        """)
 
     match_badge_html = f"""<span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid #f2ca50; padding: 3px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">✨ {affinity}% Vector Match</span>""" if affinity > 0 else ""
 
@@ -91,25 +108,22 @@ def render_movie_details_page():
     )
 
     with col_info:
-        st.markdown(
-            textwrap.dedent(f"""
-            <div style="{card_bg} border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
-                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
-                    {match_badge_html}
-                    <span style="background: #2a2a2c; color: #e5e1e4; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">⭐ {rating}/10</span>
-                    <span style="color: #99907c; font-size: 0.8rem;">• {year}</span>
-                    {runtime_pill}
-                    <span style="color: #99907c; font-size: 0.8rem;">• {movie.get('language', 'English')}</span>
-                </div>
-                <h1 style="font-family: 'Outfit'; font-size: 2.4rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0; line-height: 1.1;">{title}</h1>
-                <p style="font-size: 0.88rem; color: #e7c17c; font-weight: 600; margin-bottom: 1.25rem;">{genres}</p>
-                <h4 style="font-size: 0.85rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;">Logline & Overview</h4>
-                <p style="font-size: 0.95rem; color: #d0c5af; line-height: 1.6; margin-bottom: 1.5rem;">{overview}</p>
-                {meta_row}
+        render_html(f"""
+        <div style="{card_bg} border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+            <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                {match_badge_html}
+                <span style="background: #2a2a2c; color: #e5e1e4; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">⭐ {rating/2:.1f} / 5</span>
+                <span style="color: #99907c; font-size: 0.8rem;">• {year}</span>
+                {runtime_pill}
+                <span style="color: #99907c; font-size: 0.8rem;">• {movie.get('language', 'English')}</span>
             </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+            <h1 style="font-family: 'Outfit'; font-size: 2.4rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0; line-height: 1.1;">{title}</h1>
+            <p style="font-size: 0.88rem; color: #e7c17c; font-weight: 600; margin-bottom: 1.25rem;">{genres}</p>
+            <h4 style="font-size: 0.85rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;">Logline & Overview</h4>
+            <p style="font-size: 0.95rem; color: #d0c5af; line-height: 1.6; margin-bottom: 1.5rem;">{overview}</p>
+            {meta_row}
+        </div>
+        """)
 
         st.markdown("<div style='margin-top: 1rem;'></div>", unsafe_allow_html=True)
 
@@ -117,33 +131,53 @@ def render_movie_details_page():
 
         with col_w_btn:
             wl_label = "✓ In Watchlist" if in_watchlist else "+ Add to Watchlist"
-            css = "gold-btn" if in_watchlist else ""
-            if css: st.markdown(f'<div class="{css}">', unsafe_allow_html=True)
-            if st.button(wl_label, key=f"det_wl_{movie_id}", use_container_width=True):
-                if in_watchlist:
-                    watchlist.remove(movie_id)
-                else:
-                    watchlist.append(movie_id)
-                st.session_state.watchlist = watchlist
-                user_store.save_watchlist(watchlist)
-                st.rerun()
-            if css: st.markdown('</div>', unsafe_allow_html=True)
+            st.button(
+                wl_label,
+                key=f"det_wl_{movie_id}",
+                use_container_width=True,
+                type="primary" if in_watchlist else "secondary",
+                on_click=_on_wl_toggle_details,
+                args=(movie_id,)
+            )
 
             # Not Interested Toggle
             not_interested = set(st.session_state.get("not_interested", set()))
             is_hidden = movie_id in not_interested
             hide_label = "↩️ Restore to Picks" if is_hidden else "🚫 Not Interested"
             st.markdown("<div style='margin-top: 8px;'></div>", unsafe_allow_html=True)
-            if st.button(hide_label, key=f"det_hide_{movie_id}", use_container_width=True, help="Exclude this film from your personalized recommendations"):
-                if is_hidden:
-                    not_interested.remove(movie_id)
-                    st.toast(f"Restored '{title}' to recommendations", icon="↩️")
-                else:
-                    not_interested.add(movie_id)
-                    st.toast(f"Marked '{title}' as Not Interested. Excluded from recommendations.", icon="🚫")
-                st.session_state.not_interested = not_interested
-                user_store.save_not_interested(not_interested)
-                st.rerun()
+            st.button(
+                hide_label,
+                key=f"det_hide_{movie_id}",
+                use_container_width=True,
+                help="Exclude this film from your personalized recommendations",
+                on_click=_on_hide_toggle_details,
+                args=(movie_id,)
+            )
+
+        def _on_rate_slider_change(m_id):
+            new_val = st.session_state.get(f"user_rate_slider_{m_id}", 0.0)
+            cur_ratings = st.session_state.get("ratings", {}).copy()
+            if new_val > 0.0:
+                cur_ratings[m_id] = float(new_val)
+            else:
+                cur_ratings.pop(m_id, None)
+            st.session_state.ratings = cur_ratings
+            user_store.save_ratings(cur_ratings)
+
+        def _on_save_rating_click(m_id):
+            new_val = st.session_state.get(f"user_rate_slider_{m_id}", 0.0)
+            cur_ratings = st.session_state.get("ratings", {}).copy()
+            if new_val > 0.0:
+                cur_ratings[m_id] = float(new_val)
+                st.session_state.ratings = cur_ratings
+                user_store.save_ratings(cur_ratings)
+
+        def _on_del_rating_click(m_id):
+            cur_ratings = st.session_state.get("ratings", {}).copy()
+            cur_ratings.pop(m_id, None)
+            st.session_state.ratings = cur_ratings
+            user_store.save_ratings(cur_ratings)
+            st.session_state[f"user_rate_slider_{m_id}"] = 0.0
 
         with col_r_box:
             new_user_rating = st.slider(
@@ -153,47 +187,19 @@ def render_movie_details_page():
                 value=float(min(5.0, user_saved_rating)),
                 step=0.5,
                 key=f"user_rate_slider_{movie_id}",
-                format="⭐ %.1f / 5"
+                format="⭐ %.1f / 5",
+                on_change=_on_rate_slider_change,
+                args=(movie_id,)
             )
 
             col_sub1, col_sub2 = st.columns([1, 1])
             with col_sub1:
-                st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
-                if st.button("⭐ Save Rating", key=f"save_rate_btn_{movie_id}", use_container_width=True):
-                    if new_user_rating > 0.0:
-                        ratings_dict[movie_id] = float(new_user_rating)
-                        st.session_state.ratings = ratings_dict
-                        user_store.save_ratings(ratings_dict)
-                        st.toast(f"Saved rating {new_user_rating:.1f}/5 ⭐ for {title}!", icon="⭐")
-                        st.rerun()
-                st.markdown('</div>', unsafe_allow_html=True)
+                if st.button("⭐ Save Rating", key=f"save_rate_btn_{movie_id}", on_click=_on_save_rating_click, args=(movie_id,), use_container_width=True, type="primary"):
+                    st.toast(f"Saved rating for {title}!", icon="⭐")
             with col_sub2:
                 if user_saved_rating > 0.0:
-                    st.markdown('<div class="danger-btn">', unsafe_allow_html=True)
-                    if st.button("🗑️ Remove Rating", key=f"del_rate_btn_{movie_id}", use_container_width=True):
-                        if movie_id in ratings_dict:
-                            del ratings_dict[movie_id]
-                        st.session_state.ratings = ratings_dict
-                        user_store.save_ratings(ratings_dict)
+                    if st.button("🗑️ Remove Rating", key=f"del_rate_btn_{movie_id}", on_click=_on_del_rating_click, args=(movie_id,), use_container_width=True):
                         st.toast(f"Removed rating for {title}", icon="🗑️")
-                        st.rerun()
-                    st.markdown('</div>', unsafe_allow_html=True)
-
-            # Automatic save when slider is dragged/changed
-            if new_user_rating != user_saved_rating:
-                if new_user_rating == 0.0:
-                    if movie_id in ratings_dict:
-                        del ratings_dict[movie_id]
-                    st.session_state.ratings = ratings_dict
-                    user_store.save_ratings(ratings_dict)
-                    st.toast(f"Removed rating for {title}", icon="🗑️")
-                    st.rerun()
-                else:
-                    ratings_dict[movie_id] = float(new_user_rating)
-                    st.session_state.ratings = ratings_dict
-                    user_store.save_ratings(ratings_dict)
-                    st.toast(f"Saved rating {new_user_rating:.1f}/5 ⭐ for {title}!", icon="⭐")
-                    st.rerun()
 
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
 
@@ -219,7 +225,7 @@ def render_movie_details_page():
             for ref in breakdown["positive_references"][:2]:
                 shared = f" (Shared: {', '.join(ref['shared_genres'])})" if ref.get("shared_genres") else ""
                 ref_items.append(
-                    f"<li style='margin-bottom: 4px;'><strong>{ref['title']}</strong> — rated {ref['user_rating']:g}/10 "
+                    f"<li style='margin-bottom: 4px;'><strong>{ref['title']}</strong> — rated {ref['user_rating']:g}/5 "
                     f"<span style='color: #f2ca50;'>({int(ref['similarity']*100)}% content similarity)</span>{shared}</li>"
                 )
             cold_refs_html = f"""
@@ -236,29 +242,26 @@ def render_movie_details_page():
         narrative_source = breakdown.get("narrative") or legacy_reasons
         narrative_items = "".join([f"<li style='margin-bottom: 4px;'>{n}</li>" for n in narrative_source])
 
-        st.markdown(
-            textwrap.dedent(f"""
-            <div style="background: #1c1b1e; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 14px; padding: 1.5rem;">
-                <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 0.75rem;">
-                    <div style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; color: #f2ca50; display: flex; align-items: center; gap: 8px;">
-                        <span class="material-symbols-outlined" style="color: #f2ca50;">auto_awesome</span>
-                        <span>Why ReelSense Curates "{title}"</span>
-                    </div>
-                    <span style="background: rgba(242, 202, 80, 0.12); color: #f2ca50; border: 1px solid rgba(242, 202, 80, 0.3); padding: 3px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;">
-                        {breakdown.get('strength_label', 'Community Curated')}
-                    </span>
+        render_html(f"""
+        <div style="background: #1c1b1e; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 14px; padding: 1.5rem;">
+            <div style="display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 8px; margin-bottom: 0.75rem;">
+                <div style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; color: #f2ca50; display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined" style="color: #f2ca50;">auto_awesome</span>
+                    <span>Why ReelSense Curates "{title}"</span>
                 </div>
-                <div style="font-size: 0.86rem; color: #99907c; margin-bottom: 1rem; line-height: 1.5;">
-                    You are currently in <strong>Catalog Discovery mode</strong>. ReelSense grounds this recommendation in MovieLens community ratings, genre balance, and active catalog signals.
-                </div>
-                <ul style="margin: 0; padding-left: 1.25rem; color: #d0c5af; font-size: 0.88rem; line-height: 1.7;">
-                    {narrative_items}
-                </ul>
-                {cold_refs_html}
+                <span style="background: rgba(242, 202, 80, 0.12); color: #f2ca50; border: 1px solid rgba(242, 202, 80, 0.3); padding: 3px 10px; border-radius: 9999px; font-size: 0.72rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.06em;">
+                    {breakdown.get('strength_label', 'Community Curated')}
+                </span>
             </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+            <div style="font-size: 0.86rem; color: #99907c; margin-bottom: 1rem; line-height: 1.5;">
+                You are currently in <strong>Catalog Discovery mode</strong>. ReelSense grounds this recommendation in MovieLens community ratings, genre balance, and active catalog signals.
+            </div>
+            <ul style="margin: 0; padding-left: 1.25rem; color: #d0c5af; font-size: 0.88rem; line-height: 1.7;">
+                {narrative_items}
+            </ul>
+            {cold_refs_html}
+        </div>
+        """)
     else:
         c_pct = breakdown.get("content_match_pct", 0)
         t_pct = breakdown.get("taste_match_pct", 0)
@@ -279,7 +282,7 @@ def render_movie_details_page():
                 shared_str = f" · Shared: {', '.join(ref['shared_genres'])}" if ref.get("shared_genres") else ""
                 ref_list.append(
                     f"<div style='display: flex; justify-content: space-between; align-items: center; padding: 6px 0; border-bottom: 1px solid rgba(77, 70, 53, 0.2); font-size: 0.86rem;'>"
-                    f"  <span style='color: #e5e1e4; font-weight: 600;'>• {ref['title']} <span style='color: #99907c; font-weight: 400;'>({ref['user_rating']:g}/10){shared_str}</span></span>"
+                    f"  <span style='color: #e5e1e4; font-weight: 600;'>• {ref['title']} <span style='color: #99907c; font-weight: 400;'>({ref['user_rating']:g}/5){shared_str}</span></span>"
                     f"  <span style='font-family: monospace; color: #f2ca50; font-size: 0.82rem;'>{ref['similarity']:.2f} cosine sim</span>"
                     f"</div>"
                 )
@@ -309,95 +312,89 @@ def render_movie_details_page():
         narrative_source = breakdown.get("narrative") or legacy_reasons
         narrative_items = "".join([f"<li style='margin-bottom: 4px;'>{n}</li>" for n in narrative_source])
 
-        st.markdown(
-            textwrap.dedent(f"""
-            <div style="background: #1c1b1e; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 14px; padding: 1.5rem;">
-                <!-- Header -->
-                <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 0.5rem;">
-                    <div style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; color: #f2ca50; display: flex; align-items: center; gap: 8px;">
-                        <span class="material-symbols-outlined" style="color: #f2ca50;">insights</span>
-                        <span>Recommendation Breakdown: Why ReelSense Curates "{title}"</span>
-                    </div>
-                    <span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid rgba(242, 202, 80, 0.4); padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">
-                        Strength: {strength}
-                    </span>
+        render_html(f"""
+        <div style="background: #1c1b1e; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 14px; padding: 1.5rem;">
+            <!-- Header -->
+            <div style="display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 0.5rem;">
+                <div style="font-family: 'Outfit'; font-size: 1.25rem; font-weight: 700; color: #f2ca50; display: flex; align-items: center; gap: 8px;">
+                    <span class="material-symbols-outlined" style="color: #f2ca50;">insights</span>
+                    <span>Recommendation Breakdown: Why ReelSense Curates "{title}"</span>
                 </div>
-                <p style="font-size: 0.85rem; color: #99907c; margin: 0 0 1.25rem 0;">
-                    Transparent signals derived from your TF-IDF content profile, MovieLens collaborative SVD factor matrix, and rating history.
-                </p>
-
-                <!-- Signal Metrics Grid -->
-                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 1.25rem;">
-                    <!-- Content Match -->
-                    <div style="background: #141316; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 10px; padding: 1rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <span style="font-size: 0.74rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.06em;">Content Match</span>
-                            <span style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #f2ca50;">{c_pct}%</span>
-                        </div>
-                        <div style="font-family: monospace; color: #f2ca50; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 4px;">{c_bar}</div>
-                        <div style="font-size: 0.72rem; color: #99907c;">TF-IDF vector alignment</div>
-                    </div>
-
-                    <!-- Taste Match -->
-                    <div style="background: #141316; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 10px; padding: 1rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <span style="font-size: 0.74rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.06em;">Taste Alignment</span>
-                            <span style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #e7c17c;">{t_pct}%</span>
-                        </div>
-                        <div style="font-family: monospace; color: #e7c17c; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 4px;">{t_bar}</div>
-                        <div style="font-size: 0.72rem; color: #99907c;">Genre distribution affinity</div>
-                    </div>
-
-                    <!-- Collaborative Signal -->
-                    <div style="background: #141316; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 10px; padding: 1rem;">
-                        <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
-                            <span style="font-size: 0.74rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.06em;">Collaborative Signal</span>
-                            <span style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #d4af37;">{cl_pct}%</span>
-                        </div>
-                        <div style="font-family: monospace; color: #d4af37; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 4px;">{cl_bar}</div>
-                        <div style="font-size: 0.72rem; color: #99907c;">Similar viewer consensus</div>
-                    </div>
-                </div>
-
-                <!-- Mathematical Transparency Box -->
-                <div style="background: rgba(242, 202, 80, 0.06); border: 1px solid rgba(242, 202, 80, 0.25); border-radius: 8px; padding: 0.85rem 1rem; font-size: 0.84rem; color: #d0c5af; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem;">
-                    <div>
-                        <strong style="color: #f2ca50;">Score Breakdown:</strong>
-                        0.4 × Content ({c_contrib:.2f}) + 0.6 × Collaborative ({cl_contrib:.2f})
-                    </div>
-                    <div style="font-family: monospace; font-weight: 700; color: #f2ca50; font-size: 0.95rem;">
-                        Final Hybrid Score: {h_score:.2f}
-                    </div>
-                </div>
-
-                <ul style="margin: 0; padding-left: 1.25rem; color: #d0c5af; font-size: 0.88rem; line-height: 1.7;">
-                    {narrative_items}
-                </ul>
-
-                {refs_html}
-                {matches_html}
+                <span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid rgba(242, 202, 80, 0.4); padding: 4px 12px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">
+                    Strength: {strength}
+                </span>
             </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+            <p style="font-size: 0.85rem; color: #99907c; margin: 0 0 1.25rem 0;">
+                Transparent signals derived from your TF-IDF content profile, MovieLens collaborative SVD factor matrix, and rating history.
+            </p>
+
+            <!-- Signal Metrics Grid -->
+            <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(210px, 1fr)); gap: 12px; margin-bottom: 1.25rem;">
+                <!-- Content Match -->
+                <div style="background: #141316; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 10px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 0.74rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.06em;">Content Match</span>
+                        <span style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #f2ca50;">{c_pct}%</span>
+                    </div>
+                    <div style="font-family: monospace; color: #f2ca50; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 4px;">{c_bar}</div>
+                    <div style="font-size: 0.72rem; color: #99907c;">TF-IDF vector alignment</div>
+                </div>
+
+                <!-- Taste Match -->
+                <div style="background: #141316; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 10px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 0.74rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.06em;">Taste Alignment</span>
+                        <span style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #e7c17c;">{t_pct}%</span>
+                    </div>
+                    <div style="font-family: monospace; color: #e7c17c; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 4px;">{t_bar}</div>
+                    <div style="font-size: 0.72rem; color: #99907c;">Genre distribution affinity</div>
+                </div>
+
+                <!-- Collaborative Signal -->
+                <div style="background: #141316; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 10px; padding: 1rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
+                        <span style="font-size: 0.74rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.06em;">Collaborative Signal</span>
+                        <span style="font-family: monospace; font-size: 0.95rem; font-weight: 700; color: #d4af37;">{cl_pct}%</span>
+                    </div>
+                    <div style="font-family: monospace; color: #d4af37; font-size: 0.85rem; letter-spacing: 1px; margin-bottom: 4px;">{cl_bar}</div>
+                    <div style="font-size: 0.72rem; color: #99907c;">Similar viewer consensus</div>
+                </div>
+            </div>
+
+            <!-- Mathematical Transparency Box -->
+            <div style="background: rgba(242, 202, 80, 0.06); border: 1px solid rgba(242, 202, 80, 0.25); border-radius: 8px; padding: 0.85rem 1rem; font-size: 0.84rem; color: #d0c5af; display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 8px; margin-bottom: 1rem;">
+                <div>
+                    <strong style="color: #f2ca50;">Score Breakdown:</strong>
+                    0.4 × Content ({c_contrib:.2f}) + 0.6 × Collaborative ({cl_contrib:.2f})
+                </div>
+                <div style="font-family: monospace; font-weight: 700; color: #f2ca50; font-size: 0.95rem;">
+                    Final Hybrid Score: {h_score:.2f}
+                </div>
+            </div>
+
+            <ul style="margin: 0; padding-left: 1.25rem; color: #d0c5af; font-size: 0.88rem; line-height: 1.7;">
+                {narrative_items}
+            </ul>
+
+            {refs_html}
+            {matches_html}
+        </div>
+        """)
 
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
 
     # Similar Movies Grid
     similar_movies = RecommendationService.get_similar_movies(movie, limit=4)
-    st.markdown(
-        textwrap.dedent("""
-        <div style="margin-bottom: 1rem;">
-            <h3 style="font-family: 'Outfit'; font-size: 1.4rem; font-weight: 700; color: #e5e1e4; margin: 0;">
-                Thematic & Vector Similar Masterworks
-            </h3>
-            <p style="font-size: 0.85rem; color: #99907c; margin-top: 2px;">
-                Films sharing director aesthetic, color grading, and sonic mood profile.
-            </p>
-        </div>
-        """).strip(),
-        unsafe_allow_html=True
-    )
+    render_html("""
+    <div style="margin-bottom: 1rem;">
+        <h3 style="font-family: 'Outfit'; font-size: 1.4rem; font-weight: 700; color: #e5e1e4; margin: 0;">
+            Thematic & Vector Similar Masterworks
+        </h3>
+        <p style="font-size: 0.85rem; color: #99907c; margin-top: 2px;">
+            Films sharing director aesthetic, color grading, and sonic mood profile.
+        </p>
+    </div>
+    """)
 
     cols = st.columns(4)
     for idx, sim_m in enumerate(similar_movies):

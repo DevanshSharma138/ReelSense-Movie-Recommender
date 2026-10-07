@@ -2,7 +2,6 @@
 ReelSense - Home / Discover Page Module
 """
 
-import textwrap
 import streamlit as st
 from src.services.movie_service import MovieService
 from src.services.recommendation_service import RecommendationService
@@ -11,6 +10,8 @@ from src.components.movie_carousel import render_movie_carousel
 from src.components.trending_grid import render_trending_grid
 from src.components.mood_matrix import render_mood_matrix
 from src.components.onboarding_banner import render_onboarding_banner
+from src.utils.ui_helpers import render_html
+
 
 def render_home_page():
     # 0. First-Time User Onboarding Guide (< 3 ratings)
@@ -19,16 +20,13 @@ def render_home_page():
     user_ratings = st.session_state.get("ratings", {})
     n_ratings = len(user_ratings)
     if n_ratings >= 3:
-        st.markdown(
-            textwrap.dedent(f"""
-            <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 1rem;">
-                <span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid rgba(242, 202, 80, 0.35); padding: 4px 14px; border-radius: 9999px; font-size: 0.8rem; font-weight: 700;">
-                    ✨ Personalized Picks Active · {n_ratings} Ratings Calibrated
-                </span>
-            </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+        render_html(f"""
+        <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 1rem;">
+            <span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid rgba(242, 202, 80, 0.35); padding: 4px 14px; border-radius: 9999px; font-size: 0.8rem; font-weight: 700;">
+                ✨ Personalized Picks Active · {n_ratings} Ratings Calibrated
+            </span>
+        </div>
+        """)
 
     # 1. Featured Hero Spotlight Banner
     trending = RecommendationService.get_trending_movies(limit=5)
