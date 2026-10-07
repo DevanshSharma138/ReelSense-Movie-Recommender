@@ -3,6 +3,7 @@ ReelSense - Topbar Search & Profile Header Component
 Matching latest Stitch UI Reference (Obsidian & Champagne Gold)
 """
 
+import textwrap
 import streamlit as st
 
 AVATAR_URL = "https://lh3.googleusercontent.com/aida-public/AB6AXuDItCNg058KG_NwgrV_LcD7qYcVPOhnWFOfQ6LWrz2lfrMb--8qPyTxOXfkElVzVHJX8eUHS80vR64MpXgLH2t8qTigWUAtCu116fvl5Z1VZWxXB8ZMBmNSzd-lh3-UU18vv9rabJGTz4fdFNMuP1FHJwMXxy6i2TjGjiSZoTCJIhQAHO-tZFdtOp9IkHJ--vfIAn3LV3RNmjK9cd8ovQxEXfP1r5cDjBwAbxAzGzmixlUNdUqpJGJK"
@@ -44,23 +45,23 @@ def render_topbar():
 
     with col_notif:
         st.markdown(
-            """
+            textwrap.dedent("""
             <div style="position: relative; width: 38px; height: 38px; border-radius: 50%; background: #201f22; border: 1px solid rgba(77, 70, 53, 0.35); display: flex; align-items: center; justify-content: center; cursor: pointer; color: #d0c5af;" title="Notifications">
                 <span class="material-symbols-outlined" style="font-size: 18px;">notifications</span>
                 <span style="position: absolute; top: 4px; right: 4px; width: 8px; height: 8px; background: #f2ca50; border-radius: 50%; border: 2px solid #0e0e10;"></span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
 
     with col_user:
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div onclick="window.location.reload();" style="position: relative; width: 38px; height: 38px; border-radius: 50%; cursor: pointer;" title="Profile: {user_name}">
                 <img src="{AVATAR_URL}" alt="Profile" style="width: 38px; height: 38px; border-radius: 50%; object-fit: cover; border: 1.5px solid rgba(212, 175, 55, 0.5);" />
                 <span style="position: absolute; bottom: 0; right: 0; width: 9px; height: 9px; border-radius: 50%; background: #f2ca50; border: 2px solid #0e0e10;"></span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
 

@@ -3,6 +3,7 @@ ReelSense - Onboarding Banner Component (Phase 3)
 Lightweight, dismissible banner shown when the user has fewer than 3 ratings.
 Directs the user toward movies they can rate to unlock hybrid recommendations.
 """
+import textwrap
 import streamlit as st
 
 
@@ -25,7 +26,7 @@ def render_onboarding_banner():
 
     with col_content:
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div style="background: linear-gradient(135deg, rgba(32, 31, 34, 0.95), rgba(42, 40, 46, 0.95)); border: 1.5px solid rgba(242, 202, 80, 0.4); border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
                     <span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid rgba(242, 202, 80, 0.3); padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">
@@ -40,7 +41,7 @@ def render_onboarding_banner():
                     ReelSense blends TF-IDF content similarity with SVD collaborative filtering. Rate <strong>{needed} more film{plural}</strong> to activate your personalized neural recommendation vectors.
                 </p>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
 

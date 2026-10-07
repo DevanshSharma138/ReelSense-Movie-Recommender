@@ -2,6 +2,7 @@
 ReelSense - My Ratings Page Module
 """
 
+import textwrap
 import streamlit as st
 from src.services.movie_service import MovieService
 from src.services import user_store
@@ -10,7 +11,7 @@ FALLBACK_POSTER = "https://images.unsplash.com/photo-1485846234645-a62644f84728?
 
 def render_ratings_page():
     st.markdown(
-        """
+        textwrap.dedent("""
         <div class="mood-page-header">
             <div class="mood-spectrum-badge">
                 <span class="material-symbols-outlined" style="font-size: 16px;">star</span>
@@ -23,7 +24,7 @@ def render_ratings_page():
                 Manage your subjective evaluation scores to continuously calibrate ReelSense's neural embedding weights.
             </p>
         </div>
-        """,
+        """).strip(),
         unsafe_allow_html=True
     )
 
@@ -31,7 +32,7 @@ def render_ratings_page():
 
     if not ratings_dict:
         st.markdown(
-            """
+            textwrap.dedent("""
             <div style="background: #202020; border: 1px solid #363636; border-radius: 12px; padding: 3.5rem 1rem; text-align: center; margin-top: 1.5rem;">
                 <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">⭐</div>
                 <h3 style="font-size: 1.3rem; font-weight: 700; color: #F4EBDD; margin-bottom: 0.5rem;">No Rated Movies Yet</h3>
@@ -39,7 +40,7 @@ def render_ratings_page():
                     Rate films on their Details page to teach ReelSense what kind of cinema moves you.
                 </p>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
         col_c, _ = st.columns([3, 7])
@@ -75,13 +76,13 @@ def render_ratings_page():
 
         with col_info:
             st.markdown(
-                f"""
+                textwrap.dedent(f"""
                 <h3 style="font-size: 1.1rem; font-weight: 700; color: #F4EBDD; margin-bottom: 4px;">{movie['title']} ({movie['release_year']})</h3>
                 <p style="font-size: 0.8rem; color: #D6AD60; margin-bottom: 8px;">{", ".join(movie.get('genres', []))}</p>
                 <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #A0A0A0;">
                     <span>Global Rating: ⭐ {movie['rating']}/10</span>
                 </div>
-                """,
+                """).strip(),
                 unsafe_allow_html=True
             )
 

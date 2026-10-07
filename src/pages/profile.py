@@ -2,6 +2,7 @@
 ReelSense - My Profile Page Module
 """
 
+import textwrap
 import streamlit as st
 from src.config import DEFAULT_USER
 from src.services.movie_service import MovieService
@@ -9,7 +10,7 @@ from src.services import user_store
 
 def render_profile_page():
     st.markdown(
-        """
+        textwrap.dedent("""
         <div class="mood-page-header">
             <div class="mood-spectrum-badge">
                 <span class="material-symbols-outlined" style="font-size: 16px;">person</span>
@@ -22,7 +23,7 @@ def render_profile_page():
                 Configure your cinematic preferences and taste profile to calibrate personalized vector recommendations.
             </p>
         </div>
-        """,
+        """).strip(),
         unsafe_allow_html=True
     )
 
@@ -120,7 +121,7 @@ def render_profile_page():
     n_rated = len(ratings)
 
     st.markdown(
-        """
+        textwrap.dedent("""
         <div style="margin-bottom: 1rem;">
             <div style="font-size: 0.75rem; color: #f2ca50; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;">
                 Mathematical Aesthetic Signature
@@ -132,7 +133,7 @@ def render_profile_page():
                 Derived in real-time from your actual subjective film evaluations and MovieLens feature vectors.
             </p>
         </div>
-        """,
+        """).strip(),
         unsafe_allow_html=True
     )
 
@@ -140,7 +141,7 @@ def render_profile_page():
 
     if n_rated == 0:
         st.markdown(
-            """
+            textwrap.dedent("""
             <div style="text-align: center; padding: 2rem 1rem;">
                 <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📊</div>
                 <h4 style="font-size: 1.1rem; color: #e5e1e4; margin-bottom: 0.5rem;">No Evaluation Data Recorded Yet</h4>
@@ -148,7 +149,7 @@ def render_profile_page():
                     Rate 3 films across the catalog to generate your weighted genre preference distribution and activate hybrid collaborative filtering.
                 </p>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
         col_c, _ = st.columns([4, 6])
@@ -177,32 +178,32 @@ def render_profile_page():
         m1, m2, m3 = st.columns(3)
         with m1:
             st.markdown(
-                f"""
+                textwrap.dedent(f"""
                 <div style="background: #18171a; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 10px; padding: 1rem; text-align: center;">
                     <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Rated Titles</div>
                     <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #f2ca50; margin-top: 4px;">{n_rated}</div>
                 </div>
-                """,
+                """).strip(),
                 unsafe_allow_html=True
             )
         with m2:
             st.markdown(
-                f"""
+                textwrap.dedent(f"""
                 <div style="background: #18171a; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 10px; padding: 1rem; text-align: center;">
                     <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Mean Rating</div>
                     <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #f2ca50; margin-top: 4px;">⭐ {avg_rating:.1f}</div>
                 </div>
-                """,
+                """).strip(),
                 unsafe_allow_html=True
             )
         with m3:
             st.markdown(
-                f"""
+                textwrap.dedent(f"""
                 <div style="background: #18171a; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 10px; padding: 1rem; text-align: center;">
                     <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Dominant Genre</div>
                     <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #f2ca50; margin-top: 4px;">{top_genre}</div>
                 </div>
-                """,
+                """).strip(),
                 unsafe_allow_html=True
             )
 
@@ -219,7 +220,7 @@ def render_profile_page():
                 bar_chars = "█" * max(1, int(round((total_score / max_w) * 12)))
 
                 st.markdown(
-                    f"""
+                    textwrap.dedent(f"""
                     <div style="margin-bottom: 0.75rem;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <span style="font-weight: 600; color: #e5e1e4; font-size: 0.88rem;">{g} <span style="font-family: monospace; color: #f2ca50; font-size: 0.8rem; margin-left: 6px;">{bar_chars}</span></span>
@@ -229,7 +230,7 @@ def render_profile_page():
                             <div style="width: {pct}%; height: 100%; background: linear-gradient(90deg, #f2ca50, #d4af37);"></div>
                         </div>
                     </div>
-                    """,
+                    """).strip(),
                     unsafe_allow_html=True
                 )
 
@@ -244,7 +245,7 @@ def render_profile_page():
     n_hidden = len(not_interested_set)
 
     st.markdown(
-        f"""
+        textwrap.dedent(f"""
         <div style="margin-bottom: 1rem;">
             <div style="font-size: 0.75rem; color: #f2ca50; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;">
                 Negative Feedback Filter
@@ -256,7 +257,7 @@ def render_profile_page():
                 Films marked as "Not Interested" are strictly excluded from all personalized recommendations and carousels.
             </p>
         </div>
-        """,
+        """).strip(),
         unsafe_allow_html=True
     )
 
@@ -264,11 +265,11 @@ def render_profile_page():
 
     if n_hidden == 0:
         st.markdown(
-            """
+            textwrap.dedent("""
             <p style="color: #99907c; font-size: 0.88rem; margin: 0;">
                 No films are currently excluded. Click the <strong>🚫</strong> button on any movie card or details page to hide titles you don't wish to see.
             </p>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
     else:
@@ -281,12 +282,12 @@ def render_profile_page():
             col_info, col_act = st.columns([8, 2])
             with col_info:
                 st.markdown(
-                    f"""
+                    textwrap.dedent(f"""
                     <div style="padding: 6px 0;">
                         <span style="font-weight: 600; color: #e5e1e4; font-size: 0.9rem;">{h_title}</span>
                         <span style="color: #99907c; font-size: 0.8rem; margin-left: 6px;">({h_year}) · {h_genres}</span>
                     </div>
-                    """,
+                    """).strip(),
                     unsafe_allow_html=True
                 )
             with col_act:
@@ -305,4 +306,3 @@ def render_profile_page():
             st.rerun()
 
     st.markdown('</div>', unsafe_allow_html=True)
-

@@ -4,6 +4,7 @@ Aligned with latest Stitch UI Reference (Obsidian & Champagne Gold)
 """
 
 import sys
+import textwrap
 import streamlit as st
 from src.config import NAV_ITEMS
 
@@ -13,7 +14,7 @@ def render_sidebar():
     with st.sidebar:
         # Branding Header
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div class="reelsense-brand" onclick="window.location.reload();">
                 <img src="{LOGO_URL}" alt="ReelSense Logo" style="height: 32px; width: auto; object-fit: contain;" />
                 <div class="reelsense-brand-text">
@@ -21,7 +22,7 @@ def render_sidebar():
                     <div class="reelsense-brand-sub">Cinematic Curation</div>
                 </div>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
 
@@ -65,7 +66,7 @@ def render_sidebar():
         # Runtime Engine Status Panel
         py_ver = f"{sys.version_info.major}.{sys.version_info.minor}"
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div style="background: #2a2a2c; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 10px; padding: 0.85rem; display: flex; flex-direction: column; gap: 6px; box-shadow: 0 4px 14px rgba(0,0,0,0.4);">
                 <div style="display: flex; align-items: center; justify-content: space-between;">
                     <span style="font-size: 0.6875rem; color: #d0c5af; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">Runtime Engine</span>
@@ -89,6 +90,6 @@ def render_sidebar():
                 75%, 100% {{ transform: scale(2); opacity: 0; }}
             }}
             </style>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )

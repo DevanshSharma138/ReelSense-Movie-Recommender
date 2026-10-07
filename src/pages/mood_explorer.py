@@ -3,11 +3,22 @@ ReelSense - Mood Explorer: Sensory & Emotional Resonance
 Faithful implementation of latest Stitch UI Reference (screen.png & code.html)
 """
 
+import textwrap
 import streamlit as st
 from src.config import MOODS
 from src.services.movie_service import MovieService
 from src.services.recommendation_service import RecommendationService
 from src.services import user_store
+from src.components.movie_card import render_movie_card
+
+MOOD_EMOJIS = {
+    "Mind-blown": "🌀",
+    "Heartwarming": "☀️",
+    "Adrenaline": "⚡",
+    "Chilling": "❄️",
+    "Melancholy": "🌧️",
+    "Thought-provoking": "🧘",
+}
 
 GENRE_OPTIONS = ["Surrealism", "Cyberpunk", "Mystery", "Drama", "Thriller", "Romance"]
 
@@ -32,7 +43,7 @@ def render_mood_explorer_page():
     # PAGE HEADER
     # ---------------------------------------------------------
     st.markdown(
-        f"""
+        textwrap.dedent(f"""
         <div class="mood-page-header">
             <div class="mood-spectrum-badge">
                 <span class="material-symbols-outlined" style="font-size: 16px;">tune</span>
@@ -45,7 +56,7 @@ def render_mood_explorer_page():
                 Choose the exact emotional texture you want to experience tonight. ReelSense maps emotional vectors directly to cinematic compositions, tempo signatures, and color grading palettes.
             </p>
         </div>
-        """,
+        """).strip(),
         unsafe_allow_html=True
     )
 
@@ -61,7 +72,7 @@ def render_mood_explorer_page():
     c1, c2, c3, c4 = st.columns(4)
     with c1:
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div class="stat-card">
                 <div>
                     <div class="stat-card-label">Acoustic Vector</div>
@@ -69,12 +80,12 @@ def render_mood_explorer_page():
                 </div>
                 <span class="material-symbols-outlined" style="color: #e7c17c; font-size: 24px;">graphic_eq</span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
     with c2:
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div class="stat-card">
                 <div>
                     <div class="stat-card-label">Luminance Bias</div>
@@ -82,12 +93,12 @@ def render_mood_explorer_page():
                 </div>
                 <span class="material-symbols-outlined" style="color: #e7c17c; font-size: 24px;">contrast</span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
     with c3:
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div class="stat-card">
                 <div>
                     <div class="stat-card-label">Pacing Ratio</div>
@@ -95,12 +106,12 @@ def render_mood_explorer_page():
                 </div>
                 <span class="material-symbols-outlined" style="color: #e7c17c; font-size: 24px;">speed</span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
     with c4:
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div class="stat-card">
                 <div>
                     <div class="stat-card-label">Curated Matches</div>
@@ -108,7 +119,7 @@ def render_mood_explorer_page():
                 </div>
                 <span class="material-symbols-outlined" style="color: #f2ca50; font-size: 24px;">auto_awesome</span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
 
@@ -120,25 +131,25 @@ def render_mood_explorer_page():
     col_label, col_badge = st.columns([8, 4])
     with col_label:
         st.markdown(
-            """
+            textwrap.dedent("""
             <div style="display: flex; align-items: center; gap: 8px;">
                 <span style="font-size: 0.95rem; font-weight: 700; color: #e5e1e4; text-transform: uppercase; letter-spacing: 0.08em;">
                     1. Select Dominant Sensory State
                 </span>
                 <span style="font-size: 0.85rem; color: #99907c;">(Single selection required)</span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
     with col_badge:
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div style="display: flex; justify-content: flex-end;">
                 <span style="background: rgba(242, 202, 80, 0.12); color: #f2ca50; border-radius: 9999px; padding: 4px 14px; font-size: 0.8rem; font-weight: 700;">
                     Active Mood: <strong>{selected_mood_id}</strong>
                 </span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
 
@@ -152,6 +163,8 @@ def render_mood_explorer_page():
             m_id = m["id"]
             is_active = (m_id == selected_mood_id)
             card_class = "sensory-card active" if is_active else "sensory-card"
+            m_emoji = MOOD_EMOJIS.get(m_id, "🎬")
+            m_icon = m.get("icon", "movie")
 
             with cols[idx]:
                 check_html = """
@@ -161,13 +174,14 @@ def render_mood_explorer_page():
                 """ if is_active else '<div style="width: 26px; height: 26px;"></div>'
 
                 st.markdown(
-                    f"""
+                    textwrap.dedent(f"""
                     <div class="{card_class}">
                         <div>
                             <div class="sensory-card-header">
                                 <div style="display: flex; align-items: center; gap: 12px;">
                                     <div class="sensory-icon-box">
-                                        <span class="material-symbols-outlined" style="font-size: 26px;">{m['icon']}</span>
+                                        <span class="material-symbols-outlined" style="font-size: 24px;">{m_icon}</span>
+                                        <span style="font-size: 18px; margin-left: 2px;">{m_emoji}</span>
                                     </div>
                                     <div>
                                         <div class="sensory-tier">{m['tier']}</div>
@@ -189,14 +203,14 @@ def render_mood_explorer_page():
                             <span class="sensory-freq">{RecommendationService.get_mood_count(m_id):,} Curated Films</span>
                         </div>
                     </div>
-                    """,
+                    """).strip(),
                     unsafe_allow_html=True
                 )
                 
                 # Selection Button
                 btn_text = f"● Active: {m['label']}" if is_active else f"Select {m['label']}"
                 if is_active:
-                    st.markdown(f'<div class="gold-btn" style="margin-top: 6px; margin-bottom: 1.5rem;">', unsafe_allow_html=True)
+                    st.markdown('<div class="gold-btn" style="margin-top: 6px; margin-bottom: 1.5rem;">', unsafe_allow_html=True)
                     st.button(btn_text, key=f"btn_mood_{m_id}", use_container_width=True, disabled=True)
                     st.markdown('</div>', unsafe_allow_html=True)
                 else:
@@ -214,14 +228,14 @@ def render_mood_explorer_page():
     col_t1, col_t2 = st.columns([8, 4])
     with col_t1:
         st.markdown(
-            """
+            textwrap.dedent("""
             <div style="display: flex; align-items: center; gap: 8px;">
                 <span class="material-symbols-outlined" style="color: #f2ca50; font-size: 20px;">filter_alt</span>
                 <span style="font-size: 0.95rem; font-weight: 700; color: #e5e1e4; text-transform: uppercase; letter-spacing: 0.08em;">
                     2. Calibration & Genre Vectors
                 </span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
     with col_t2:
@@ -264,7 +278,7 @@ def render_mood_explorer_page():
     with col_slider:
         current_slider_val = st.session_state.mood_min_rating
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 6px;">
                 <span style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; font-weight: 700;">Minimum Critical Score</span>
                 <span style="font-size: 0.88rem; color: #f2ca50; font-weight: 800; display: flex; align-items: center; gap: 4px;">
@@ -272,7 +286,7 @@ def render_mood_explorer_page():
                     {current_slider_val:.1f}★
                 </span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
         slider_val = st.slider(
@@ -293,12 +307,12 @@ def render_mood_explorer_page():
     c_status, c_find = st.columns([8, 4])
     with c_status:
         st.markdown(
-            """
+            textwrap.dedent("""
             <div style="display: flex; align-items: center; gap: 8px; color: #d0c5af; font-size: 0.85rem; height: 100%; padding-top: 8px;">
                 <span class="material-symbols-outlined" style="color: #f2ca50; font-size: 18px;">psychology_alt</span>
                 <span>Sense Neural Filter ready for recalculation</span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
     with c_find:
@@ -342,7 +356,7 @@ def render_mood_explorer_page():
     col_res_title, col_res_sort = st.columns([7, 5])
     with col_res_title:
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div>
                 <div style="display: flex; align-items: center; gap: 6px; margin-bottom: 2px;">
                     <span style="width: 8px; height: 8px; border-radius: 50%; background: #f2ca50; display: inline-block;"></span>
@@ -352,16 +366,16 @@ def render_mood_explorer_page():
                     Matches for <span style="color: #f2ca50; font-style: italic;">{selected_mood_id}</span> Resonance
                 </h2>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
     with col_res_sort:
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div style="display: flex; justify-content: flex-end; align-items: center; gap: 12px; height: 100%;">
                 <span style="font-size: 0.8rem; color: #99907c;">{len(results_to_display)} Curated Screenings Found</span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
         c_s1, c_s2 = st.columns(2)
@@ -384,70 +398,18 @@ def render_mood_explorer_page():
 
     st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
 
-    # 4 Film Cards Grid
-    grid_cols = st.columns(4)
+    # 4 Film Cards Grid (Reusing consistent movie card component with poster fallbacks & actions)
+    grid_cols = st.columns(len(results_to_display) if results_to_display else 1)
     for idx, movie in enumerate(results_to_display):
-        m_id = movie["id"]
-        title = movie["title"]
-        rating = movie.get("rating", 8.8)
-        affinity = movie.get("mood_affinity", movie.get("vector_match", 95))
-        runtime = movie.get("runtime", "2h 00m")
-        director = movie.get("director", "Cinema Masterwork")
-        overview = movie.get("overview", "")
-        genres = movie.get("genres", ["Drama", "Mystery"])
-        genre_str = " / ".join(genres[:2])
-        poster_url = movie.get("poster_url", "")
-
         with grid_cols[idx]:
-            st.markdown(
-                f"""
-                <div class="film-card">
-                    <div class="film-poster-container">
-                        <img src="{poster_url}" class="film-poster-img" alt="{title}" />
-                        <div class="film-badge-affinity">
-                            <span style="width: 6px; height: 6px; border-radius: 50%; background: #f2ca50; display: inline-block;"></span>
-                            <span>{affinity}% Mood Affinity</span>
-                        </div>
-                        <div class="film-badge-rating">
-                            <span class="material-symbols-outlined" style="font-size: 14px; color: #f2ca50;">star</span>
-                            <span>{rating:.1f}</span>
-                        </div>
-                        <div class="film-poster-meta-bottom">
-                            <span class="film-runtime-pill">{runtime}</span>
-                            <span class="film-genre-text">{genre_str}</span>
-                        </div>
-                    </div>
-                    <div class="film-card-content">
-                        <div>
-                            <h3 class="film-title">{title}</h3>
-                            <p class="film-overview">{overview}</p>
-                        </div>
-                        <div class="film-footer-row">
-                            <div style="display: flex; align-items: center; gap: 4px; color: #99907c;">
-                                <span class="material-symbols-outlined" style="font-size: 16px;">person</span>
-                                <span>{director}</span>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-                """,
-                unsafe_allow_html=True
-            )
-            
-            # Interactive Inspect Trigger
-            st.markdown('<div class="gold-btn" style="margin-top: 6px;">', unsafe_allow_html=True)
-            if st.button(f"Inspect {title[:16]} →", key=f"inspect_film_{m_id}_{idx}", use_container_width=True):
-                st.session_state.selected_movie_id = m_id
-                st.session_state.current_page = "movie_details"
-                st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
+            render_movie_card(movie, key_prefix=f"mood_film_{movie['id']}_{idx}")
 
     # ---------------------------------------------------------
     # 4. CURATION RATIONALE FOOTER
     # ---------------------------------------------------------
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
     st.markdown(
-        """
+        textwrap.dedent("""
         <div class="rationale-box">
             <div style="display: flex; align-items: center; gap: 16px; flex: 1; min-width: 320px;">
                 <div class="rationale-icon">
@@ -460,7 +422,7 @@ def render_mood_explorer_page():
                     </p>
                 </div>
             </div>
-        """,
+        """).strip(),
         unsafe_allow_html=True
     )
 

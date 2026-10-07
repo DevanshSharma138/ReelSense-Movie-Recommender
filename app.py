@@ -28,7 +28,15 @@ st.set_page_config(
     initial_sidebar_state="expanded"
 )
 
-# 2. Inject Custom Stylesheet
+# 2. Inject Google Fonts & Custom Stylesheet
+st.markdown(
+    """
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;500;600;700;800&family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200&display=swap" rel="stylesheet">
+    """,
+    unsafe_allow_html=True
+)
 CSS_PATH = os.path.join(os.path.dirname(__file__), "assets", "styles.css")
 if os.path.exists(CSS_PATH):
     with open(CSS_PATH, "r", encoding="utf-8") as f:

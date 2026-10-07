@@ -2,6 +2,7 @@
 ReelSense - Discover Page Module
 """
 
+import textwrap
 import streamlit as st
 from src.services.movie_service import MovieService
 from src.components.movie_card import render_movie_card
@@ -9,7 +10,7 @@ from src.components.onboarding_banner import render_onboarding_banner
 
 def render_discover_page():
     st.markdown(
-        """
+        textwrap.dedent("""
         <div class="mood-page-header">
             <div class="mood-spectrum-badge">
                 <span class="material-symbols-outlined" style="font-size: 16px;">explore</span>
@@ -22,7 +23,7 @@ def render_discover_page():
                 Explore the complete ReelSense master library. Calibrate by cinematographic genre, release era, director aesthetic, and critical acclaim.
             </p>
         </div>
-        """,
+        """).strip(),
         unsafe_allow_html=True
     )
 
@@ -115,12 +116,12 @@ def render_discover_page():
     # Result Header Count
     count = len(filtered_movies)
     st.markdown(
-        f"""
+        textwrap.dedent(f"""
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
             <span style="font-size: 1rem; font-weight: 700; color: #F4EBDD;">Showing {count} Movies</span>
             <span style="font-size: 0.8rem; color: #A0A0A0;">Sorted by: {sort_by}</span>
         </div>
-        """,
+        """).strip(),
         unsafe_allow_html=True
     )
 
@@ -137,13 +138,13 @@ def render_discover_page():
             st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
     else:
         st.markdown(
-            """
+            textwrap.dedent("""
             <div style="background: #202020; border: 1px solid #363636; border-radius: 12px; padding: 3rem 1rem; text-align: center; margin-top: 1rem;">
                 <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎬</div>
                 <h3 style="font-size: 1.2rem; font-weight: 700; color: #F4EBDD; margin-bottom: 0.5rem;">No Matching Movies Found</h3>
                 <p style="font-size: 0.85rem; color: #A0A0A0; margin-bottom: 1.5rem;">Try adjusting your search keywords, lowering the minimum rating, or clearing your genre filters.</p>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
         col_c, _ = st.columns([3, 7])

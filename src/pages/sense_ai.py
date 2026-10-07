@@ -3,6 +3,7 @@ ReelSense - Sense AI Engine Page Module
 Natural language prompt-based vector discovery engine
 """
 
+import textwrap
 import streamlit as st
 from src.services.recommendation_service import RecommendationService
 from src.components.movie_card import render_movie_card
@@ -24,7 +25,7 @@ def render_sense_ai_page():
 
     with tab_search:
         st.markdown(
-            """
+            textwrap.dedent("""
             <div class="mood-page-header">
                 <div class="mood-spectrum-badge">
                     <span class="material-symbols-outlined" style="font-size: 16px;">psychology</span>
@@ -37,7 +38,7 @@ def render_sense_ai_page():
                     Describe a mood, theme, genre, or vibe (e.g., <em>emotional drama</em>, <em>slow sci-fi</em>, <em>funny movie</em>). ReelSense matches your prompt against plot summaries, genres, and movie tags using TF-IDF feature vectors and cosine similarity.
                 </p>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
 
@@ -79,7 +80,7 @@ def render_sense_ai_page():
         matched_movies = [m for m in raw_matched if m["id"] not in hidden_ids][:12]
 
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div style="display: flex; align-items: center; justify-content: space-between; margin-bottom: 1rem;">
                 <div>
                     <h3 style="font-family: 'Outfit'; font-size: 1.3rem; font-weight: 700; color: #e5e1e4; margin: 0;">
@@ -90,7 +91,7 @@ def render_sense_ai_page():
                     </p>
                 </div>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
 

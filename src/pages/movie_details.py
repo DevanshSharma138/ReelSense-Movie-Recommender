@@ -3,6 +3,7 @@ ReelSense - Movie Details Page Module
 Matching latest Stitch UI Reference (Obsidian & Champagne Gold)
 """
 
+import textwrap
 import streamlit as st
 from src.services.movie_service import MovieService
 from src.services.recommendation_service import RecommendationService
@@ -66,11 +67,11 @@ def render_movie_details_page():
 
     with col_poster:
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div style="border-radius: 16px; overflow: hidden; border: 1.5px solid rgba(212, 175, 55, 0.4); box-shadow: 0 12px 32px rgba(0,0,0,0.7), 0 0 20px rgba(212,175,55,0.15);">
                 <img src="{poster_url}" style="width: 100%; aspect-ratio: 2/3; object-fit: cover;" onerror="this.src='{FALLBACK_POSTER}';"/>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
 
@@ -83,20 +84,22 @@ def render_movie_details_page():
 
     with col_info:
         st.markdown(
-            f"""<div style="background: #201f22; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
-<div style="display: flex; gap: 8px; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
-{match_badge_html}
-<span style="background: #2a2a2c; color: #e5e1e4; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">⭐ {rating}/10</span>
-<span style="color: #99907c; font-size: 0.8rem;">• {year}</span>
-{runtime_pill}
-<span style="color: #99907c; font-size: 0.8rem;">• {movie.get('language', 'English')}</span>
-</div>
-<h1 style="font-family: 'Outfit'; font-size: 2.4rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0; line-height: 1.1;">{title}</h1>
-<p style="font-size: 0.88rem; color: #e7c17c; font-weight: 600; margin-bottom: 1.25rem;">{genres}</p>
-<h4 style="font-size: 0.85rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;">Logline & Overview</h4>
-<p style="font-size: 0.95rem; color: #d0c5af; line-height: 1.6; margin-bottom: 1.5rem;">{overview}</p>
-{meta_row}
-</div>""",
+            textwrap.dedent(f"""
+            <div style="background: #201f22; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+                <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
+                    {match_badge_html}
+                    <span style="background: #2a2a2c; color: #e5e1e4; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">⭐ {rating}/10</span>
+                    <span style="color: #99907c; font-size: 0.8rem;">• {year}</span>
+                    {runtime_pill}
+                    <span style="color: #99907c; font-size: 0.8rem;">• {movie.get('language', 'English')}</span>
+                </div>
+                <h1 style="font-family: 'Outfit'; font-size: 2.4rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0; line-height: 1.1;">{title}</h1>
+                <p style="font-size: 0.88rem; color: #e7c17c; font-weight: 600; margin-bottom: 1.25rem;">{genres}</p>
+                <h4 style="font-size: 0.85rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.4rem;">Logline & Overview</h4>
+                <p style="font-size: 0.95rem; color: #d0c5af; line-height: 1.6; margin-bottom: 1.5rem;">{overview}</p>
+                {meta_row}
+            </div>
+            """).strip(),
             unsafe_allow_html=True
         )
 
@@ -186,7 +189,7 @@ def render_movie_details_page():
     user_ratings = st.session_state.get("ratings", {})
     reasons = RecommendationService.get_recommendation_explanation(movie, user_ratings=user_ratings)
     st.markdown(
-        f"""
+        textwrap.dedent(f"""
         <div style="background: #1c1b1e; border: 1px solid rgba(77, 70, 53, 0.3); border-radius: 14px; padding: 1.5rem;">
             <div style="font-family: 'Outfit'; font-size: 1.15rem; font-weight: 700; color: #f2ca50; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 8px;">
                 <span class="material-symbols-outlined" style="color: #f2ca50;">auto_awesome</span>
@@ -196,7 +199,7 @@ def render_movie_details_page():
                 {"".join([f'<li>{r}</li>' for r in reasons])}
             </ul>
         </div>
-        """,
+        """).strip(),
         unsafe_allow_html=True
     )
 
@@ -205,7 +208,7 @@ def render_movie_details_page():
     # Similar Movies Grid
     similar_movies = RecommendationService.get_similar_movies(movie, limit=4)
     st.markdown(
-        f"""
+        textwrap.dedent("""
         <div style="margin-bottom: 1rem;">
             <h3 style="font-family: 'Outfit'; font-size: 1.4rem; font-weight: 700; color: #e5e1e4; margin: 0;">
                 Thematic & Vector Similar Masterworks
@@ -214,7 +217,7 @@ def render_movie_details_page():
                 Films sharing director aesthetic, color grading, and sonic mood profile.
             </p>
         </div>
-        """,
+        """).strip(),
         unsafe_allow_html=True
     )
 

@@ -2,6 +2,7 @@
 ReelSense - My Watchlist Page Module
 """
 
+import textwrap
 import streamlit as st
 from src.services.movie_service import MovieService
 from src.services import user_store
@@ -9,7 +10,7 @@ from src.components.movie_card import render_movie_card
 
 def render_watchlist_page():
     st.markdown(
-        """
+        textwrap.dedent("""
         <div class="mood-page-header">
             <div class="mood-spectrum-badge">
                 <span class="material-symbols-outlined" style="font-size: 16px;">bookmark</span>
@@ -22,7 +23,7 @@ def render_watchlist_page():
                 Your private theater collection of calibrated cinematic experiences, saved rails, and bookmarked masterworks.
             </p>
         </div>
-        """,
+        """).strip(),
         unsafe_allow_html=True
     )
 
@@ -31,7 +32,7 @@ def render_watchlist_page():
 
     if not saved_movies:
         st.markdown(
-            """
+            textwrap.dedent("""
             <div style="background: #202020; border: 1px solid #363636; border-radius: 12px; padding: 3.5rem 1rem; text-align: center; margin-top: 1.5rem;">
                 <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">🔖</div>
                 <h3 style="font-size: 1.3rem; font-weight: 700; color: #F4EBDD; margin-bottom: 0.5rem;">Your Watchlist is Empty</h3>
@@ -39,7 +40,7 @@ def render_watchlist_page():
                     Bookmark movies across Home, Discover, and Mood Explorer to save them directly to your personal watchlist.
                 </p>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
         col_c, _ = st.columns([3, 7])
