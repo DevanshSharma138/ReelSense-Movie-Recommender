@@ -2,6 +2,7 @@
 ReelSense - Home / Discover Page Module
 """
 
+import textwrap
 import streamlit as st
 from src.services.movie_service import MovieService
 from src.services.recommendation_service import RecommendationService
@@ -19,13 +20,13 @@ def render_home_page():
     n_ratings = len(user_ratings)
     if n_ratings >= 3:
         st.markdown(
-            f"""
+            textwrap.dedent(f"""
             <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 1rem;">
                 <span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid rgba(242, 202, 80, 0.35); padding: 4px 14px; border-radius: 9999px; font-size: 0.8rem; font-weight: 700;">
                     ✨ Personalized Picks Active · {n_ratings} Ratings Calibrated
                 </span>
             </div>
-            """,
+            """).strip(),
             unsafe_allow_html=True
         )
 

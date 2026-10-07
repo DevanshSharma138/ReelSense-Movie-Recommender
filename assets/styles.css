@@ -687,3 +687,205 @@ div[data-testid="stButton"] > button:hover {
     border-color: var(--primary-gold) !important;
     box-shadow: 0 0 0 1px var(--primary-gold) !important;
 }
+
+/* -------------------------------------------------------------
+   STREAMLIT COMPONENT THEMING (TABS, EXPANDERS, SELECTBOX)
+------------------------------------------------------------- */
+
+/* Streamlit Tabs */
+[data-baseweb="tab-list"] {
+    background-color: transparent !important;
+    border-bottom: 1px solid rgba(77, 70, 53, 0.3) !important;
+    gap: 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+}
+[data-baseweb="tab"] {
+    background-color: transparent !important;
+    color: var(--text-outline) !important;
+    font-family: var(--font-display) !important;
+    font-size: 0.95rem !important;
+    font-weight: 600 !important;
+    padding: 0.75rem 0.25rem !important;
+    border: none !important;
+    transition: all 0.2s ease !important;
+}
+[data-baseweb="tab"]:hover {
+    color: var(--text-on-surface) !important;
+}
+[data-baseweb="tab"][aria-selected="true"] {
+    color: var(--primary-gold) !important;
+    border-bottom: 2px solid var(--primary-gold) !important;
+    font-weight: 700 !important;
+}
+[data-baseweb="tab-highlight"] {
+    background-color: var(--primary-gold) !important;
+}
+
+/* Streamlit Expanders */
+[data-testid="stExpander"] {
+    background-color: var(--bg-surface-low) !important;
+    border: 1px solid rgba(77, 70, 53, 0.35) !important;
+    border-radius: 12px !important;
+    margin-bottom: 1.25rem !important;
+    overflow: hidden;
+    box-shadow: 0 4px 16px rgba(0, 0, 0, 0.35);
+}
+[data-testid="stExpander"] details summary {
+    font-family: var(--font-display) !important;
+    font-weight: 600 !important;
+    color: var(--text-on-surface) !important;
+    padding: 0.85rem 1.25rem !important;
+}
+[data-testid="stExpander"] details summary:hover {
+    color: var(--primary-gold) !important;
+}
+[data-testid="stExpander"] [data-testid="stExpanderDetails"] {
+    padding: 1rem 1.25rem !important;
+    border-top: 1px solid rgba(77, 70, 53, 0.2) !important;
+}
+
+/* Streamlit Selectbox and Multiselect */
+[data-baseweb="select"] > div {
+    background-color: var(--bg-surface-container) !important;
+    border: 1px solid rgba(77, 70, 53, 0.4) !important;
+    border-radius: 8px !important;
+    color: var(--text-on-surface) !important;
+}
+[data-baseweb="select"] > div:hover {
+    border-color: rgba(212, 175, 55, 0.6) !important;
+}
+[data-baseweb="select"] [data-baseweb="tag"] {
+    background-color: var(--bg-surface-high) !important;
+    border: 1px solid rgba(212, 175, 55, 0.35) !important;
+    color: var(--primary-gold) !important;
+    border-radius: 6px !important;
+}
+[data-baseweb="popover"], [data-baseweb="menu"] {
+    background-color: var(--bg-surface-container) !important;
+    border: 1px solid rgba(77, 70, 53, 0.4) !important;
+    box-shadow: 0 8px 32px rgba(0, 0, 0, 0.8) !important;
+}
+[data-baseweb="menu"] li {
+    color: var(--text-on-surface) !important;
+}
+[data-baseweb="menu"] li:hover, [data-baseweb="menu"] li[aria-selected="true"] {
+    background-color: var(--bg-surface-high) !important;
+    color: var(--primary-gold) !important;
+}
+
+/* Destructive / Danger Button */
+.danger-btn > button {
+    background-color: rgba(180, 40, 40, 0.15) !important;
+    color: #ff8585 !important;
+    border: 1px solid rgba(220, 53, 69, 0.45) !important;
+    border-radius: 9999px !important;
+    font-weight: 600 !important;
+    font-size: 0.85rem !important;
+    padding: 0.45rem 1rem !important;
+    transition: all 0.2s ease !important;
+}
+.danger-btn > button:hover {
+    background-color: rgba(220, 53, 69, 0.3) !important;
+    border-color: #ff5252 !important;
+    color: #ffffff !important;
+    box-shadow: 0 0 16px rgba(220, 53, 69, 0.35) !important;
+}
+
+/* Evaluation Benchmark Table */
+.eval-table-container {
+    overflow-x: auto;
+    margin: 1.25rem 0;
+    border-radius: 12px;
+    border: 1px solid rgba(77, 70, 53, 0.35);
+    background: var(--bg-surface-container);
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
+}
+.eval-table {
+    width: 100%;
+    border-collapse: collapse;
+    font-size: 0.875rem;
+    color: var(--text-on-surface);
+    text-align: left;
+}
+.eval-table th {
+    background: var(--bg-surface-high);
+    color: var(--primary-gold);
+    font-family: var(--font-display);
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(77, 70, 53, 0.4);
+    white-space: nowrap;
+}
+.eval-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid rgba(77, 70, 53, 0.2);
+    white-space: nowrap;
+}
+.eval-table tr:last-child td {
+    border-bottom: none;
+}
+.eval-table tr:hover td {
+    background: rgba(242, 202, 80, 0.04);
+}
+.eval-table tr.highlight td {
+    background: rgba(242, 202, 80, 0.08);
+    font-weight: 600;
+    color: var(--primary-gold);
+}
+
+/* Keyboard Accessible Focus States */
+button:focus-visible, input:focus-visible, select:focus-visible {
+    outline: 2px solid var(--primary-gold) !important;
+    outline-offset: 2px !important;
+}
+
+/* -------------------------------------------------------------
+   RESPONSIVENESS & MOBILE LAYOUT POLISH
+------------------------------------------------------------- */
+@media (max-width: 992px) {
+    .main .block-container {
+        padding-left: 1.5rem !important;
+        padding-right: 1.5rem !important;
+    }
+    .mood-page-title {
+        font-size: 1.8rem;
+    }
+    .rationale-box {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+}
+
+@media (max-width: 768px) {
+    .main .block-container {
+        padding-left: 1rem !important;
+        padding-right: 1rem !important;
+        padding-top: 1rem !important;
+    }
+    .mood-page-title {
+        font-size: 1.5rem;
+    }
+    .stat-card {
+        padding: 0.75rem 1rem;
+    }
+    .stat-card-val {
+        font-size: 1rem;
+    }
+    .sensory-card {
+        min-height: auto;
+        padding: 1rem;
+    }
+    .topbar-container {
+        padding: 0.4rem 0.2rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .film-title {
+        font-size: 0.95rem;
+    }
+    .reelsense-brand-title {
+        font-size: 1.2rem;
+    }
+}

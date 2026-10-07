@@ -150,6 +150,7 @@ def render_movie_details_page():
 
             col_sub1, col_sub2 = st.columns([1, 1])
             with col_sub1:
+                st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
                 if st.button("⭐ Save Rating", key=f"save_rate_btn_{movie_id}", use_container_width=True):
                     if new_user_rating > 0.0:
                         ratings_dict[movie_id] = float(new_user_rating)
@@ -157,8 +158,10 @@ def render_movie_details_page():
                         user_store.save_ratings(ratings_dict)
                         st.toast(f"Saved rating {new_user_rating}⭐ for {title}!", icon="⭐")
                         st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
             with col_sub2:
                 if user_saved_rating > 0.0:
+                    st.markdown('<div class="danger-btn">', unsafe_allow_html=True)
                     if st.button("🗑️ Remove Rating", key=f"del_rate_btn_{movie_id}", use_container_width=True):
                         if movie_id in ratings_dict:
                             del ratings_dict[movie_id]
@@ -166,6 +169,7 @@ def render_movie_details_page():
                         user_store.save_ratings(ratings_dict)
                         st.toast(f"Removed rating for {title}", icon="🗑️")
                         st.rerun()
+                    st.markdown('</div>', unsafe_allow_html=True)
 
             # Automatic save when slider is dragged/changed
             if new_user_rating != user_saved_rating:

@@ -29,7 +29,12 @@ def render_profile_page():
 
     user = st.session_state.get("user_profile", DEFAULT_USER)
 
-    st.markdown('<div style="background: #202020; border: 1px solid #363636; border-radius: 12px; padding: 2rem; max-width: 800px;">', unsafe_allow_html=True)
+    st.markdown(
+        textwrap.dedent("""
+        <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 2rem; max-width: 840px; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
+        """).strip(),
+        unsafe_allow_html=True
+    )
 
     # 1. Profile Name
     profile_name = st.text_input(
@@ -137,15 +142,20 @@ def render_profile_page():
         unsafe_allow_html=True
     )
 
-    st.markdown('<div style="background: #202020; border: 1px solid #363636; border-radius: 12px; padding: 2rem; max-width: 800px;">', unsafe_allow_html=True)
+    st.markdown(
+        textwrap.dedent("""
+        <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 2rem; max-width: 840px; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
+        """).strip(),
+        unsafe_allow_html=True
+    )
 
     if n_rated == 0:
         st.markdown(
             textwrap.dedent("""
             <div style="text-align: center; padding: 2rem 1rem;">
                 <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📊</div>
-                <h4 style="font-size: 1.1rem; color: #e5e1e4; margin-bottom: 0.5rem;">No Evaluation Data Recorded Yet</h4>
-                <p style="font-size: 0.85rem; color: #99907c; max-width: 450px; margin: 0 auto 1.5rem auto;">
+                <h4 style="font-family: var(--font-display); font-size: 1.15rem; color: #e5e1e4; margin-bottom: 0.5rem;">No Evaluation Data Recorded Yet</h4>
+                <p style="font-size: 0.88rem; color: #99907c; max-width: 450px; margin: 0 auto 1.5rem auto; line-height: 1.6;">
                     Rate 3 films across the catalog to generate your weighted genre preference distribution and activate hybrid collaborative filtering.
                 </p>
             </div>
@@ -179,9 +189,9 @@ def render_profile_page():
         with m1:
             st.markdown(
                 textwrap.dedent(f"""
-                <div style="background: #18171a; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 10px; padding: 1rem; text-align: center;">
-                    <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Rated Titles</div>
-                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #f2ca50; margin-top: 4px;">{n_rated}</div>
+                <div style="background: var(--bg-surface-low); border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 12px; padding: 1.1rem; text-align: center;">
+                    <div style="font-size: 0.72rem; color: var(--text-outline); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Rated Titles</div>
+                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: var(--primary-gold); margin-top: 4px;">{n_rated}</div>
                 </div>
                 """).strip(),
                 unsafe_allow_html=True
@@ -189,9 +199,9 @@ def render_profile_page():
         with m2:
             st.markdown(
                 textwrap.dedent(f"""
-                <div style="background: #18171a; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 10px; padding: 1rem; text-align: center;">
-                    <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Mean Rating</div>
-                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #f2ca50; margin-top: 4px;">⭐ {avg_rating:.1f}</div>
+                <div style="background: var(--bg-surface-low); border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 12px; padding: 1.1rem; text-align: center;">
+                    <div style="font-size: 0.72rem; color: var(--text-outline); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Mean Rating</div>
+                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: var(--primary-gold); margin-top: 4px;">⭐ {avg_rating:.1f}</div>
                 </div>
                 """).strip(),
                 unsafe_allow_html=True
@@ -199,16 +209,16 @@ def render_profile_page():
         with m3:
             st.markdown(
                 textwrap.dedent(f"""
-                <div style="background: #18171a; border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 10px; padding: 1rem; text-align: center;">
-                    <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Dominant Genre</div>
-                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: #f2ca50; margin-top: 4px;">{top_genre}</div>
+                <div style="background: var(--bg-surface-low); border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 12px; padding: 1.1rem; text-align: center;">
+                    <div style="font-size: 0.72rem; color: var(--text-outline); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Dominant Genre</div>
+                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: var(--primary-gold); margin-top: 4px;">{top_genre}</div>
                 </div>
                 """).strip(),
                 unsafe_allow_html=True
             )
 
         st.markdown("<div style='margin-bottom: 1.5rem;'></div>", unsafe_allow_html=True)
-        st.markdown("<h4 style='font-size: 0.95rem; font-weight: 700; color: #e5e1e4; margin-bottom: 0.8rem;'>Genre Preference Strength (Weighted by Ratings)</h4>", unsafe_allow_html=True)
+        st.markdown("<h4 style='font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #e5e1e4; margin-bottom: 0.8rem;'>Genre Preference Strength (Weighted by Ratings)</h4>", unsafe_allow_html=True)
 
         if genre_weights:
             max_w = max(genre_weights.values())
@@ -221,7 +231,7 @@ def render_profile_page():
 
                 st.markdown(
                     textwrap.dedent(f"""
-                    <div style="margin-bottom: 0.75rem;">
+                    <div style="margin-bottom: 0.85rem;">
                         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 4px;">
                             <span style="font-weight: 600; color: #e5e1e4; font-size: 0.88rem;">{g} <span style="font-family: monospace; color: #f2ca50; font-size: 0.8rem; margin-left: 6px;">{bar_chars}</span></span>
                             <span style="font-size: 0.78rem; color: #99907c;">{total_score:.1f} pts ({c} film{'s' if c != 1 else ''})</span>
@@ -261,12 +271,17 @@ def render_profile_page():
         unsafe_allow_html=True
     )
 
-    st.markdown('<div style="background: #202020; border: 1px solid #363636; border-radius: 12px; padding: 1.5rem; max-width: 800px;">', unsafe_allow_html=True)
+    st.markdown(
+        textwrap.dedent("""
+        <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 1.5rem; max-width: 840px; box-shadow: 0 4px 20px rgba(0,0,0,0.4);">
+        """).strip(),
+        unsafe_allow_html=True
+    )
 
     if n_hidden == 0:
         st.markdown(
             textwrap.dedent("""
-            <p style="color: #99907c; font-size: 0.88rem; margin: 0;">
+            <p style="color: #99907c; font-size: 0.88rem; margin: 0; line-height: 1.6;">
                 No films are currently excluded. Click the <strong>🚫</strong> button on any movie card or details page to hide titles you don't wish to see.
             </p>
             """).strip(),
@@ -298,11 +313,13 @@ def render_profile_page():
                     st.toast(f"Restored '{h_title}' to recommendations", icon="↩️")
                     st.rerun()
 
-        st.markdown("<div style='margin-top: 1.25rem; border-top: 1px solid #2e2e32; padding-top: 1rem;'></div>", unsafe_allow_html=True)
+        st.markdown("<div style='margin-top: 1.25rem; border-top: 1px solid rgba(77, 70, 53, 0.3); padding-top: 1rem;'></div>", unsafe_allow_html=True)
+        st.markdown('<div class="danger-btn">', unsafe_allow_html=True)
         if st.button("🔄 Reset All Excluded Films", key="reset_all_not_interested_btn"):
             st.session_state.not_interested = set()
             user_store.save_not_interested(set())
             st.toast("Reset all exclusions. All films restored.", icon="🔄")
             st.rerun()
+        st.markdown('</div>', unsafe_allow_html=True)
 
     st.markdown('</div>', unsafe_allow_html=True)

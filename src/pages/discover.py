@@ -118,8 +118,8 @@ def render_discover_page():
     st.markdown(
         textwrap.dedent(f"""
         <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1.2rem;">
-            <span style="font-size: 1rem; font-weight: 700; color: #F4EBDD;">Showing {count} Movies</span>
-            <span style="font-size: 0.8rem; color: #A0A0A0;">Sorted by: {sort_by}</span>
+            <span style="font-size: 1rem; font-weight: 700; color: var(--text-on-surface);">Showing {count} Curated Titles</span>
+            <span style="font-size: 0.8rem; color: var(--text-outline);">Sorted by: {sort_by}</span>
         </div>
         """).strip(),
         unsafe_allow_html=True
@@ -135,14 +135,16 @@ def render_discover_page():
             for j, movie in enumerate(row_movies):
                 with cols[j]:
                     render_movie_card(movie, key_prefix=f"disc_grid_{movie['id']}")
-            st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
+            st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
     else:
         st.markdown(
             textwrap.dedent("""
-            <div style="background: #202020; border: 1px solid #363636; border-radius: 12px; padding: 3rem 1rem; text-align: center; margin-top: 1rem;">
+            <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 3.5rem 1rem; text-align: center; margin-top: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
                 <div style="font-size: 3rem; margin-bottom: 0.5rem;">🎬</div>
-                <h3 style="font-size: 1.2rem; font-weight: 700; color: #F4EBDD; margin-bottom: 0.5rem;">No Matching Movies Found</h3>
-                <p style="font-size: 0.85rem; color: #A0A0A0; margin-bottom: 1.5rem;">Try adjusting your search keywords, lowering the minimum rating, or clearing your genre filters.</p>
+                <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: var(--text-on-surface); margin-bottom: 0.5rem;">No Matching Movies Found</h3>
+                <p style="font-size: 0.88rem; color: var(--text-outline); margin-bottom: 1.5rem; max-width: 480px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                    Try adjusting your search keywords, lowering the minimum rating threshold, or resetting your active genre filters.
+                </p>
             </div>
             """).strip(),
             unsafe_allow_html=True

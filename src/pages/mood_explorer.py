@@ -399,10 +399,24 @@ def render_mood_explorer_page():
     st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
 
     # 4 Film Cards Grid (Reusing consistent movie card component with poster fallbacks & actions)
-    grid_cols = st.columns(len(results_to_display) if results_to_display else 1)
-    for idx, movie in enumerate(results_to_display):
-        with grid_cols[idx]:
-            render_movie_card(movie, key_prefix=f"mood_film_{movie['id']}_{idx}")
+    if results_to_display:
+        grid_cols = st.columns(len(results_to_display))
+        for idx, movie in enumerate(results_to_display):
+            with grid_cols[idx]:
+                render_movie_card(movie, key_prefix=f"mood_film_{movie['id']}_{idx}")
+    else:
+        st.markdown(
+            textwrap.dedent("""
+            <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 3rem 1.5rem; text-align: center; margin-top: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+                <div style="font-size: 2.8rem; margin-bottom: 0.5rem;">🎭</div>
+                <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0;">No Available Films for this Mood Calibration</h3>
+                <p style="font-size: 0.88rem; color: #99907c; max-width: 480px; margin: 0 auto; line-height: 1.6;">
+                    All titles matching this mood may have been marked as Not Interested or the rating threshold is set too high. Try lowering the Minimum Critical Score or resetting your filters.
+                </p>
+            </div>
+            """).strip(),
+            unsafe_allow_html=True
+        )
 
     # ---------------------------------------------------------
     # 4. CURATION RATIONALE FOOTER

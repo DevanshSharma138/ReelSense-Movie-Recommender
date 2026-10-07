@@ -33,11 +33,11 @@ def render_ratings_page():
     if not ratings_dict:
         st.markdown(
             textwrap.dedent("""
-            <div style="background: #202020; border: 1px solid #363636; border-radius: 12px; padding: 3.5rem 1rem; text-align: center; margin-top: 1.5rem;">
+            <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 3.5rem 1rem; text-align: center; margin-top: 1.5rem; box-shadow: 0 4px 20px rgba(0,0,0,0.5);">
                 <div style="font-size: 3.5rem; margin-bottom: 0.5rem;">⭐</div>
-                <h3 style="font-size: 1.3rem; font-weight: 700; color: #F4EBDD; margin-bottom: 0.5rem;">No Rated Movies Yet</h3>
-                <p style="font-size: 0.9rem; color: #A0A0A0; margin-bottom: 1.5rem; max-width: 450px; margin-left: auto; margin-right: auto;">
-                    Rate films on their Details page to teach ReelSense what kind of cinema moves you.
+                <h3 style="font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; color: var(--text-on-surface); margin-bottom: 0.5rem;">No Rated Movies Yet</h3>
+                <p style="font-size: 0.9rem; color: var(--text-outline); margin-bottom: 1.5rem; max-width: 450px; margin-left: auto; margin-right: auto; line-height: 1.6;">
+                    Rate films on their Details page or Discover view to teach ReelSense what kind of cinema moves you.
                 </p>
             </div>
             """).strip(),
@@ -52,7 +52,7 @@ def render_ratings_page():
             st.markdown('</div>', unsafe_allow_html=True)
         return
 
-    st.markdown(f"<p style='font-size: 1.05rem; font-weight: 700; color: #F4EBDD; margin-bottom: 1rem;'>You have rated {len(ratings_dict)} films:</p>", unsafe_allow_html=True)
+    st.markdown(f"<p style='font-size: 1.05rem; font-weight: 700; color: var(--text-on-surface); margin-bottom: 1rem;'>You have evaluated {len(ratings_dict)} titles:</p>", unsafe_allow_html=True)
 
     for raw_m_id, user_val in list(ratings_dict.items()):
         try:
@@ -65,22 +65,27 @@ def render_ratings_page():
 
         poster_url = movie.get("poster_url") or FALLBACK_POSTER
 
-        st.markdown('<div style="background: #202020; border: 1px solid #363636; border-radius: 12px; padding: 1rem; margin-bottom: 1rem;">', unsafe_allow_html=True)
+        st.markdown(
+            textwrap.dedent("""
+            <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 1.25rem; margin-bottom: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+            """).strip(),
+            unsafe_allow_html=True
+        )
         col_img, col_info, col_ctrl = st.columns([1, 4, 3])
 
         with col_img:
             st.markdown(
-                f'<img src="{poster_url}" style="width: 100%; border-radius: 8px; aspect-ratio: 2/3; object-fit: cover;" onerror="this.src=\'{FALLBACK_POSTER}\';"/>',
+                f'<img src="{poster_url}" style="width: 100%; border-radius: 10px; aspect-ratio: 2/3; object-fit: cover; border: 1px solid rgba(77, 70, 53, 0.3);" onerror="this.src=\'{FALLBACK_POSTER}\';"/>',
                 unsafe_allow_html=True
             )
 
         with col_info:
             st.markdown(
                 textwrap.dedent(f"""
-                <h3 style="font-size: 1.1rem; font-weight: 700; color: #F4EBDD; margin-bottom: 4px;">{movie['title']} ({movie['release_year']})</h3>
-                <p style="font-size: 0.8rem; color: #D6AD60; margin-bottom: 8px;">{", ".join(movie.get('genres', []))}</p>
-                <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: #A0A0A0;">
-                    <span>Global Rating: ⭐ {movie['rating']}/10</span>
+                <h3 style="font-family: var(--font-display); font-size: 1.15rem; font-weight: 700; color: var(--text-on-surface); margin: 0 0 6px 0;">{movie['title']} <span style="font-weight: 400; color: var(--text-outline); font-size: 0.9rem;">({movie['release_year']})</span></h3>
+                <p style="font-size: 0.8rem; color: var(--primary-gold); font-weight: 600; margin-bottom: 8px;">{", ".join(movie.get('genres', []))}</p>
+                <div style="display: flex; align-items: center; gap: 8px; font-size: 0.85rem; color: var(--text-outline);">
+                    <span>Community Consensus: ⭐ {movie['rating']}/10</span>
                 </div>
                 """).strip(),
                 unsafe_allow_html=True
@@ -105,16 +110,18 @@ def render_ratings_page():
 
             col_b1, col_b2 = st.columns(2)
             with col_b1:
-                if st.button("Details", key=f"rate_det_btn_{m_id}"):
+                if st.button("🎬 Details", key=f"rate_det_btn_{m_id}", use_container_width=True):
                     st.session_state.selected_movie_id = m_id
                     st.session_state.current_page = "movie_details"
                     st.rerun()
             with col_b2:
-                if st.button("Remove", key=f"rate_del_btn_{m_id}"):
+                st.markdown('<div class="danger-btn">', unsafe_allow_html=True)
+                if st.button("🗑️ Remove", key=f"rate_del_btn_{m_id}", use_container_width=True, help="Remove this rating"):
                     if m_id in st.session_state.ratings:
                         del st.session_state.ratings[m_id]
                     user_store.save_ratings(st.session_state.ratings)
                     st.toast(f"Removed rating for {movie['title']}", icon="🗑️")
                     st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown('</div>', unsafe_allow_html=True)

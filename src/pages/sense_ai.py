@@ -66,10 +66,16 @@ def render_sense_ai_page():
         
         preset_cols = st.columns(len(PRESET_PROMPTS))
         for idx, preset in enumerate(PRESET_PROMPTS):
+            is_active = (current_prompt == preset)
             with preset_cols[idx]:
+                css_wrap = "gold-btn" if is_active else ""
+                if css_wrap:
+                    st.markdown(f'<div class="{css_wrap}">', unsafe_allow_html=True)
                 if st.button(preset, key=f"preset_btn_{idx}", help=preset):
                     st.session_state.sense_ai_prompt = preset
                     st.rerun()
+                if css_wrap:
+                    st.markdown('</div>', unsafe_allow_html=True)
 
         st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
 
@@ -104,4 +110,15 @@ def render_sense_ai_page():
                         render_movie_card(movie, key_prefix=f"sense_ai_{r_idx}_{c_idx}")
                 st.markdown("<div style='margin-bottom: 1.2rem;'></div>", unsafe_allow_html=True)
         else:
-            st.info("No matching films found. Try tweaking your prompt keyword.")
+            st.markdown(
+                textwrap.dedent(f"""
+                <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 3rem 1.5rem; text-align: center; margin-top: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">
+                    <div style="font-size: 2.8rem; margin-bottom: 0.5rem;">🔍</div>
+                    <h3 style="font-family: var(--font-display); font-size: 1.25rem; font-weight: 700; color: #e5e1e4; margin: 0 0 0.5rem 0;">No Direct Vector Matches for "{query}"</h3>
+                    <p style="font-size: 0.88rem; color: #99907c; max-width: 480px; margin: 0 auto; line-height: 1.6;">
+                        Try a broader thematic prompt such as <em>"slow sci-fi"</em>, <em>"emotional drama"</em>, or <em>"mind-bending thriller"</em> to match MovieLens plot vectors and curator tags.
+                    </p>
+                </div>
+                """).strip(),
+                unsafe_allow_html=True
+            )
