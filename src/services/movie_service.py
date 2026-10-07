@@ -2,13 +2,17 @@
 ReelSense - Movie Data & Search Service
 Phase 3: reads the real MovieLens-based catalog instead of SAMPLE_MOVIES.
 """
-from src.services.catalog import get_catalog, get_by_id
+from src.services.catalog import get_catalog, get_by_id, search_movies
 
 
 class MovieService:
     @staticmethod
     def get_all_movies():
         return get_catalog()
+
+    @staticmethod
+    def search_movies(query="", limit=None):
+        return search_movies(query=query, limit=limit)
 
     @staticmethod
     def get_movie_by_id(movie_id):

@@ -23,6 +23,12 @@ import os
 import sys
 from pathlib import Path
 
+try:
+    if hasattr(sys.stdout, "reconfigure"):
+        sys.stdout.reconfigure(encoding="utf-8")
+except Exception:
+    pass
+
 # Ensure project root is in sys.path
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
@@ -54,8 +60,8 @@ print("  -> Passed: Fresh user has empty ratings, watchlist, and not_interested.
 
 # Step 2: Rate one movie (< 3 ratings)
 print("[Step 2] Rate 1 movie (< 3 threshold)...")
-user_store.save_ratings({1: 9.0})
-app.session_state["ratings"] = {1: 9.0}
+user_store.save_ratings({1: 4.5})
+app.session_state["ratings"] = {1: 4.5}
 app.run(timeout=30)
 assert not app.exception
 rec_mode_1 = RecommendationService.get_recommendation_mode({"ratings": app.session_state["ratings"]})
@@ -65,8 +71,8 @@ print("  -> Passed: 1 movie rated. Onboarding status active (< 3 ratings).")
 
 # Step 3: Rate three movies
 print("[Step 3] Rate 3 movies (>= 3 threshold)...")
-user_store.save_ratings({1: 9.0, 260: 9.5, 318: 10.0})
-app.session_state["ratings"] = {1: 9.0, 260: 9.5, 318: 10.0}
+user_store.save_ratings({1: 4.5, 260: 4.8, 318: 5.0})
+app.session_state["ratings"] = {1: 4.5, 260: 4.8, 318: 5.0}
 app.run(timeout=30)
 assert not app.exception
 assert len(app.session_state["ratings"]) >= 3
@@ -91,7 +97,7 @@ print("[Step 6 & 7] Restart application & verify data persistence...")
 app_restarted = AppTest.from_file(app_path)
 app_restarted.run(timeout=30)
 assert not app_restarted.exception
-assert app_restarted.session_state["ratings"] == {1: 9.0, 260: 9.5, 318: 10.0}
+assert app_restarted.session_state["ratings"] == {1: 4.5, 260: 4.8, 318: 5.0}
 assert app_restarted.session_state["watchlist"] == [296]
 print("  -> Passed: Ratings and Watchlist survived application restart.")
 
@@ -127,8 +133,8 @@ app_restarted_2.run(timeout=30)
 assert not app_restarted_2.exception
 cat_by_id = {m["id"]: m for m in get_catalog()}
 expected_count = 3
-expected_avg = (9.0 + 9.5 + 10.0) / 3
-print(f"  -> Passed: Profile page rendered. Rated count: {expected_count}, Avg rating: {expected_avg:.2f}/10.")
+expected_avg = (4.5 + 4.8 + 5.0) / 3
+print(f"  -> Passed: Profile page rendered. Rated count: {expected_count}, Avg rating: {expected_avg:.2f}/5.")
 
 # Step 13 & 14: Open Mood Explorer & verify dynamic counts
 print("[Step 13 & 14] Open Mood Explorer page & verify dynamic counts...")

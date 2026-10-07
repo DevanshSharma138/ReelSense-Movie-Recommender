@@ -60,14 +60,19 @@ def _normalize_id_set(items: Optional[Union[Set[Any], List[Any]]]) -> Set[int]:
 
 
 def _normalize_ratings(ratings: Optional[Dict[Any, Any]]) -> Dict[int, float]:
-    """Normalize ratings dictionary ensuring integer keys and float values."""
+    """
+    Normalize ratings dictionary ensuring integer keys and float values.
+    Implements safe, deterministic migration from old 0-10 scale to 0-5 scale:
+    Values > 5.0 are divided by 2.0 and bounded to [0.0, 5.0].
+    """
     result = {}
     for k, v in (ratings or {}).items():
         try:
             mid = int(k)
             val = float(v)
-            # Bound rating to valid UI range [0.0, 10.0]
-            val = max(0.0, min(10.0, val))
+            if val > 5.0:
+                val = round(val / 2.0, 2)
+            val = max(0.0, min(5.0, val))
             result[mid] = val
         except (ValueError, TypeError):
             continue
@@ -75,10 +80,12 @@ def _normalize_ratings(ratings: Optional[Dict[Any, Any]]) -> Dict[int, float]:
 
 
 def _normalize_profile(profile: Optional[Dict[str, Any]]) -> Dict[str, Any]:
-    """Merge profile with DEFAULT_USER to guarantee all expected fields exist."""
+    """Merge profile with DEFAULT_USER to guarantee all expected fields exist, migrating 0-10 preferences."""
     base = DEFAULT_USER.copy()
     if isinstance(profile, dict):
         base.update({k: v for k, v in profile.items() if k in base and v is not None})
+    if base.get("min_rating_pref", 0) > 5.0:
+        base["min_rating_pref"] = round(base["min_rating_pref"] / 2.0, 1)
     return base
 
 
@@ -217,3 +224,12 @@ def save_profile(profile: Dict[str, Any], path: Optional[Path] = None) -> bool:
     current = load(path)
     current["user_profile"] = profile
     return save(current, path)
+
+
+def migrate_to_5_point_scale(path: Optional[Path] = None) -> bool:
+    """Safely migrate any stored ratings to the 0.0-5.0 scale."""
+    target_path = Path(path) if path else DEFAULT_STORE_PATH
+    if not target_path.exists():
+        return False
+    current = load(target_path)
+    return save(current, target_path)

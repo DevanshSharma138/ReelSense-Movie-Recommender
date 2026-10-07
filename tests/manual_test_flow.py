@@ -38,8 +38,8 @@ assert len(at1.session_state["ratings"]) == 0, "Ratings should be empty"
 print("Confirmed: Fresh start, Watchlist is empty, Ratings is empty.")
 
 print("--- STEP 4 & 5: Rate 3 movies & check hybrid recommendations ---")
-user_store.save_ratings({356: 9.5, 318: 9.0, 296: 8.5})
-at1.session_state["ratings"] = {356: 9.5, 318: 9.0, 296: 8.5}
+user_store.save_ratings({356: 4.5, 318: 4.5, 296: 4.25})
+at1.session_state["ratings"] = {356: 4.5, 318: 4.5, 296: 4.25}
 at1.run(timeout=30)
 assert not at1.exception
 
@@ -77,7 +77,7 @@ r_loaded = at2.session_state["ratings"]
 wl_loaded = at2.session_state["watchlist"]
 prof_loaded = at2.session_state["user_profile"]
 
-assert r_loaded == {356: 9.5, 318: 9.0, 296: 8.5}, f"Ratings lost: {r_loaded}"
+assert r_loaded == {356: 4.5, 318: 4.5, 296: 4.25}, f"Ratings lost: {r_loaded}"
 assert wl_loaded == [593], f"Watchlist lost: {wl_loaded}"
 assert prof_loaded["name"] == "Aesthetic Cinephile", f"Profile lost: {prof_loaded}"
 

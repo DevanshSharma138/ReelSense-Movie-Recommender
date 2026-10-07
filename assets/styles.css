@@ -1092,3 +1092,62 @@ button:focus-visible, input:focus-visible, select:focus-visible {
         font-size: 1.2rem;
     }
 }
+
+/* =========================================================================
+   CLICKABLE MOVIE CARD CONTAINER & BUTTON OVERLAY
+   ========================================================================= */
+div[class*="st-key-card_box_"] {
+    position: relative !important;
+    cursor: pointer !important;
+    border-radius: 16px !important;
+    transition: transform 0.22s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.22s cubic-bezier(0.16, 1, 0.3, 1) !important;
+    overflow: hidden !important;
+    margin-bottom: 6px !important;
+}
+
+div[class*="st-key-card_box_"]:hover {
+    transform: translateY(-5px) !important;
+    box-shadow: 0 14px 34px rgba(0, 0, 0, 0.65), 0 0 20px rgba(242, 202, 80, 0.15) !important;
+}
+
+div[class*="st-key-card_box_"] div[data-testid="stButton"] {
+    position: absolute !important;
+    top: 0 !important;
+    left: 0 !important;
+    width: 100% !important;
+    height: 100% !important;
+    z-index: 5 !important;
+    margin: 0 !important;
+    padding: 0 !important;
+}
+
+div[class*="st-key-card_box_"] div[data-testid="stButton"] > button {
+    width: 100% !important;
+    height: 100% !important;
+    opacity: 0 !important;
+    border: none !important;
+    background: transparent !important;
+    cursor: pointer !important;
+    padding: 0 !important;
+    margin: 0 !important;
+    box-shadow: none !important;
+}
+
+/* Onboarding banner unified container */
+div[class*="st-key-onboarding_banner_card"] {
+    background: linear-gradient(135deg, rgba(32, 31, 34, 0.95), rgba(42, 40, 46, 0.95)) !important;
+    border: 1.5px solid rgba(242, 202, 80, 0.35) !important;
+    border-radius: 14px !important;
+    padding: 1.25rem 1.5rem !important;
+    margin-bottom: 1.5rem !important;
+    box-shadow: 0 8px 24px rgba(0, 0, 0, 0.5) !important;
+}
+
+/* Consistent button dimensions & alignment */
+div[data-testid="stColumn"] div[data-testid="stButton"] > button {
+    min-height: 38px !important;
+    border-radius: 10px !important;
+    display: inline-flex !important;
+    align-items: center !important;
+    justify-content: center !important;
+}

@@ -149,11 +149,11 @@ def render_movie_details_page():
             new_user_rating = st.slider(
                 "Your Personal Rating",
                 min_value=0.0,
-                max_value=10.0,
-                value=float(user_saved_rating),
+                max_value=5.0,
+                value=float(min(5.0, user_saved_rating)),
                 step=0.5,
                 key=f"user_rate_slider_{movie_id}",
-                format="⭐ %.1f"
+                format="⭐ %.1f / 5"
             )
 
             col_sub1, col_sub2 = st.columns([1, 1])
@@ -164,7 +164,7 @@ def render_movie_details_page():
                         ratings_dict[movie_id] = float(new_user_rating)
                         st.session_state.ratings = ratings_dict
                         user_store.save_ratings(ratings_dict)
-                        st.toast(f"Saved rating {new_user_rating}⭐ for {title}!", icon="⭐")
+                        st.toast(f"Saved rating {new_user_rating:.1f}/5 ⭐ for {title}!", icon="⭐")
                         st.rerun()
                 st.markdown('</div>', unsafe_allow_html=True)
             with col_sub2:
@@ -192,7 +192,7 @@ def render_movie_details_page():
                     ratings_dict[movie_id] = float(new_user_rating)
                     st.session_state.ratings = ratings_dict
                     user_store.save_ratings(ratings_dict)
-                    st.toast(f"Saved rating {new_user_rating}⭐ for {title}!", icon="⭐")
+                    st.toast(f"Saved rating {new_user_rating:.1f}/5 ⭐ for {title}!", icon="⭐")
                     st.rerun()
 
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)

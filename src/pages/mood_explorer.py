@@ -22,6 +22,14 @@ MOOD_EMOJIS = {
 
 GENRE_OPTIONS = ["Surrealism", "Cyberpunk", "Mystery", "Drama", "Thriller", "Romance"]
 
+def _reset_mood_filters_callback():
+    st.session_state.selected_mood = "Mind-blown"
+    st.session_state.mood_selected_genres = ["Surrealism", "Cyberpunk"]
+    st.session_state.mood_min_rating = 8.5
+    st.session_state.mood_score_slider = 8.5
+    st.session_state.mood_sort_by = "Affinity Score"
+
+
 def render_mood_explorer_page():
     # Initialize session states for Mood Explorer
     if "selected_mood" not in st.session_state:
@@ -240,12 +248,7 @@ def render_mood_explorer_page():
         )
     with col_t2:
         st.markdown('<div style="display: flex; justify-content: flex-end;">', unsafe_allow_html=True)
-        if st.button("↺ Reset All", key="mood_reset_filters_btn"):
-            st.session_state.selected_mood = "Mind-blown"
-            st.session_state.mood_selected_genres = ["Surrealism", "Cyberpunk"]
-            st.session_state.mood_min_rating = 8.5
-            st.session_state.mood_sort_by = "Affinity Score"
-            st.rerun()
+        st.button("↺ Reset All", key="mood_reset_filters_btn", on_click=_reset_mood_filters_callback)
         st.markdown('</div>', unsafe_allow_html=True)
 
     col_genres, col_slider = st.columns([7, 5])

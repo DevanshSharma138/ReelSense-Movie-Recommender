@@ -22,12 +22,12 @@ def render_onboarding_banner():
     needed = 3 - n_ratings
     plural = "s" if needed != 1 else ""
 
-    col_content, col_actions = st.columns([8.2, 3.8])
+    with st.container(key="onboarding_banner_card"):
+        col_content, col_actions = st.columns([8.2, 3.8], vertical_alignment="center")
 
-    with col_content:
-        st.markdown(
-            textwrap.dedent(f"""
-            <div style="background: linear-gradient(135deg, rgba(32, 31, 34, 0.95), rgba(42, 40, 46, 0.95)); border: 1.5px solid rgba(242, 202, 80, 0.4); border-radius: 14px; padding: 1.25rem 1.5rem; margin-bottom: 1.5rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+        with col_content:
+            st.markdown(
+                textwrap.dedent(f"""
                 <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 6px;">
                     <span style="background: rgba(242, 202, 80, 0.15); color: #f2ca50; border: 1px solid rgba(242, 202, 80, 0.3); padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700; text-transform: uppercase; letter-spacing: 0.08em;">
                         ✨ First-Time Curation
@@ -40,21 +40,19 @@ def render_onboarding_banner():
                 <p style="font-size: 0.9rem; color: #d0c5af; line-height: 1.5; margin: 0;">
                     ReelSense blends TF-IDF content similarity with SVD collaborative filtering. Rate <strong>{needed} more film{plural}</strong> to activate your personalized neural recommendation vectors.
                 </p>
-            </div>
-            """).strip(),
-            unsafe_allow_html=True
-        )
+                """).strip(),
+                unsafe_allow_html=True
+            )
 
-    with col_actions:
-        st.markdown("<div style='margin-top: 24px;'></div>", unsafe_allow_html=True)
-        col_btn1, col_btn2 = st.columns([2.4, 1.6])
-        with col_btn1:
-            st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
-            if st.button("🌟 Rate Films", key="onboard_browse_btn", use_container_width=True):
-                st.session_state.current_page = "discover-movies"
-                st.rerun()
-            st.markdown('</div>', unsafe_allow_html=True)
-        with col_btn2:
-            if st.button("✕ Dismiss", key="onboard_dismiss_btn", use_container_width=True):
-                st.session_state.onboarding_dismissed = True
-                st.rerun()
+        with col_actions:
+            col_btn1, col_btn2 = st.columns([1.5, 1.1], vertical_alignment="center")
+            with col_btn1:
+                st.markdown('<div class="gold-btn">', unsafe_allow_html=True)
+                if st.button("⭐ Rate Films", key="onboard_browse_btn", use_container_width=True):
+                    st.session_state.current_page = "discover-movies"
+                    st.rerun()
+                st.markdown('</div>', unsafe_allow_html=True)
+            with col_btn2:
+                if st.button("✕ Dismiss", key="onboard_dismiss_btn", use_container_width=True, help="Dismiss onboarding banner"):
+                    st.session_state.onboarding_dismissed = True
+                    st.rerun()

@@ -8,6 +8,23 @@ from src.services.movie_service import MovieService
 from src.components.movie_card import render_movie_card
 from src.components.onboarding_banner import render_onboarding_banner
 
+def _reset_discover_filters_callback():
+    st.session_state.discover_search = ""
+    st.session_state.global_search = ""
+    st.session_state.disc_search_input = ""
+    st.session_state.topbar_global_search_input = ""
+    st.session_state.filter_genres = []
+    st.session_state.filter_min_rating = 0.0
+    st.session_state.filter_language = "All"
+    st.session_state.filter_sort_by = "Rating (High to Low)"
+    st.session_state.filter_year_range = (1930, 2026)
+    st.session_state.filter_genres_widget = []
+    st.session_state.filter_min_rating_widget = 0.0
+    st.session_state.filter_language_widget = "All"
+    st.session_state.filter_sort_by_widget = "Rating (High to Low)"
+    st.session_state.filter_year_range_widget = (1930, 2026)
+
+
 def render_discover_page():
     st.markdown(
         textwrap.dedent("""
@@ -31,14 +48,20 @@ def render_discover_page():
     render_onboarding_banner()
 
     # Search Bar
+    if "disc_search_input" not in st.session_state:
+        st.session_state.disc_search_input = st.session_state.get("discover_search", "")
+
     search_query = st.text_input(
         "Search Movies",
-        value=st.session_state.get("discover_search", ""),
+        value=st.session_state.get("disc_search_input", ""),
         placeholder="Search by title, director, cast, or genre...",
         label_visibility="collapsed",
         key="disc_search_input"
     )
-    st.session_state.discover_search = search_query
+    if search_query != st.session_state.get("discover_search", ""):
+        st.session_state.discover_search = search_query
+        st.session_state.global_search = search_query
+        st.session_state.topbar_global_search_input = search_query
 
     # Initialize filter state defaults
     if "filter_genres" not in st.session_state:
@@ -118,15 +141,7 @@ def render_discover_page():
 
         with col_reset:
             st.markdown("<div style='margin-top: 28px;'></div>", unsafe_allow_html=True)
-            if st.button("🔄 Reset Filters", key="disc_reset_filters_btn"):
-                st.session_state.discover_search = ""
-                st.session_state.global_search = ""
-                st.session_state.filter_genres = []
-                st.session_state.filter_min_rating = 0.0
-                st.session_state.filter_language = "All"
-                st.session_state.filter_sort_by = "Rating (High to Low)"
-                st.session_state.filter_year_range = (1930, 2026)
-                st.rerun()
+            st.button("🔄 Reset Filters", key="disc_reset_filters_btn", on_click=_reset_discover_filters_callback)
 
     # Apply filters using MovieService
     filtered_movies = MovieService.filter_movies(

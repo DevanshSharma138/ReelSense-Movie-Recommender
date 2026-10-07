@@ -88,13 +88,16 @@ def render_profile_page():
     st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)
 
     # 5. Minimum Rating Preference
+    curr_min_rating = float(user.get("min_rating_pref", 3.8))
+    if curr_min_rating > 5.0:
+        curr_min_rating = round(curr_min_rating / 2.0, 1)
     min_rating_pref = st.slider(
         "Minimum Baseline Movie Rating",
-        min_value=5.0,
-        max_value=9.0,
-        value=float(user.get("min_rating_pref", 7.5)),
-        step=0.5,
-        format="⭐ %.1f",
+        min_value=2.0,
+        max_value=5.0,
+        value=float(min(5.0, max(2.0, curr_min_rating))),
+        step=0.1,
+        format="⭐ %.1f / 5",
         key="prof_rating_input"
     )
 
@@ -202,7 +205,7 @@ def render_profile_page():
                 textwrap.dedent(f"""
                 <div style="background: var(--bg-surface-low); border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 12px; padding: 1.1rem; text-align: center;">
                     <div style="font-size: 0.72rem; color: var(--text-outline); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Mean Rating</div>
-                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: var(--primary-gold); margin-top: 4px;">⭐ {avg_rating:.1f}</div>
+                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: var(--primary-gold); margin-top: 4px;">⭐ {avg_rating:.1f} / 5</div>
                 </div>
                 """).strip(),
                 unsafe_allow_html=True

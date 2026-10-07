@@ -104,6 +104,7 @@ def render_topbar():
             if search_input != current_search:
                 st.session_state.global_search = search_input
                 st.session_state.discover_search = search_input
+                st.session_state.disc_search_input = search_input
                 if search_input.strip():
                     st.session_state.current_page = "discover-movies"
                     st.rerun()

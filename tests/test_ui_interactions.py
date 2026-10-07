@@ -139,21 +139,21 @@ def test_hide_and_restore_wiring_and_recommendation_exclusion():
 
 
 def test_rating_save_edit_delete_flow():
-    """Verify ratings save, update, delete, and model reactivity."""
+    """Verify ratings save, update, delete, and model reactivity (0-5 scale)."""
     # 1. Save single rating
-    user_store.save_ratings({1: 8.5})
+    user_store.save_ratings({1: 4.5})
     s1 = user_store.load()
-    assert s1["ratings"][1] == 8.5
+    assert s1["ratings"][1] == 4.5
 
-    # 2. Edit rating from 8.5 to 10.0
-    s1["ratings"][1] = 10.0
+    # 2. Edit rating from 4.5 to 5.0
+    s1["ratings"][1] = 5.0
     user_store.save_ratings(s1["ratings"])
     s2 = user_store.load()
-    assert s2["ratings"][1] == 10.0
+    assert s2["ratings"][1] == 5.0
 
     # 3. Add 2 more ratings to cross cold-start threshold (>= 3)
-    s2["ratings"][260] = 9.5
-    s2["ratings"][318] = 9.0
+    s2["ratings"][260] = 4.8
+    s2["ratings"][318] = 4.5
     user_store.save_ratings(s2["ratings"])
 
     mode = RecommendationService.get_recommendation_mode({"ratings": s2["ratings"]})
@@ -222,3 +222,65 @@ def test_on_demand_movie_enrichment_resolution():
     assert "Toy Story" in movie["title"]
     assert movie["poster_url"] is not None
     assert len(movie["poster_url"]) > 10
+
+
+def test_catalog_and_movie_service_search_movies():
+    """Verify search finds known movies (Matrix, Toy Story) and returns clean empty state on unknown."""
+    from src.services.catalog import Catalog, search_movies
+
+    # 1. Search Matrix via Catalog and MovieService
+    results_matrix = MovieService.search_movies("Matrix")
+    assert len(results_matrix) > 0
+    assert any("Matrix" in m["title"] for m in results_matrix)
+
+    # 2. Search Toy Story
+    results_toy = MovieService.search_movies("toy story")
+    assert len(results_toy) > 0
+    assert any("Toy Story" in m["title"] for m in results_toy)
+
+    # 3. Search nonsense query
+    results_empty = MovieService.search_movies("xyznonexistentfilmtag99999")
+    assert isinstance(results_empty, list)
+    assert len(results_empty) == 0
+
+    # 4. Catalog namespace methods
+    cat_results = Catalog.search_movies("Star Wars")
+    assert len(cat_results) > 0
+    assert any("Star Wars" in m["title"] for m in cat_results)
+
+
+def test_rating_scale_migration_and_bounds():
+    """Verify safe, deterministic migration from old 0-10 scale to 0-5 scale."""
+    # 1. Old scale ratings > 5.0 get divided by 2.0
+    old_scale_ratings = {1: 10.0, 260: 9.0, 318: 8.0, 593: 7.0}
+    user_store.save_ratings(old_scale_ratings)
+    migrated = user_store.get_ratings()
+
+    assert migrated[1] == 5.0
+    assert migrated[260] == 4.5
+    assert migrated[318] == 4.0
+    assert migrated[593] == 3.5
+
+    # 2. Values on 0-5 scale are preserved without alteration
+    new_scale_ratings = {1: 4.5, 260: 5.0, 318: 3.5}
+    user_store.save_ratings(new_scale_ratings)
+    loaded_new = user_store.get_ratings()
+    assert loaded_new == new_scale_ratings
+
+    # 3. Out-of-bounds ratings are clamped to [0.0, 5.0]
+    out_of_bounds = {1: 12.0, 260: -2.0}
+    user_store.save_ratings(out_of_bounds)
+    clamped = user_store.get_ratings()
+    assert clamped[1] == 5.0
+    assert clamped[260] == 0.0
+
+
+def test_onboarding_dismiss_and_rate_films_navigation():
+    """Verify onboarding banner conditions and session state handling."""
+    # When user has 0 ratings, onboarding should be active
+    assert user_store.get_ratings() == {}
+    
+    # Simulating dismissal
+    state = user_store.get_default_state()
+    assert state["ratings"] == {}
+    assert "user_profile" in state

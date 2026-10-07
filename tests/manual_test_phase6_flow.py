@@ -41,8 +41,8 @@ def run_phase6_manual_flow():
     print("  -> Passed: Fresh user has empty taste evolution state.")
 
     # 2. Rate 1 movie (< 3 threshold)
-    print("\n[Step 2] Rate 1 movie (< 3 threshold: Toy Story ID 1 rated 9.0)...")
-    ratings_1 = {1: 9.0}
+    print("\n[Step 2] Rate 1 movie (< 3 threshold: Toy Story ID 1 rated 4.5)...")
+    ratings_1 = {1: 4.5}
     # Inspect movie details breakdown for Jurassic Park (ID 480)
     jp_movie = MovieService.get_movie_by_id(480)
     bd_cold = TasteService.get_recommendation_breakdown(jp_movie, user_ratings=ratings_1)
@@ -62,8 +62,8 @@ def run_phase6_manual_flow():
     print(f"  -> Passed: Minimal evolution anchors in {evo_1['milestones'][0]['dominant_genre']}.")
 
     # 4. Rate 3 movies (Hybrid threshold reached)
-    print("\n[Step 4] Rate 3 movies (Toy Story: 8.0, Star Wars IV: 10.0, Jurassic Park: 9.0)...")
-    ratings_3 = {1: 8.0, 260: 10.0, 480: 9.0}
+    print("\n[Step 4] Rate 3 movies (Toy Story: 4.0, Star Wars IV: 5.0, Jurassic Park: 4.5)...")
+    ratings_3 = {1: 4.0, 260: 5.0, 480: 4.5}
     matrix_movie = MovieService.get_movie_by_id(2571)  # The Matrix
     bd_hybrid = TasteService.get_recommendation_breakdown(matrix_movie, user_ratings=ratings_3)
     assert bd_hybrid["is_cold_start"] is False
@@ -90,8 +90,8 @@ def run_phase6_manual_flow():
 
     # 6. Rate 5 movies to test milestone adaptation and taste shifts
     print("\n[Step 6] Rate 5 movies (expanding into Sci-Fi and Thriller)...")
-    # Add Empire Strikes Back (1196: 10.0) and Matrix (2571: 10.0)
-    ratings_5 = {1: 7.0, 260: 10.0, 480: 8.5, 1196: 10.0, 2571: 10.0}
+    # Add Empire Strikes Back (1196: 5.0) and Matrix (2571: 5.0)
+    ratings_5 = {1: 3.5, 260: 5.0, 480: 4.25, 1196: 5.0, 2571: 5.0}
     evo_5 = TasteService.get_taste_evolution(ratings_5)
     assert len(evo_5["milestones"]) == 3  # 1st, 3rd, 5th
     assert "5th Rating" in evo_5["milestones"][2]["label"]

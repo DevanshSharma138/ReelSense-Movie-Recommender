@@ -92,20 +92,23 @@ def render_ratings_page():
             )
 
         with col_ctrl:
+            user_val_f = float(user_val)
+            if user_val_f > 5.0:
+                user_val_f = round(user_val_f / 2.0, 2)
             updated_score = st.slider(
                 "Your Given Rating",
-                min_value=1.0,
-                max_value=10.0,
-                value=float(user_val),
+                min_value=0.5,
+                max_value=5.0,
+                value=float(min(5.0, max(0.5, user_val_f))),
                 step=0.5,
                 key=f"rate_page_slider_{m_id}",
-                format="⭐ %.1f"
+                format="⭐ %.1f / 5"
             )
             
             if updated_score != user_val:
                 st.session_state.ratings[m_id] = float(updated_score)
                 user_store.save_ratings(st.session_state.ratings)
-                st.toast(f"Updated rating to {updated_score}⭐", icon="⭐")
+                st.toast(f"Updated rating to {updated_score:.1f}/5 ⭐", icon="⭐")
                 st.rerun()
 
             col_b1, col_b2 = st.columns(2)

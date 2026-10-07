@@ -144,3 +144,41 @@ def get_catalog():
 
 def get_by_id():
     return {m["id"]: m for m in get_catalog()}
+
+
+def search_movies(query: str = "", limit: int = None):
+    """
+    Search catalog by title, normalized title, director, genres, and cast.
+    Prioritizes exact and prefix title matches first.
+    """
+    if not query or not str(query).strip():
+        return []
+    q = str(query).lower().strip()
+    cat = get_catalog()
+    exact = []
+    starts = []
+    contains = []
+    other = []
+    for m in cat:
+        t_low = m["title"].lower()
+        if t_low == q:
+            exact.append(m)
+        elif t_low.startswith(q):
+            starts.append(m)
+        elif q in t_low:
+            contains.append(m)
+        elif (q in m.get("overview", "").lower() or
+              q in m.get("director", "").lower() or
+              any(q in str(g).lower() for g in m.get("genres", [])) or
+              any(q in str(a).lower() for a in m.get("cast", []))):
+            other.append(m)
+    res = exact + starts + contains + other
+    return res[:limit] if limit else res
+
+
+class Catalog:
+    """Catalog access namespace."""
+    get_catalog = staticmethod(get_catalog)
+    get_by_id = staticmethod(get_by_id)
+    search_movies = staticmethod(search_movies)
+

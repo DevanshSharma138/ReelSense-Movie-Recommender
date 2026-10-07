@@ -55,6 +55,26 @@ def test_app_top_navigation_flow():
     assert not at.exception
     assert at.session_state.current_page == "my-profile"
 
+    # Click Architecture
+    at.button(key="top_nav_about").click().run()
+    assert not at.exception
+    assert at.session_state.current_page == "about"
+
+    # Click Curator AI
+    at.button(key="topbar_curator_ai_btn").click().run()
+    assert not at.exception
+    assert at.session_state.current_page == "about-the-ai"
+
+    # Click User Profile button
+    at.button(key="topbar_user_profile_btn").click().run()
+    assert not at.exception
+    assert at.session_state.current_page == "my-profile"
+
+    # Click Home nav pill
+    at.button(key="top_nav_home").click().run()
+    assert not at.exception
+    assert at.session_state.current_page == "home"
+
     # Click Return Home via Brand
     at.button(key="top_brand_home_btn").click().run()
     assert not at.exception
@@ -97,3 +117,22 @@ def test_app_hero_banner_interaction():
         hero_btn.click().run()
         assert not at.exception
         assert at.session_state.current_page == "movie_details"
+
+
+def test_app_movie_card_click_interaction():
+    """Verify movie card overlay button opens Movie Details without separate Inspect button."""
+    at = AppTest.from_file(APP_PATH, default_timeout=15)
+    at.run()
+    assert not at.exception
+
+    card_btn = None
+    for b in at.button:
+        if b.key and "_card_" in b.key:
+            card_btn = b
+            break
+
+    assert card_btn is not None, "Expected clickable movie card button"
+    card_btn.click().run()
+    assert not at.exception
+    assert at.session_state.current_page == "movie_details"
+    assert at.session_state.selected_movie_id is not None

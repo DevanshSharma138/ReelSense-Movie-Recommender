@@ -38,21 +38,21 @@ def test_1_fresh_state_returns_empty_defaults(temp_store):
 
 
 def test_2_save_single_rating(temp_store):
-    """TEST 2: Save a rating -> load -> rating remains."""
-    ok = user_store.save_ratings({356: 9.5}, path=temp_store)
+    """TEST 2: Save a rating -> load -> rating remains (0-5 scale)."""
+    ok = user_store.save_ratings({356: 4.5}, path=temp_store)
     assert ok is True
     assert temp_store.exists()
 
     loaded_ratings = user_store.get_ratings(path=temp_store)
     assert 356 in loaded_ratings
-    assert loaded_ratings[356] == 9.5
+    assert loaded_ratings[356] == 4.5
     # Verify integer key type
     assert isinstance(list(loaded_ratings.keys())[0], int)
 
 
 def test_3_save_multiple_ratings(temp_store):
-    """TEST 3: Save multiple ratings -> load -> all remain."""
-    test_ratings = {356: 9.0, 318: 9.5, 296: 8.0, 593: 8.5}
+    """TEST 3: Save multiple ratings -> load -> all remain (0-5 scale)."""
+    test_ratings = {356: 4.5, 318: 4.8, 296: 4.0, 593: 4.2}
     user_store.save_ratings(test_ratings, path=temp_store)
 
     loaded = user_store.get_ratings(path=temp_store)
@@ -83,13 +83,13 @@ def test_5_save_not_interested(temp_store):
 
 
 def test_6_save_profile(temp_store):
-    """TEST 6: Save profile -> load -> profile remains."""
+    """TEST 6: Save profile -> load -> profile remains (0-5 scale)."""
     custom_profile = {
         "name": "Cinematic Pioneer",
         "favorite_genres": ["Sci-Fi", "Noir", "Thriller"],
         "preferred_language": "French",
         "preferred_era": "2020s & Newer",
-        "min_rating_pref": 8.0,
+        "min_rating_pref": 4.0,
     }
     user_store.save_profile(custom_profile, path=temp_store)
 
@@ -97,7 +97,7 @@ def test_6_save_profile(temp_store):
     assert loaded["name"] == "Cinematic Pioneer"
     assert loaded["favorite_genres"] == ["Sci-Fi", "Noir", "Thriller"]
     assert loaded["preferred_language"] == "French"
-    assert loaded["min_rating_pref"] == 8.0
+    assert loaded["min_rating_pref"] == 4.0
 
 
 def test_7_malformed_json_fallback(temp_store):
@@ -150,7 +150,7 @@ def test_9_app_restarts_with_existing_user_data_json():
     try:
         # Pre-seed persistence
         persisted_data = {
-            "ratings": {356: 9.5, 318: 9.0},
+            "ratings": {356: 4.5, 318: 4.0},
             "watchlist": [296, 593],
             "not_interested": {101},
             "user_profile": {"name": "Test Restored User"},
@@ -163,7 +163,7 @@ def test_9_app_restarts_with_existing_user_data_json():
         assert not at.exception, f"App crashed on restart with existing user_data.json: {at.exception}"
 
         # Verify state was restored into session_state
-        assert at.session_state["ratings"] == {356: 9.5, 318: 9.0}
+        assert at.session_state["ratings"] == {356: 4.5, 318: 4.0}
         assert at.session_state["watchlist"] == [296, 593]
         assert at.session_state["not_interested"] == {101}
         assert at.session_state["user_profile"]["name"] == "Test Restored User"
@@ -180,8 +180,8 @@ def test_10_persisted_ratings_activate_hybrid_recommendations():
     backup_text = real_store.read_text(encoding="utf-8") if real_store.exists() else None
 
     try:
-        # Save 3 ratings in persistent storage
-        three_ratings = {356: 9.0, 318: 9.5, 296: 8.5}
+        # Save 3 ratings in persistent storage (0-5 scale)
+        three_ratings = {356: 4.5, 318: 4.8, 296: 4.0}
         user_store.save_ratings(three_ratings, path=real_store)
 
         # Restart application and render Home
@@ -225,19 +225,19 @@ def test_11_movie_details_interactive_rating_flow():
         at.session_state.current_page = "movie_details"
         at.run(timeout=10)
 
-        # Set slider to 8.5
+        # Set slider to 4.5 on 0-5 scale
         slider = [s for s in at.slider if "user_rate_slider_356" in s.key][0]
-        slider.set_value(8.5).run(timeout=10)
+        slider.set_value(4.5).run(timeout=10)
 
-        assert at.session_state.ratings.get(356) == 8.5
+        assert at.session_state.ratings.get(356) == 4.5
         persisted = user_store.load(real_store)
-        assert persisted["ratings"].get(356) == 8.5
+        assert persisted["ratings"].get(356) == 4.5
 
         # Navigate to My Ratings and check movie is listed
         at.session_state.current_page = "my-ratings"
         at.run(timeout=10)
         assert not at.exception
-        assert at.session_state.ratings.get(356) == 8.5
+        assert at.session_state.ratings.get(356) == 4.5
     finally:
         if backup_text is not None:
             real_store.write_text(backup_text, encoding="utf-8")
@@ -247,12 +247,12 @@ def test_11_movie_details_interactive_rating_flow():
 
 def test_12_windows_file_lock_resilience(temp_store):
     """TEST 12: Saving handles open file handles without crashing or raising WinError 32."""
-    user_store.save({"ratings": {356: 8.0}}, path=temp_store)
+    user_store.save({"ratings": {356: 4.0}}, path=temp_store)
 
     # Open file handle for reading to simulate active file reader / watcher
     with open(temp_store, "r", encoding="utf-8"):
-        ok = user_store.save({"ratings": {356: 9.5}}, path=temp_store)
+        ok = user_store.save({"ratings": {356: 4.5}}, path=temp_store)
         assert ok is True
 
     loaded = user_store.load(temp_store)
-    assert loaded["ratings"] == {356: 9.5}
+    assert loaded["ratings"] == {356: 4.5}

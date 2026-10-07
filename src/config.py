@@ -162,5 +162,5 @@ DEFAULT_USER = {
     "favorite_genres": ["Drama", "Sci-Fi", "Thriller", "Action"],
     "preferred_language": "English",
     "preferred_era": "2010s & Newer",
-    "min_rating_pref": 7.5
+    "min_rating_pref": 3.8
 }

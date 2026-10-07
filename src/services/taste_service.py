@@ -98,7 +98,7 @@ class TasteService:
             if signals.get("reference_movies"):
                 top_ref = signals["reference_movies"][0]
                 narrative.append(
-                    f"Content overlap with '{top_ref['title']}' (rated {top_ref['user_rating']:g}/10, cosine similarity {top_ref['similarity']:.2f})."
+                    f"Content overlap with '{top_ref['title']}' (rated {top_ref['user_rating']:g}/5, cosine similarity {top_ref['similarity']:.2f})."
                 )
 
             if movie.get("trending_rank"):
@@ -160,7 +160,7 @@ class TasteService:
             top_ref = refs[0]
             shared_info = f" (Shared genres: {', '.join(top_ref['shared_genres'])})" if top_ref.get("shared_genres") else ""
             narrative.append(
-                f"Because you rated '{top_ref['title']}' highly ({top_ref['user_rating']:g}/10){shared_info}."
+                f"Because you rated '{top_ref['title']}' highly ({top_ref['user_rating']:g}/5){shared_info}."
             )
             narrative.append(
                 f"TF-IDF content cosine similarity with your favorites is {top_ref['similarity']:.2f}."

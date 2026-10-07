@@ -78,15 +78,13 @@ def render_movie_card(movie, key_prefix="card"):
 </div>
 """).strip()
 
-    st.markdown(card_html, unsafe_allow_html=True)
-
-    # Action buttons: Row 1 full-width Inspect, Row 2 equal Bookmark and Exclude
-    st.markdown('<div class="gold-btn" style="margin-top: 6px; margin-bottom: 4px;">', unsafe_allow_html=True)
-    if st.button("🎬 Inspect →", key=f"{key_prefix}_det_{m_id}", use_container_width=True):
-        st.session_state.selected_movie_id = m_id
-        st.session_state.current_page = "movie_details"
-        st.rerun()
-    st.markdown('</div>', unsafe_allow_html=True)
+    # Clickable Movie Card Container (Direct interaction without separate Inspect button)
+    with st.container(key=f"card_box_{key_prefix}_{m_id}"):
+        st.markdown(card_html, unsafe_allow_html=True)
+        if st.button(f"View {title}", key=f"{key_prefix}_card_{m_id}", help=f"View details for {title}", use_container_width=True):
+            st.session_state.selected_movie_id = m_id
+            st.session_state.current_page = "movie_details"
+            st.rerun()
 
     col_bm, col_hide = st.columns(2)
     with col_bm:

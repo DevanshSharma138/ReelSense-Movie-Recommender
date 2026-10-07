@@ -167,13 +167,13 @@ class HybridModel:
 
         target_movie = self.cat[p]
         raw_r = ratings or {}
-        # Convert ratings to 0.5-5.0 scale if provided on 10.0 scale
+        # Ensure ratings are on 0.5-5.0 scale (if old 10-scale passed, divide by 2)
         if any(float(v) > 5.0 for v in raw_r.values()):
             r = {int(k): float(v) / 2.0 for k, v in raw_r.items() if int(k) in self.pos}
-            orig_ratings = {int(k): float(v) for k, v in raw_r.items() if int(k) in self.pos}
+            orig_ratings = {int(k): float(v) / 2.0 for k, v in raw_r.items() if int(k) in self.pos}
         else:
             r = {int(k): float(v) for k, v in raw_r.items() if int(k) in self.pos}
-            orig_ratings = {int(k): float(v) * 2.0 for k, v in raw_r.items() if int(k) in self.pos}
+            orig_ratings = {int(k): float(v) for k, v in raw_r.items() if int(k) in self.pos}
 
         # Check cold-start threshold
         if len(r) < MIN_RATINGS:
@@ -188,7 +188,7 @@ class HybridModel:
                     ref_movies.append({
                         "id": rid,
                         "title": ref_m["title"],
-                        "user_rating": orig_ratings.get(rid, rval * 2.0),
+                        "user_rating": orig_ratings.get(rid, rval),
                         "similarity": round(sim_val, 2),
                         "shared_genres": shared_g,
                         "shared_moods": shared_m,
@@ -249,7 +249,7 @@ class HybridModel:
             ref_movies.append({
                 "id": rid,
                 "title": ref_m["title"],
-                "user_rating": orig_ratings.get(rid, r[rid] * 2.0),
+                "user_rating": orig_ratings.get(rid, r[rid]),
                 "similarity": round(sim_val, 2),
                 "shared_genres": shared_g,
                 "shared_moods": shared_m,
