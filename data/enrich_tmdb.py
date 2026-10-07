@@ -183,8 +183,8 @@ def run_enrichment():
             audit_reason = result.get("audit", {}).get("reason", "Unknown")
             print(f"[{idx}/{len(to_process)}] REJECTED / FALLBACK: movieId={m_id} '{ml_title}' -> {audit_reason}")
 
-        # Controlled pacing: 80ms delay between requests to stay well within TMDB rate limits
-        time.sleep(0.08)
+        # Controlled pacing: 350ms delay between requests to stay well within TMDB rate limits (approx 3 req/sec)
+        time.sleep(0.35)
 
     print("\n" + "=" * 60)
     print("Enrichment Run Summary")

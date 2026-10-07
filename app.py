@@ -25,7 +25,7 @@ st.set_page_config(
     page_title=f"{APP_NAME} - {APP_TAGLINE}",
     page_icon="🎬",
     layout="wide",
-    initial_sidebar_state="expanded"
+    initial_sidebar_state="collapsed"
 )
 
 # 2. Inject Google Fonts & Custom Stylesheet

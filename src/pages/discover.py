@@ -40,19 +40,38 @@ def render_discover_page():
     )
     st.session_state.discover_search = search_query
 
+    # Initialize filter state defaults
+    if "filter_genres" not in st.session_state:
+        st.session_state.filter_genres = []
+    if "filter_min_rating" not in st.session_state:
+        st.session_state.filter_min_rating = 0.0
+    if "filter_language" not in st.session_state:
+        st.session_state.filter_language = "All"
+    if "filter_sort_by" not in st.session_state:
+        st.session_state.filter_sort_by = "Rating (High to Low)"
+    if "filter_year_range" not in st.session_state:
+        st.session_state.filter_year_range = (1930, 2026)
+
     # Filters Section Collapsible / Expandable Container
     with st.expander("🎛️ Filter & Sort Controls", expanded=True):
         col1, col2, col3, col4 = st.columns(4)
 
         all_genres = MovieService.get_all_genres()
         all_languages = ["All"] + MovieService.get_all_languages()
+        sort_options = [
+            "Rating (High to Low)",
+            "Release Year (Newest First)",
+            "Release Year (Oldest First)",
+            "Title (A-Z)"
+        ]
 
         with col1:
             selected_genres = st.multiselect(
                 "Genres",
                 options=all_genres,
-                default=[],
-                placeholder="Select genres..."
+                default=st.session_state.filter_genres,
+                placeholder="Select genres...",
+                key="filter_genres_widget"
             )
 
         with col2:
@@ -60,28 +79,30 @@ def render_discover_page():
                 "Minimum Rating",
                 min_value=0.0,
                 max_value=10.0,
-                value=0.0,
+                value=float(st.session_state.filter_min_rating),
                 step=0.5,
-                format="⭐ %.1f"
+                format="⭐ %.1f",
+                key="filter_min_rating_widget"
             )
 
         with col3:
+            curr_lang = st.session_state.filter_language
+            lang_idx = all_languages.index(curr_lang) if curr_lang in all_languages else 0
             language = st.selectbox(
                 "Language",
                 options=all_languages,
-                index=0
+                index=lang_idx,
+                key="filter_language_widget"
             )
 
         with col4:
+            curr_sort = st.session_state.filter_sort_by
+            sort_idx = sort_options.index(curr_sort) if curr_sort in sort_options else 0
             sort_by = st.selectbox(
                 "Sort By",
-                options=[
-                    "Rating (High to Low)",
-                    "Release Year (Newest First)",
-                    "Release Year (Oldest First)",
-                    "Title (A-Z)"
-                ],
-                index=0
+                options=sort_options,
+                index=sort_idx,
+                key="filter_sort_by_widget"
             )
 
         col_year, col_reset = st.columns([3, 1])
@@ -90,15 +111,21 @@ def render_discover_page():
                 "Release Year Range",
                 min_value=1930,
                 max_value=2026,
-                value=(1930, 2026),
-                step=1
+                value=st.session_state.filter_year_range,
+                step=1,
+                key="filter_year_range_widget"
             )
 
         with col_reset:
             st.markdown("<div style='margin-top: 28px;'></div>", unsafe_allow_html=True)
-            if st.button("🔄 Reset Filters", key="reset_filters_btn"):
+            if st.button("🔄 Reset Filters", key="disc_reset_filters_btn"):
                 st.session_state.discover_search = ""
                 st.session_state.global_search = ""
+                st.session_state.filter_genres = []
+                st.session_state.filter_min_rating = 0.0
+                st.session_state.filter_language = "All"
+                st.session_state.filter_sort_by = "Rating (High to Low)"
+                st.session_state.filter_year_range = (1930, 2026)
                 st.rerun()
 
     # Apply filters using MovieService

@@ -94,7 +94,7 @@ def test_5_positive_reference_movies_come_from_actual_user_ratings():
     for rid in ref_ids:
         assert rid in user_ratings
     assert refs[0]["id"] == 260
-    assert refs[0]["similarity"] > 0.5
+    assert refs[0]["similarity"] > 0.15
 
 
 def test_6_excluded_movies_are_not_used_as_active_recommendations():

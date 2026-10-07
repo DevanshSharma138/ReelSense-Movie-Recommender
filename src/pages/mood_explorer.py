@@ -240,7 +240,7 @@ def render_mood_explorer_page():
         )
     with col_t2:
         st.markdown('<div style="display: flex; justify-content: flex-end;">', unsafe_allow_html=True)
-        if st.button("↺ Reset All", key="reset_filters_btn"):
+        if st.button("↺ Reset All", key="mood_reset_filters_btn"):
             st.session_state.selected_mood = "Mind-blown"
             st.session_state.mood_selected_genres = ["Surrealism", "Cyberpunk"]
             st.session_state.mood_min_rating = 8.5

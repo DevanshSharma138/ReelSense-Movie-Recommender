@@ -30,6 +30,7 @@ ReelSense solves this by implementing an explainable, interactive, hybrid recomm
 - **Sensory Mood Explorer:** 6 curated emotional spectrum states (Happy, Relaxed, Thrilling, Romantic, Emotional, Mind-blown) with dynamic catalog availability counts.
 - **Transparent "Why Recommended" Explanations:** Real data-driven justifications (shared genres, user rating overlap, community velocity rank, review consensus).
 - **Natural Language Vector Search (Sense AI):** TF-IDF and cosine similarity search matching user free-text vibes (e.g. *"slow sci-fi"*, *"emotional drama"*) against plot summaries, tags, and genres.
+- **Horizontal Top Navigation Bar:** High-efficiency, responsive top navigation bar replacing the vertical sidebar, freeing horizontal space for symmetrical movie grid layouts, featuring quick search, dynamic Vault/Ratings badges, and instant page transitions.
 - **Offline 4-Tier Image Fallback Hierarchy:** TMDB Poster -> TMDB Backdrop -> Procedural Local SVG Vector Art -> Placeholder (guarantees zero broken layout dependency).
 
 ---

@@ -283,5 +283,2190 @@
     "language": "English",
     "fetched_at": 1791367221.930446,
     "validation_status": "VALID_TMDB"
+  },
+  "356": {
+    "tmdb_id": 13,
+    "title": "Forrest Gump",
+    "release_date": "1994-06-23",
+    "overview": "A man with a low IQ has accomplished great things in his life and been present during significant historic events—in each case, far exceeding what anyone imagined he could do. But despite all he has achieved, his one true love eludes him.",
+    "poster": "/Cw4hIUIAmSYfK9QfaUW5igp9La.jpg",
+    "backdrop": "/66Kn4XWhkuPkJxOJyPEx4U2CUfN.jpg",
+    "runtime": 142,
+    "director": "Robert Zemeckis",
+    "cast": [
+      "Tom Hanks",
+      "Robin Wright",
+      "Gary Sinise",
+      "Sally Field"
+    ],
+    "language": "English",
+    "fetched_at": 1791368631.862506,
+    "validation_status": "VALID_TMDB"
+  },
+  "296": {
+    "tmdb_id": 680,
+    "title": "Pulp Fiction",
+    "release_date": "1994-09-10",
+    "overview": "A burger-loving hit man, his philosophical partner, a drug-addled gangster's moll and a washed-up boxer converge in this sprawling, comedic crime caper. Their adventures unfurl in three stories that ingeniously trip back and forth in time.",
+    "poster": "/vQWk5YBFWF4bZaofAbv0tShwBvQ.jpg",
+    "backdrop": "/suaEOtk1N1sgg2MTM7oZd2cfVp3.jpg",
+    "runtime": 154,
+    "director": "Quentin Tarantino",
+    "cast": [
+      "John Travolta",
+      "Samuel L. Jackson",
+      "Uma Thurman",
+      "Bruce Willis"
+    ],
+    "language": "English",
+    "fetched_at": 1791368636.199934,
+    "validation_status": "VALID_TMDB"
+  },
+  "589": {
+    "tmdb_id": 280,
+    "title": "Terminator 2: Judgment Day",
+    "release_date": "1991-07-03",
+    "overview": "Ten years after the events of the original, a reprogrammed T-800 is sent back in time to protect young John Connor from the shape-shifting T-1000. Together with his mother Sarah, he fights to stop Skynet from triggering a nuclear apocalypse.",
+    "poster": "/jFTVD4XoWQTcg7wdyJKa8PEds5q.jpg",
+    "backdrop": "/izkMjmhauFx9DjoBQqM5sM5WAwE.jpg",
+    "runtime": 137,
+    "director": "James Cameron",
+    "cast": [
+      "Arnold Schwarzenegger",
+      "Linda Hamilton",
+      "Edward Furlong",
+      "Robert Patrick"
+    ],
+    "language": "English",
+    "fetched_at": 1791368648.4196253,
+    "validation_status": "VALID_TMDB"
+  },
+  "2959": {
+    "tmdb_id": 550,
+    "title": "Fight Club",
+    "release_date": "1999-10-15",
+    "overview": "A ticking-time-bomb insomniac and a slippery soap salesman channel primal male aggression into a shocking new form of therapy. Their concept catches on, with underground \"fight clubs\" forming in every town, until an eccentric gets in the way and ignites an out-of-control spiral toward oblivion.",
+    "poster": "/jSziioSwPVrOy9Yow3XhWIBDjq1.jpg",
+    "backdrop": "/c6OLXfKAk5BKeR6broC8pYiCquX.jpg",
+    "runtime": 139,
+    "director": "David Fincher",
+    "cast": [
+      "Edward Norton",
+      "Brad Pitt",
+      "Helena Bonham Carter",
+      "Meat Loaf"
+    ],
+    "language": "English",
+    "fetched_at": 1791368654.1088524,
+    "validation_status": "VALID_TMDB"
+  },
+  "1196": {
+    "tmdb_id": 1891,
+    "title": "The Empire Strikes Back",
+    "release_date": "1980-05-20",
+    "overview": "The epic saga continues as Luke Skywalker, in hopes of defeating the evil Galactic Empire, learns the ways of the Jedi from aging master Yoda. But Darth Vader is more determined than ever to capture Luke. Meanwhile, rebel leader Princess Leia, cocky Han Solo, Chewbacca, and droids C-3PO and R2-D2 are thrown into various stages of capture, betrayal and despair.",
+    "poster": "/nNAeTmF4CtdSgMDplXTDPOpYzsX.jpg",
+    "backdrop": "/k9pshruhCpJAdH9RaGJO6jaWQ4X.jpg",
+    "runtime": 124,
+    "director": "Irvin Kershner",
+    "cast": [
+      "Mark Hamill",
+      "Harrison Ford",
+      "Carrie Fisher",
+      "Billy Dee Williams"
+    ],
+    "language": "English",
+    "fetched_at": 1791368657.1644764,
+    "validation_status": "VALID_TMDB"
+  },
+  "2858": {
+    "tmdb_id": 14,
+    "title": "American Beauty",
+    "release_date": "1999-09-15",
+    "overview": "Lester Burnham, a depressed suburban father in a mid-life crisis, decides to turn his hectic life around after developing an infatuation with his daughter's attractive friend.",
+    "poster": "/wby9315QzVKdW9BonAefg8jGTTb.jpg",
+    "backdrop": "/2ndw55F40IkALzWyjCCza3M6nqM.jpg",
+    "runtime": 122,
+    "director": "Sam Mendes",
+    "cast": [
+      "Kevin Spacey",
+      "Annette Bening",
+      "Thora Birch",
+      "Wes Bentley"
+    ],
+    "language": "English",
+    "fetched_at": 1791368660.5335703,
+    "validation_status": "VALID_TMDB"
+  },
+  "780": {
+    "tmdb_id": 602,
+    "title": "Independence Day",
+    "release_date": "1996-07-02",
+    "overview": "Strange phenomena surface around the globe. The skies ignite. Terror races through the world's major cities. As these extraordinary events unfold, it becomes increasingly clear that a force of incredible magnitude has arrived. Its mission: total annihilation over the Fourth of July weekend. The last hope to stop the destruction is an unlikely group of people united by fate and unimaginable circumstances.",
+    "poster": "/p0BPQGSPoSa8Ml0DAf2mB2kCU0R.jpg",
+    "backdrop": "/kFI1oF6KVnLEbUT7yLIbKXeyvu.jpg",
+    "runtime": 145,
+    "director": "Roland Emmerich",
+    "cast": [
+      "Will Smith",
+      "Bill Pullman",
+      "Jeff Goldblum",
+      "Mary McDonnell"
+    ],
+    "language": "English",
+    "fetched_at": 1791368664.892277,
+    "validation_status": "VALID_TMDB"
+  },
+  "150": {
+    "tmdb_id": 568,
+    "title": "Apollo 13",
+    "release_date": "1995-06-30",
+    "overview": "The true story of technical troubles that scuttle the Apollo 13 lunar mission in 1970, risking the lives of astronaut Jim Lovell and his crew, with the failed journey turning into a thrilling saga of heroism. Drifting more than 200,000 miles from Earth, the astronauts work furiously with the ground crew to avert tragedy.",
+    "poster": "/tVeKscCm2fY1xDXZk8PgnZ87h9S.jpg",
+    "backdrop": "/n0FDJI9c0uWiZwm8wgXVjaMBn96.jpg",
+    "runtime": 140,
+    "director": "Ron Howard",
+    "cast": [
+      "Tom Hanks",
+      "Bill Paxton",
+      "Kevin Bacon",
+      "Gary Sinise"
+    ],
+    "language": "English",
+    "fetched_at": 1791368667.8869064,
+    "validation_status": "VALID_TMDB"
+  },
+  "1198": {
+    "tmdb_id": 85,
+    "title": "Raiders of the Lost Ark",
+    "release_date": "1981-06-12",
+    "overview": "When Dr. Indiana Jones – the tweed-suited professor who just happens to be a celebrated archaeologist – is hired by the government to locate the legendary Ark of the Covenant, he finds himself up against the entire Nazi regime.",
+    "poster": "/ceG9VzoRAVGwivFU403Wc3AHRys.jpg",
+    "backdrop": "/zPACwR32amTNvzId9qyapCWXYDJ.jpg",
+    "runtime": 115,
+    "director": "Steven Spielberg",
+    "cast": [
+      "Harrison Ford",
+      "Karen Allen",
+      "Paul Freeman",
+      "John Rhys-Davies"
+    ],
+    "language": "English",
+    "fetched_at": 1791368669.5674977,
+    "validation_status": "VALID_TMDB"
+  },
+  "457": {
+    "tmdb_id": 5503,
+    "title": "The Fugitive",
+    "release_date": "1993-08-06",
+    "overview": "Wrongfully convicted of murdering his wife and sentenced to death, Richard Kimble escapes from the law in an attempt to find the real killer and clear his name.",
+    "poster": "/b3rEtLKyOnF89mcK75GXDXdmOEf.jpg",
+    "backdrop": "/7WVRxZ7KZmzoHnUkAjnEFT4o6Dw.jpg",
+    "runtime": 131,
+    "director": "Andrew Davis",
+    "cast": [
+      "Harrison Ford",
+      "Tommy Lee Jones",
+      "Joe Pantoliano",
+      "Jeroen Krabbé"
+    ],
+    "language": "English",
+    "fetched_at": 1791368674.9768145,
+    "validation_status": "VALID_TMDB"
+  },
+  "592": {
+    "tmdb_id": 268,
+    "title": "Batman",
+    "release_date": "1989-06-21",
+    "overview": "Having witnessed his parents' brutal murder as a child, millionaire philanthropist Bruce Wayne fights crime in Gotham City disguised as Batman, a costumed hero who strikes fear into the hearts of villains. But when a deformed madman known as 'The Joker' seizes control of Gotham's criminal underworld, Batman must face his most ruthless nemesis ever while protecting both his identity and his love interest, reporter Vicki Vale.",
+    "poster": "/cij4dd21v2Rk2YtUQbV5kW69WB2.jpg",
+    "backdrop": "/rhc7OF7tC9HPu0X8DBKQJzaGRbu.jpg",
+    "runtime": 126,
+    "director": "Tim Burton",
+    "cast": [
+      "Michael Keaton",
+      "Jack Nicholson",
+      "Kim Basinger",
+      "Robert Wuhl"
+    ],
+    "language": "English",
+    "fetched_at": 1791368676.8514838,
+    "validation_status": "VALID_TMDB"
+  },
+  "5952": {
+    "tmdb_id": 121,
+    "title": "The Lord of the Rings: The Two Towers",
+    "release_date": "2002-12-18",
+    "overview": "Frodo Baggins and the other members of the Fellowship continue on their sacred quest to destroy the One Ring--but on separate paths. Their destinies lie at two towers--Orthanc Tower in Isengard, where the corrupt wizard Saruman awaits, and Sauron's fortress at Barad-dur, deep within the dark lands of Mordor.",
+    "poster": "/5VTN0pR8gcqV3EPUHHfMGnJYN9L.jpg",
+    "backdrop": "/6G73mNyooWAEQTpckPSnFxFoNmc.jpg",
+    "runtime": 179,
+    "director": "Peter Jackson",
+    "cast": [
+      "Elijah Wood",
+      "Ian McKellen",
+      "Viggo Mortensen",
+      "Sean Astin"
+    ],
+    "language": "English",
+    "fetched_at": 1791368682.525838,
+    "validation_status": "VALID_TMDB"
+  },
+  "7153": {
+    "tmdb_id": 122,
+    "title": "The Lord of the Rings: The Return of the King",
+    "release_date": "2003-12-17",
+    "overview": "As armies mass for a final battle that will decide the fate of the world--and powerful, ancient forces of Light and Dark compete to determine the outcome--one member of the Fellowship of the Ring is revealed as the noble heir to the throne of the Kings of Men. Yet, the sole hope for triumph over evil lies with a brave hobbit, Frodo, who, accompanied by his loyal friend Sam and the hideous, wretched Gollum, ventures deep into the very dark heart of Mordor on his seemingly impossible quest to destroy the Ring of Power.​",
+    "poster": "/rCzpDGLbOoPwLjy3OAm5NUPOTrC.jpg",
+    "backdrop": "/2u7zbn8EudG6kLlBzUYqP8RyFU4.jpg",
+    "runtime": 201,
+    "director": "Peter Jackson",
+    "cast": [
+      "Elijah Wood",
+      "Ian McKellen",
+      "Viggo Mortensen",
+      "Sean Astin"
+    ],
+    "language": "English",
+    "fetched_at": 1791368684.2168202,
+    "validation_status": "VALID_TMDB"
+  },
+  "588": {
+    "tmdb_id": 812,
+    "title": "Aladdin",
+    "release_date": "1992-11-25",
+    "overview": "In the boorish city of Agrabah, kind-hearted street urchin Aladdin and Princess Jasmine fall in love, although she can only marry a prince. He and power-hungry Grand Vizier Jafar vie for a magic lamp that can fulfill their wishes.",
+    "poster": "/eLFfl7vS8dkeG1hKp5mwbm37V83.jpg",
+    "backdrop": "/nenJjvfe2Eq8uBMXFJnWj5mw4bi.jpg",
+    "runtime": 91,
+    "director": "Ron Clements",
+    "cast": [
+      "Scott Weinger",
+      "Robin Williams",
+      "Linda Larkin",
+      "Jonathan Freeman"
+    ],
+    "language": "English",
+    "fetched_at": 1791368687.317362,
+    "validation_status": "VALID_TMDB"
+  },
+  "364": {
+    "tmdb_id": 8587,
+    "title": "The Lion King",
+    "release_date": "1994-06-15",
+    "overview": "Young lion prince Simba, eager to one day become king of the Pride Lands, grows up under the watchful eye of his father Mufasa; all the while his villainous uncle Scar conspires to take the throne for himself. Amid betrayal and tragedy, Simba must confront his past and find his rightful place in the Circle of Life.",
+    "poster": "/sKCr78MXSLixwmZ8DyJLrpMsd15.jpg",
+    "backdrop": "/q00H8EqULYSK74lgevMkhmGGLHn.jpg",
+    "runtime": 89,
+    "director": "Roger Allers",
+    "cast": [
+      "Matthew Broderick",
+      "Moira Kelly",
+      "Jeremy Irons",
+      "Nathan Lane"
+    ],
+    "language": "English",
+    "fetched_at": 1791368698.4089928,
+    "validation_status": "VALID_TMDB"
+  },
+  "3578": {
+    "tmdb_id": 98,
+    "title": "Gladiator",
+    "release_date": "2000-05-04",
+    "overview": "After the death of Emperor Marcus Aurelius, his devious son takes power and demotes Maximus, one of Rome's most capable generals who Marcus preferred. Eventually, Maximus is forced to become a gladiator and battle to the death against other men for the amusement of paying audiences.",
+    "poster": "/aDb548BOkFfI4nFm0kx8A3Ezh7H.jpg",
+    "backdrop": "/Ar7QuJ7sJEiC0oP3I8fKBKIQD9u.jpg",
+    "runtime": 155,
+    "director": "Ridley Scott",
+    "cast": [
+      "Russell Crowe",
+      "Joaquin Phoenix",
+      "Connie Nielsen",
+      "Oliver Reed"
+    ],
+    "language": "English",
+    "fetched_at": 1791368704.6472373,
+    "validation_status": "VALID_TMDB"
+  },
+  "1580": {
+    "tmdb_id": 607,
+    "title": "Men in Black",
+    "release_date": "1997-07-02",
+    "overview": "After a police chase with an otherworldly being, a New York City cop is recruited as an agent in a top-secret organization established to monitor and police alien activity on Earth: the Men in Black. Agent K and new recruit Agent J find themselves in the middle of a deadly plot by an intergalactic terrorist who has arrived on Earth to assassinate two ambassadors from opposing galaxies.",
+    "poster": "/uLOmOF5IzWoyrgIF5MfUnh5pa1X.jpg",
+    "backdrop": "/aJMhYOP80cVBtq5ku3uyqASF3Ol.jpg",
+    "runtime": 98,
+    "director": "Barry Sonnenfeld",
+    "cast": [
+      "Tommy Lee Jones",
+      "Will Smith",
+      "Linda Fiorentino",
+      "Vincent D'Onofrio"
+    ],
+    "language": "English",
+    "fetched_at": 1791368708.0899253,
+    "validation_status": "VALID_TMDB"
+  },
+  "648": {
+    "tmdb_id": 954,
+    "title": "Mission: Impossible",
+    "release_date": "1996-05-22",
+    "overview": "When Ethan Hunt, the leader of a crack espionage team whose perilous operation has gone awry with no explanation, discovers that a mole has penetrated the CIA, he's surprised to learn that he's the prime suspect. To clear his name, Hunt now must ferret out the real double agent and, in the process, even the score.",
+    "poster": "/l5uxY5m5OInWpcExIpKG6AR3rgL.jpg",
+    "backdrop": "/sra8XnL96OyLHENcglmZJg6HA8z.jpg",
+    "runtime": 111,
+    "director": "Brian De Palma",
+    "cast": [
+      "Tom Cruise",
+      "Jon Voight",
+      "Emmanuelle Béart",
+      "Henry Czerny"
+    ],
+    "language": "English",
+    "fetched_at": 1791368712.4101498,
+    "validation_status": "VALID_TMDB"
+  },
+  "4226": {
+    "tmdb_id": 77,
+    "title": "Memento",
+    "release_date": "2000-10-11",
+    "overview": "Leonard Shelby is tracking down the man who raped and murdered his wife. The difficulty of locating his wife's killer, however, is compounded by the fact that he suffers from a rare, untreatable form of short-term memory loss. Although he can recall details of life before his accident, Leonard cannot remember what happened fifteen minutes ago, where he's going, or why.",
+    "poster": "/nzlv62aC0octS5AklAiWpXLX9Z0.jpg",
+    "backdrop": "/7Wev9JMo6R5XAfz2KDvXb7oPMmy.jpg",
+    "runtime": 113,
+    "director": "Christopher Nolan",
+    "cast": [
+      "Guy Pearce",
+      "Carrie-Anne Moss",
+      "Joe Pantoliano",
+      "Mark Boone Junior"
+    ],
+    "language": "English",
+    "fetched_at": 1791368716.7044427,
+    "validation_status": "VALID_TMDB"
+  },
+  "6539": {
+    "tmdb_id": 22,
+    "title": "Pirates of the Caribbean: The Curse of the Black Pearl",
+    "release_date": "2003-07-09",
+    "overview": "When wily pirate Captain Barbossa seizes Jack Sparrow’s beloved ship, the Black Pearl, and kidnaps the governor’s daughter, Elizabeth Swann, blacksmith Will Turner reluctantly teams up with the unpredictable pirate Jack to rescue her—only to uncover a terrifying curse that turns Barbossa’s crew into the undead.",
+    "poster": "/poHwCZeWzJCShH7tOjg8RIoyjcw.jpg",
+    "backdrop": "/uRNgkJSkNBFbbn9fPsEjDIy8Sh3.jpg",
+    "runtime": 143,
+    "director": "Gore Verbinski",
+    "cast": [
+      "Johnny Depp",
+      "Geoffrey Rush",
+      "Orlando Bloom",
+      "Keira Knightley"
+    ],
+    "language": "English",
+    "fetched_at": 1791368720.1553147,
+    "validation_status": "VALID_TMDB"
+  },
+  "58559": {
+    "tmdb_id": 155,
+    "title": "The Dark Knight",
+    "release_date": "2008-07-16",
+    "overview": "Batman raises the stakes in his war on crime. With the help of Lt. Jim Gordon and District Attorney Harvey Dent, Batman sets out to dismantle the remaining criminal organizations that plague the streets. The partnership proves to be effective, but they soon find themselves prey to a reign of chaos unleashed by a rising criminal mastermind known to the terrified citizens of Gotham as the Joker.",
+    "poster": "/qJ2tW6WMUDux911r6m7haRef0WH.jpg",
+    "backdrop": "/9FE5eD92WfVCiivM9Pq9GVSrlWk.jpg",
+    "runtime": 152,
+    "director": "Christopher Nolan",
+    "cast": [
+      "Christian Bale",
+      "Heath Ledger",
+      "Aaron Eckhart",
+      "Michael Caine"
+    ],
+    "language": "English",
+    "fetched_at": 1791368721.8459177,
+    "validation_status": "VALID_TMDB"
+  },
+  "595": {
+    "tmdb_id": 10020,
+    "title": "Beauty and the Beast",
+    "release_date": "1991-10-22",
+    "overview": "Follow the adventures of Belle, a bright young woman who finds herself in the castle of a prince who's been turned into a mysterious beast. With the help of the castle's enchanted staff, Belle soon learns the most important lesson of all -- that true beauty comes from within.",
+    "poster": "/hUJ0UvQ5tgE2Z9WpfuduVSdiCiU.jpg",
+    "backdrop": "/fW4ZCoEZRBqLAJGFQ2g5AdAfPQR.jpg",
+    "runtime": 84,
+    "director": "Gary Trousdale",
+    "cast": [
+      "Paige O'Hara",
+      "Robby Benson",
+      "Richard White",
+      "Jerry Orbach"
+    ],
+    "language": "English",
+    "fetched_at": 1791368723.5424936,
+    "validation_status": "VALID_TMDB"
+  },
+  "1214": {
+    "tmdb_id": 348,
+    "title": "Alien",
+    "release_date": "1979-05-25",
+    "overview": "During its return to the earth, commercial spaceship Nostromo intercepts a distress signal from a distant planet. When a three-member team of the crew discovers a chamber containing thousands of eggs on the planet, a creature inside one of the eggs attacks an explorer. The entire crew is unaware of the impending nightmare set to descend upon them when the alien parasite planted inside its unfortunate host is birthed.",
+    "poster": "/vfrQk5IPloGg1v9Rzbh2Eg3VGyM.jpg",
+    "backdrop": "/AmR3JG1VQVxU8TfAvljUhfSFUOx.jpg",
+    "runtime": 117,
+    "director": "Ridley Scott",
+    "cast": [
+      "Tom Skerritt",
+      "Sigourney Weaver",
+      "Veronica Cartwright",
+      "Harry Dean Stanton"
+    ],
+    "language": "English",
+    "fetched_at": 1791368726.6350129,
+    "validation_status": "VALID_TMDB"
+  },
+  "165": {
+    "tmdb_id": 1572,
+    "title": "Die Hard: With a Vengeance",
+    "release_date": "1995-05-19",
+    "overview": "New York detective John McClane is back and kicking bad-guy butt in the third installment of this action-packed series, which finds him teaming with civilian Zeus Carver to prevent the loss of innocent lives. McClane thought he'd seen it all, until a genius named Simon engages McClane, his new \"partner\" -- and his beloved city -- in a deadly game that demands their concentration.",
+    "poster": "/buqmCdFQEWwEpL3agGgg2GVjN2d.jpg",
+    "backdrop": "/fBvSfLetWlAMevQVHa0nBDV1Fon.jpg",
+    "runtime": 128,
+    "director": "John McTiernan",
+    "cast": [
+      "Bruce Willis",
+      "Jeremy Irons",
+      "Samuel L. Jackson",
+      "Larry Bryggman"
+    ],
+    "language": "English",
+    "fetched_at": 1791368730.0612237,
+    "validation_status": "VALID_TMDB"
+  },
+  "500": {
+    "tmdb_id": 788,
+    "title": "Mrs. Doubtfire",
+    "release_date": "1993-11-24",
+    "overview": "Loving but irresponsible dad Daniel Hillard, estranged from his exasperated spouse, is crushed by a court order allowing only weekly visits with his kids. When Daniel learns his ex needs a housekeeper, he gets the job -- disguised as a British nanny. Soon he becomes not only his children's best pal but the kind of parent he should have been from the start.",
+    "poster": "/shHrSmXS5140o6sQzgzXxn3KqSm.jpg",
+    "backdrop": "/f9X91dUckoRzOZlw4XBUOfkN9FC.jpg",
+    "runtime": 125,
+    "director": "Chris Columbus",
+    "cast": [
+      "Robin Williams",
+      "Sally Field",
+      "Lisa Jakub",
+      "Matthew Lawrence"
+    ],
+    "language": "English",
+    "fetched_at": 1791368730.9420826,
+    "validation_status": "VALID_TMDB"
+  },
+  "1265": {
+    "tmdb_id": 137,
+    "title": "Groundhog Day",
+    "release_date": "1993-02-11",
+    "overview": "A cynical TV weatherman, along with his idealistic producer and his sardonic cameraman, is sent to report on Groundhog Day in the small town of Punxsutawney, where he finds himself repeating the same day over and over.",
+    "poster": "/gCgt1WARPZaXnq523ySQEUKinCs.jpg",
+    "backdrop": "/4W6RYDNe4OByNryOCvJprrutm9h.jpg",
+    "runtime": 101,
+    "director": "Harold Ramis",
+    "cast": [
+      "Bill Murray",
+      "Andie MacDowell",
+      "Chris Elliott",
+      "Stephen Tobolowsky"
+    ],
+    "language": "English",
+    "fetched_at": 1791368733.831031,
+    "validation_status": "VALID_TMDB"
+  },
+  "1704": {
+    "tmdb_id": 489,
+    "title": "Good Will Hunting",
+    "release_date": "1997-12-05",
+    "overview": "Will Hunting is a headstrong, working-class genius who is failing the lessons of life. After one too many run-ins with the law, Will's last chance is a psychology professor, who might be the only man who can reach him.",
+    "poster": "/z2FnLKpFi1HPO7BEJxdkv6hpJSU.jpg",
+    "backdrop": "/xj1Sv1xm4Y0ydBueGuf10Y9qM0O.jpg",
+    "runtime": 127,
+    "director": "Gus Van Sant",
+    "cast": [
+      "Matt Damon",
+      "Robin Williams",
+      "Ben Affleck",
+      "Stellan Skarsgård"
+    ],
+    "language": "English",
+    "fetched_at": 1791368737.125573,
+    "validation_status": "VALID_TMDB"
+  },
+  "6377": {
+    "tmdb_id": 12,
+    "title": "Finding Nemo",
+    "release_date": "2003-05-30",
+    "overview": "Nemo, an adventurous young clownfish, is unexpectedly taken from his Great Barrier Reef home to a dentist's office aquarium. It's up to his worrisome father Marlin and a friendly but forgetful fish Dory to bring Nemo home -- meeting vegetarian sharks, surfer dude turtles, hypnotic jellyfish, hungry seagulls, and more along the way.",
+    "poster": "/eHuGQ10FUzK1mdOY69wF5pGgEf5.jpg",
+    "backdrop": "/eCynaAOgYYiw5yN5lBwz3IxqvaW.jpg",
+    "runtime": 100,
+    "director": "Andrew Stanton",
+    "cast": [
+      "Albert Brooks",
+      "Ellen DeGeneres",
+      "Alexander Gould",
+      "Willem Dafoe"
+    ],
+    "language": "English",
+    "fetched_at": 1791368738.1195614,
+    "validation_status": "VALID_TMDB"
+  },
+  "318": {
+    "tmdb_id": 278,
+    "title": "The Shawshank Redemption",
+    "release_date": "1994-09-23",
+    "overview": "Imprisoned in the 1940s for the double murder of his wife and her lover, upstanding banker Andy Dufresne begins a new life at the Shawshank prison, where he puts his accounting skills to work for an amoral warden. During his long stretch in prison, Dufresne comes to be admired by the other inmates -- including an older prisoner named Red -- for his integrity and unquenchable sense of hope.",
+    "poster": "/9cqNxx0GxF0bflZmeSMuL5tnGzr.jpg",
+    "backdrop": "/pNjh59JSxChQktamG3LMp9ZoQzp.jpg",
+    "runtime": 142,
+    "director": "Frank Darabont",
+    "cast": [
+      "Tim Robbins",
+      "Morgan Freeman",
+      "Bob Gunton",
+      "William Sadler"
+    ],
+    "language": "English",
+    "fetched_at": 1791368803.535348,
+    "validation_status": "VALID_TMDB"
+  },
+  "593": {
+    "tmdb_id": 274,
+    "title": "The Silence of the Lambs",
+    "release_date": "1991-02-14",
+    "overview": "Clarice Starling is a top student at the FBI's training academy.  Jack Crawford wants Clarice to interview Dr. Hannibal Lecter, a brilliant psychiatrist who is also a violent psychopath, serving life behind bars for various acts of murder and cannibalism.  Crawford believes that Lecter may have insight into a case and that Starling, as an attractive young woman, may be just the bait to draw him out.",
+    "poster": "/uS9m8OBk1A8eM9I042bx8XXpqAq.jpg",
+    "backdrop": "/mbOx1wxMLikzwWUO9TKAcFIy6op.jpg",
+    "runtime": 119,
+    "director": "Jonathan Demme",
+    "cast": [
+      "Jodie Foster",
+      "Anthony Hopkins",
+      "Scott Glenn",
+      "Ted Levine"
+    ],
+    "language": "English",
+    "fetched_at": 1791369278.2446458,
+    "validation_status": "VALID_TMDB"
+  },
+  "260": {
+    "tmdb_id": 11,
+    "title": "Star Wars",
+    "release_date": "1977-05-25",
+    "overview": "Princess Leia is captured and held hostage by the evil Imperial forces in their effort to take over the galactic Empire. Venturesome Luke Skywalker and dashing captain Han Solo team together with the loveable robot duo R2-D2 and C-3PO to rescue the beautiful princess and restore peace and justice in the Empire.",
+    "poster": "/fai0rspsNeJCS69wHNjOdWxcI7P.jpg",
+    "backdrop": "/zqkmTXzjkAgXmEWLRsY4UpTWCeo.jpg",
+    "runtime": 121,
+    "director": "George Lucas",
+    "cast": [
+      "Mark Hamill",
+      "Harrison Ford",
+      "Carrie Fisher",
+      "Peter Cushing"
+    ],
+    "language": "English",
+    "fetched_at": 1791369279.0528905,
+    "validation_status": "VALID_TMDB"
+  },
+  "480": {
+    "tmdb_id": 329,
+    "title": "Jurassic Park",
+    "release_date": "1993-06-11",
+    "overview": "A wealthy entrepreneur secretly creates a theme park featuring living dinosaurs drawn from prehistoric DNA. Before opening day, he invites a team of experts and his two eager grandchildren to experience the park and help calm anxious investors. However, the park is anything but amusing as the security systems go off-line and the dinosaurs escape.",
+    "poster": "/d9mtMGQDLANKieb9PbD3yK7xxzo.jpg",
+    "backdrop": "/4SyDTF02R5BepqSdQmOaNCHObzF.jpg",
+    "runtime": 127,
+    "director": "Steven Spielberg",
+    "cast": [
+      "Sam Neill",
+      "Laura Dern",
+      "Jeff Goldblum",
+      "Richard Attenborough"
+    ],
+    "language": "English",
+    "fetched_at": 1791369279.8941975,
+    "validation_status": "VALID_TMDB"
+  },
+  "527": {
+    "tmdb_id": 424,
+    "title": "Schindler's List",
+    "release_date": "1993-12-15",
+    "overview": "The true story of how businessman Oskar Schindler saved over a thousand Jewish lives from the Nazis while they worked as slaves in his factory during World War II.",
+    "poster": "/sF1U4EUQS8YHUYjNl3pMGNIQyr0.jpg",
+    "backdrop": "/zb6fM1CX41D9rF9hdgclu0peUmy.jpg",
+    "runtime": 195,
+    "director": "Steven Spielberg",
+    "cast": [
+      "Liam Neeson",
+      "Ben Kingsley",
+      "Ralph Fiennes",
+      "Caroline Goodall"
+    ],
+    "language": "English",
+    "fetched_at": 1791369285.3411677,
+    "validation_status": "VALID_TMDB"
+  },
+  "50": {
+    "tmdb_id": 629,
+    "title": "The Usual Suspects",
+    "release_date": "1995-07-19",
+    "overview": "Held in an L.A. interrogation room, Verbal Kint attempts to convince the feds that a mythic crime lord, Keyser Soze, not only exists, but was also responsible for drawing him and his four partners into a multi-million dollar heist that ended with an explosion in San Pedro harbor – leaving few survivors. Verbal lures his interrogators with an incredible story of the crime lord's almost supernatural prowess.",
+    "poster": "/99X2SgyFunJFXGAYnDv3sb9pnUD.jpg",
+    "backdrop": "/hy0Hx9fMPk2fmw26Li60z1S2giU.jpg",
+    "runtime": 106,
+    "director": "Bryan Singer",
+    "cast": [
+      "Stephen Baldwin",
+      "Gabriel Byrne",
+      "Benicio del Toro",
+      "Kevin Pollak"
+    ],
+    "language": "English",
+    "fetched_at": 1791369286.2586873,
+    "validation_status": "VALID_TMDB"
+  },
+  "47": {
+    "tmdb_id": 807,
+    "title": "Se7en",
+    "release_date": "1995-09-22",
+    "overview": "Two homicide detectives are on a desperate hunt for a serial killer whose crimes are based on the \"seven deadly sins\" in this dark and haunting film that takes viewers from the tortured remains of one victim to the next. The seasoned Det. Somerset researches each sin in an effort to get inside the killer's mind, while his novice partner, Mills, scoffs at his efforts to unravel the case.",
+    "poster": "/191nKfP0ehp3uIvWqgPbFmI4lv9.jpg",
+    "backdrop": "/i5H7zusQGsysGQ8i6P361Vnr0n2.jpg",
+    "runtime": 127,
+    "director": "David Fincher",
+    "cast": [
+      "Morgan Freeman",
+      "Brad Pitt",
+      "Gwyneth Paltrow",
+      "John Cassini"
+    ],
+    "language": "English",
+    "fetched_at": 1791369287.0780313,
+    "validation_status": "VALID_TMDB"
+  },
+  "1210": {
+    "tmdb_id": 1892,
+    "title": "Return of the Jedi",
+    "release_date": "1983-05-25",
+    "overview": "Luke Skywalker leads a mission to rescue his friend Han Solo from the clutches of Jabba the Hutt, the Emperor prepares to crush the Rebellion with a more powerful Death Star, and the Rebel fleet mounts a massive attack on the space station. Luke Skywalker confronts Darth Vader in a final climactic duel before the evil Emperor.",
+    "poster": "/jQYlydvHm3kUix1f8prMucrplhm.jpg",
+    "backdrop": "/ziECpBRIyclmBNaFSWlvCfsKbMD.jpg",
+    "runtime": 132,
+    "director": "Richard Marquand",
+    "cast": [
+      "Mark Hamill",
+      "Harrison Ford",
+      "Carrie Fisher",
+      "Billy Dee Williams"
+    ],
+    "language": "English",
+    "fetched_at": 1791369290.2324042,
+    "validation_status": "VALID_TMDB"
+  },
+  "2028": {
+    "tmdb_id": 857,
+    "title": "Saving Private Ryan",
+    "release_date": "1998-07-24",
+    "overview": "As U.S. troops storm the beaches of Normandy, three brothers lie dead on the battlefield, with a fourth trapped behind enemy lines. Ranger captain John Miller and seven men are tasked with penetrating German-held territory and bringing the boy home.",
+    "poster": "/uqx37cS8cpHg8U35f9U5IBlrCV3.jpg",
+    "backdrop": "/bdD39MpSVhKjxarTxLSfX6baoMP.jpg",
+    "runtime": 169,
+    "director": "Steven Spielberg",
+    "cast": [
+      "Tom Hanks",
+      "Tom Sizemore",
+      "Edward Burns",
+      "Barry Pepper"
+    ],
+    "language": "English",
+    "fetched_at": 1791369291.9668367,
+    "validation_status": "VALID_TMDB"
+  },
+  "2762": {
+    "tmdb_id": 745,
+    "title": "The Sixth Sense",
+    "release_date": "1999-08-06",
+    "overview": "Following an unexpected tragedy, child psychologist Malcolm Crowe meets a nine year old boy named Cole Sear, who is hiding a dark secret.",
+    "poster": "/vOyfUXNFSnaTk7Vk5AjpsKTUWsu.jpg",
+    "backdrop": "/6TjllWT3cGrPFyqDXurVZ3L8bBi.jpg",
+    "runtime": 107,
+    "director": "M. Night Shyamalan",
+    "cast": [
+      "Bruce Willis",
+      "Haley Joel Osment",
+      "Toni Collette",
+      "Olivia Williams"
+    ],
+    "language": "English",
+    "fetched_at": 1791369296.393868,
+    "validation_status": "VALID_TMDB"
+  },
+  "380": {
+    "tmdb_id": 36955,
+    "title": "True Lies",
+    "release_date": "1994-07-15",
+    "overview": "A fearless, globe-trotting, terrorist-battling secret agent has his life turned upside down when he discovers his wife might be having an affair with a used car salesman while terrorists smuggle nuclear war heads into the United States.",
+    "poster": "/pqdvCBDThAOjlA0XBzbNm7GvwpU.jpg",
+    "backdrop": "/jRZ3joUcg8YDCQYl4Tog5xhY6wk.jpg",
+    "runtime": 141,
+    "director": "James Cameron",
+    "cast": [
+      "Arnold Schwarzenegger",
+      "Jamie Lee Curtis",
+      "Tom Arnold",
+      "Bill Paxton"
+    ],
+    "language": "English",
+    "fetched_at": 1791369298.1503198,
+    "validation_status": "VALID_TMDB"
+  },
+  "377": {
+    "tmdb_id": 1637,
+    "title": "Speed",
+    "release_date": "1994-06-09",
+    "overview": "Tensions run high when a crazed bomber rigs a Los Angeles bus with a device that will kill everyone on board if the vehicle's speed dips below fifty miles per hour.",
+    "poster": "/82PkCE4R95KhHICUDF7G4Ly2z3l.jpg",
+    "backdrop": "/lywmuPU5Hr1Mnpb9UGeDbILmkTx.jpg",
+    "runtime": 116,
+    "director": "Jan de Bont",
+    "cast": [
+      "Keanu Reeves",
+      "Dennis Hopper",
+      "Sandra Bullock",
+      "Joe Morton"
+    ],
+    "language": "English",
+    "fetched_at": 1791369301.4877346,
+    "validation_status": "VALID_TMDB"
+  },
+  "1270": {
+    "tmdb_id": 105,
+    "title": "Back to the Future",
+    "release_date": "1985-07-03",
+    "overview": "Eighties teenager Marty McFly is accidentally sent back in time to 1955, inadvertently disrupting his parents' first meeting and attracting his mother's romantic interest. Marty must repair the damage to history by rekindling his parents' romance and - with the help of his eccentric inventor friend Doc Brown - return to 1985.",
+    "poster": "/vN5B5WgYscRGcQpVhHl6p9DDTP0.jpg",
+    "backdrop": "/5bzPWQ2dFUl2aZKkp7ILJVVkRed.jpg",
+    "runtime": 116,
+    "director": "Robert Zemeckis",
+    "cast": [
+      "Michael J. Fox",
+      "Christopher Lloyd",
+      "Crispin Glover",
+      "Lea Thompson"
+    ],
+    "language": "English",
+    "fetched_at": 1791369302.4356685,
+    "validation_status": "VALID_TMDB"
+  },
+  "4306": {
+    "tmdb_id": 808,
+    "title": "Shrek",
+    "release_date": "2001-05-18",
+    "overview": "It ain't easy bein' green -- especially if you're a likable (albeit smelly) ogre named Shrek. On a mission to retrieve a gorgeous princess from the clutches of a fire-breathing dragon, Shrek teams up with an unlikely compatriot -- a wisecracking donkey.",
+    "poster": "/iB64vpL3dIObOtMZgX3RqdVdQDc.jpg",
+    "backdrop": "/w0eKUOEog2ImtktCHAMUZws8qif.jpg",
+    "runtime": 90,
+    "director": "Andrew Adamson",
+    "cast": [
+      "Mike Myers",
+      "Eddie Murphy",
+      "Cameron Diaz",
+      "John Lithgow"
+    ],
+    "language": "English",
+    "fetched_at": 1791369304.215629,
+    "validation_status": "VALID_TMDB"
+  },
+  "590": {
+    "tmdb_id": 581,
+    "title": "Dances with Wolves",
+    "release_date": "1990-11-09",
+    "overview": "Wounded Civil War soldier John Dunbar tries to commit suicide—and becomes a hero instead. As a reward, he's assigned to his dream post, a remote junction on the Western frontier, and soon makes unlikely friends with the local Sioux tribe.",
+    "poster": "/hw0ZEHAaTqTxSXGVwUFX7uvanSA.jpg",
+    "backdrop": "/ywWva4trKw7f3wtbz81Fe3FnrtC.jpg",
+    "runtime": 181,
+    "director": "Kevin Costner",
+    "cast": [
+      "Kevin Costner",
+      "Mary McDonnell",
+      "Graham Greene",
+      "Rodney A. Grant"
+    ],
+    "language": "English",
+    "fetched_at": 1791369305.143302,
+    "validation_status": "VALID_TMDB"
+  },
+  "344": {
+    "tmdb_id": 3049,
+    "title": "Ace Ventura: Pet Detective",
+    "release_date": "1994-02-04",
+    "overview": "He's Ace Ventura: Pet Detective. The Ace is on the case to find the Miami Dolphins' missing mascot and quarterback Dan Marino. He goes eyeball to eyeball with a man-eating shark, stakes out the Miami Dolphins and woos and wows the ladies. Whether he's undercover, under fire or underwater, he always gets his man… or beast!",
+    "poster": "/pqiRuETmuSybfnVZ7qyeoXhQyN1.jpg",
+    "backdrop": "/nbvREKIjX16mwNZtFqAoQTTHPnQ.jpg",
+    "runtime": 86,
+    "director": "Tom Shadyac",
+    "cast": [
+      "Jim Carrey",
+      "Courteney Cox",
+      "Sean Young",
+      "Tone Loc"
+    ],
+    "language": "English",
+    "fetched_at": 1791369307.1512766,
+    "validation_status": "VALID_TMDB"
+  },
+  "367": {
+    "tmdb_id": 854,
+    "title": "The Mask",
+    "release_date": "1994-07-29",
+    "overview": "Timid bank clerk Stanley Ipkiss discovers a magical mask infused with the spirit of the Norse god Loki. Donning it transforms him into an unrestrained, green-faced, cartoon-like wild man. While the mask grants him the confidence to woo a local singer, it also makes him the target of a ruthless mobster.",
+    "poster": "/jPC2eYub74zwf2tPGVtzSlBW6Oy.jpg",
+    "backdrop": "/bQlw59HncOXX9alFlOYKHAvSnm.jpg",
+    "runtime": 101,
+    "director": "Chuck Russell",
+    "cast": [
+      "Jim Carrey",
+      "Peter Riegert",
+      "Peter Greene",
+      "Amy Yasbeck"
+    ],
+    "language": "English",
+    "fetched_at": 1791369308.821433,
+    "validation_status": "VALID_TMDB"
+  },
+  "1036": {
+    "tmdb_id": 562,
+    "title": "Die Hard",
+    "release_date": "1988-07-15",
+    "overview": "High above the city of L.A. a team of terrorists has seized a building, taken hostages, and declared war. One man has manages to escape... An off-duty cop hiding somewhere inside. He's alone, tired... and the only chance anyone has got.",
+    "poster": "/7Bjd8kfmDSOzpmhySpEhkUyK2oH.jpg",
+    "backdrop": "/bvk2AAH64lP2YZs02Q3jskfHT8j.jpg",
+    "runtime": 132,
+    "director": "John McTiernan",
+    "cast": [
+      "Bruce Willis",
+      "Alan Rickman",
+      "Alexander Godunov",
+      "Bonnie Bedelia"
+    ],
+    "language": "English",
+    "fetched_at": 1791369311.9807684,
+    "validation_status": "VALID_TMDB"
+  },
+  "1197": {
+    "tmdb_id": 2493,
+    "title": "The Princess Bride",
+    "release_date": "1987-09-25",
+    "overview": "In this enchantingly cracked fairy tale, the beautiful Princess Buttercup and the dashing Westley must overcome staggering odds to find happiness amid six-fingered swordsmen, murderous princes, Sicilians and rodents of unusual size. But even death can't stop these true lovebirds from triumphing.",
+    "poster": "/2FC9L9MrjBoGHYjYZjdWQdopVYb.jpg",
+    "backdrop": "/onACwa3TjpeaY7EVHSZZbeNkd2q.jpg",
+    "runtime": 99,
+    "director": "Rob Reiner",
+    "cast": [
+      "Cary Elwes",
+      "Robin Wright",
+      "Mandy Patinkin",
+      "Chris Sarandon"
+    ],
+    "language": "English",
+    "fetched_at": 1791369313.579149,
+    "validation_status": "VALID_TMDB"
+  },
+  "316": {
+    "tmdb_id": 2164,
+    "title": "Stargate",
+    "release_date": "1994-10-28",
+    "overview": "An interstellar teleportation device, found in Egypt, leads to a planet with humans resembling ancient Egyptians who worship the god Ra.",
+    "poster": "/4T6Po0XnZlevmhfPh3ZfEs5butR.jpg",
+    "backdrop": "/s2bqHApZlliCuwgyHod0qucrYqZ.jpg",
+    "runtime": 121,
+    "director": "Roland Emmerich",
+    "cast": [
+      "James Spader",
+      "Kurt Russell",
+      "Jaye Davidson",
+      "Viveca Lindfors"
+    ],
+    "language": "English",
+    "fetched_at": 1791369316.6081824,
+    "validation_status": "VALID_TMDB"
+  },
+  "1721": {
+    "tmdb_id": 597,
+    "title": "Titanic",
+    "release_date": "1997-12-18",
+    "overview": "101-year-old Rose DeWitt Bukater tells the story of her life aboard the Titanic, 84 years later. A young Rose boards the ship with her mother and fiancé. Meanwhile, Jack Dawson and Fabrizio De Rossi win third-class tickets aboard the ship. Rose tells the whole story from Titanic's departure through to its death—on its first and last voyage—on April 15, 1912.",
+    "poster": "/9xjZS2rlVxm8SFx8kPC3aIGCOYQ.jpg",
+    "backdrop": "/xXCuto8YVp5RFqBJ7yKmVmLOWpF.jpg",
+    "runtime": 194,
+    "director": "James Cameron",
+    "cast": [
+      "Leonardo DiCaprio",
+      "Kate Winslet",
+      "Billy Zane",
+      "Kathy Bates"
+    ],
+    "language": "English",
+    "fetched_at": 1791369322.1326306,
+    "validation_status": "VALID_TMDB"
+  },
+  "2628": {
+    "tmdb_id": 1893,
+    "title": "Star Wars: Episode I - The Phantom Menace",
+    "release_date": "1999-05-19",
+    "overview": "Anakin Skywalker, a young slave strong with the Force, is discovered on Tatooine. Meanwhile, the evil Sith have returned, enacting their plot for revenge against the Jedi.",
+    "poster": "/6wkfovpn7Eq8dYNKaG5PY3q2oq6.jpg",
+    "backdrop": "/3TeGmKJfkik1D1rIoqGb1aR4k9c.jpg",
+    "runtime": 136,
+    "director": "George Lucas",
+    "cast": [
+      "Liam Neeson",
+      "Ewan McGregor",
+      "Natalie Portman",
+      "Jake Lloyd"
+    ],
+    "language": "English",
+    "fetched_at": 1791369323.796043,
+    "validation_status": "VALID_TMDB"
+  },
+  "153": {
+    "tmdb_id": 414,
+    "title": "Batman Forever",
+    "release_date": "1995-06-16",
+    "overview": "Batman faces off against two foes: the schizophrenic, horribly scarred former District Attorney Harvey Dent, aka Two-Face, and the Riddler, a disgruntled ex-Wayne Enterprises inventor seeking revenge against his former employer by unleashing his brain-sucking weapon on Gotham City's residents. As the caped crusader also copes with tortured memories of his parents' murder, he has a new romance, with psychologist Chase Meridian.",
+    "poster": "/i0fJS8M5UKoETjjJ0zwUiKaR8tr.jpg",
+    "backdrop": "/snlu32RmjldF9b068UURJg8sQtn.jpg",
+    "runtime": 121,
+    "director": "Joel Schumacher",
+    "cast": [
+      "Val Kilmer",
+      "Tommy Lee Jones",
+      "Jim Carrey",
+      "Nicole Kidman"
+    ],
+    "language": "English",
+    "fetched_at": 1791369326.9665036,
+    "validation_status": "VALID_TMDB"
+  },
+  "110": {
+    "tmdb_id": 197,
+    "title": "Braveheart",
+    "release_date": "1995-05-24",
+    "overview": "Enraged at the slaughter of Murron, his new bride and childhood love, Scottish warrior William Wallace slays a platoon of the local English lord's soldiers. This leads the village to revolt and, eventually, the entire country to rise up against English rule.",
+    "poster": "/or1gBugydmjToAEq7OZY0owwFk.jpg",
+    "backdrop": "/1m1c5gIWWkb1FEC9lzsoXHhhs7b.jpg",
+    "runtime": 178,
+    "director": "Mel Gibson",
+    "cast": [
+      "Mel Gibson",
+      "Catherine McCormack",
+      "Sophie Marceau",
+      "Patrick McGoohan"
+    ],
+    "language": "English",
+    "fetched_at": 1791369458.6358519,
+    "validation_status": "VALID_TMDB"
+  },
+  "32": {
+    "tmdb_id": 63,
+    "title": "Twelve Monkeys",
+    "release_date": "1995-12-29",
+    "overview": "In the year 2035, convict James Cole reluctantly volunteers to be sent back in time to discover the origin of a deadly virus that wiped out nearly all of the earth's population and forced the survivors into underground communities. But when Cole is mistakenly sent to 1990 instead of 1996, he's arrested and locked up in a mental hospital. There he meets psychiatrist Dr. Kathryn Railly and the son of a famous virus expert who may hold the key to the Army of the 12 Monkeys; thought to be responsible for unleashing the killer disease.",
+    "poster": "/gt3iyguaCIw8DpQZI1LIN5TohM2.jpg",
+    "backdrop": "/mKIkGoyuR71qz6FdiEiOjxvBQcS.jpg",
+    "runtime": 129,
+    "director": "Terry Gilliam",
+    "cast": [
+      "Bruce Willis",
+      "Madeleine Stowe",
+      "Brad Pitt",
+      "Christopher Plummer"
+    ],
+    "language": "English",
+    "fetched_at": 1791369462.545483,
+    "validation_status": "VALID_TMDB"
+  },
+  "1291": {
+    "tmdb_id": 89,
+    "title": "Indiana Jones and the Last Crusade",
+    "release_date": "1989-05-24",
+    "overview": "In 1938, an art collector appeals to eminent archaeologist Dr. Indiana Jones to embark on a search for the Holy Grail. Indy learns that a medieval historian has vanished while searching for it, and the missing man is his own father, Dr. Henry Jones Sr.. He sets out to rescue his father by following clues in the old man's notebook, which his father had mailed to him before he went missing. Indy arrives in Venice, where he enlists the help of a beautiful academic, Dr. Elsa Schneider, along with Marcus Brody and Sallah. Together they must stop the Nazis from recovering the power of eternal life and taking over the world!",
+    "poster": "/sizg1AU8f8JDZX4QIgE4pjUMBvx.jpg",
+    "backdrop": "/7KGdTzKux4fp5sW7hUM33NWqBU1.jpg",
+    "runtime": 127,
+    "director": "Steven Spielberg",
+    "cast": [
+      "Harrison Ford",
+      "Sean Connery",
+      "Denholm Elliott",
+      "Alison Doody"
+    ],
+    "language": "English",
+    "fetched_at": 1791369465.9065025,
+    "validation_status": "VALID_TMDB"
+  },
+  "608": {
+    "tmdb_id": 275,
+    "title": "Fargo",
+    "release_date": "1996-03-08",
+    "overview": "Jerry Lundegaard is a small-town Minnesota car salesman deeply in debt and willing to do almost anything to get out. Police chief Marge Gunderson discovers a string of violent crimes as Jerry's schemes spiral out of control.",
+    "poster": "/rt7cpEr1uP6RTZykBFhBTcRaKvG.jpg",
+    "backdrop": "/747dgDfL5d8esobk7h4odaOFhUq.jpg",
+    "runtime": 98,
+    "director": "Joel Coen",
+    "cast": [
+      "Frances McDormand",
+      "William H. Macy",
+      "Steve Buscemi",
+      "Peter Stormare"
+    ],
+    "language": "English",
+    "fetched_at": 1791369506.071506,
+    "validation_status": "VALID_TMDB"
+  },
+  "1136": {
+    "tmdb_id": 762,
+    "title": "Monty Python and the Holy Grail",
+    "release_date": "1975-04-03",
+    "overview": "King Arthur, accompanied by his squire, recruits his Knights of the Round Table, including Sir Bedevere the Wise, Sir Lancelot the Brave, Sir Robin the Not-Quite-So-Brave-As-Sir-Lancelot and Sir Galahad the Pure. On the way, Arthur battles the Black Knight who, despite having had all his limbs chopped off, insists he can still fight. They reach Camelot, but Arthur decides not  to enter, as \"it is a silly place\".",
+    "poster": "/7nTkHjETdGMYK1phHwDbPsrzbYl.jpg",
+    "backdrop": "/1KgXxv6tHXOnakqYvMPvFwYKWiw.jpg",
+    "runtime": 91,
+    "director": "Terry Jones",
+    "cast": [
+      "Graham Chapman",
+      "John Cleese",
+      "Eric Idle",
+      "Terry Gilliam"
+    ],
+    "language": "English",
+    "fetched_at": 1791369521.435048,
+    "validation_status": "VALID_TMDB"
+  },
+  "597": {
+    "tmdb_id": 114,
+    "title": "Pretty Woman",
+    "release_date": "1990-03-23",
+    "overview": "Vivian is a carefree, streetwise diamond in the rough when she meets sophisticated billionaire Edward in a chance encounter that turns into a week-long business arrangement. But Vivian's energetic spirit challenges Edward's no-nonsense approach to life, and soon they are teaching each other – and falling in love!",
+    "poster": "/oVKX1Pt1q7jXTkTk51mu2S0sAB0.jpg",
+    "backdrop": "/rleTwPqymtOpeD2bR7asJGEmldV.jpg",
+    "runtime": 120,
+    "director": "Garry Marshall",
+    "cast": [
+      "Julia Roberts",
+      "Richard Gere",
+      "Ralph Bellamy",
+      "Jason Alexander"
+    ],
+    "language": "English",
+    "fetched_at": 1791369523.5299795,
+    "validation_status": "VALID_TMDB"
+  },
+  "293": {
+    "tmdb_id": 101,
+    "title": "Léon: The Professional",
+    "release_date": "1994-09-14",
+    "overview": "Léon, the top hit man in New York, has earned a rep as an effective \"cleaner\". But when his next-door neighbors are wiped out by a loose-cannon DEA agent, he becomes the unwilling custodian of 12-year-old Mathilda. Before long, Mathilda's thoughts turn to revenge, and she considers following in Léon's footsteps.",
+    "poster": "/bxB2q91nKYp8JNzqE7t7TWBVupB.jpg",
+    "backdrop": "/fj0hwDJEOOHllRim2BMt5L7tbjf.jpg",
+    "runtime": 111,
+    "director": "Luc Besson",
+    "cast": [
+      "Jean Reno",
+      "Natalie Portman",
+      "Gary Oldman",
+      "Danny Aiello"
+    ],
+    "language": "French",
+    "fetched_at": 1791369529.5953922,
+    "validation_status": "VALID_TMDB"
+  },
+  "1193": {
+    "tmdb_id": 510,
+    "title": "One Flew Over the Cuckoo's Nest",
+    "release_date": "1975-11-19",
+    "overview": "A petty criminal fakes insanity to serve his sentence in a mental ward rather than prison. He soon finds himself as a leader to the other patients—and an enemy to the cruel, domineering nurse who runs the ward.",
+    "poster": "/kjWsMh72V6d8KRLV4EOoSJLT1H7.jpg",
+    "backdrop": "/uA8eSNAUUUyfHNIrG4h0zHxzt9W.jpg",
+    "runtime": 135,
+    "director": "Miloš Forman",
+    "cast": [
+      "Jack Nicholson",
+      "Brad Dourif",
+      "Louise Fletcher",
+      "Danny DeVito"
+    ],
+    "language": "English",
+    "fetched_at": 1791369530.7995653,
+    "validation_status": "VALID_TMDB"
+  },
+  "3793": {
+    "tmdb_id": 36657,
+    "title": "X-Men",
+    "release_date": "2000-07-13",
+    "overview": "Two mutants, Rogue and Wolverine, come to a private academy for their kind whose resident superhero team, the X-Men, must oppose a terrorist organization with similar powers.",
+    "poster": "/bRDAc4GogyS9ci3ow7UnInOcriN.jpg",
+    "backdrop": "/3QUVzbcNyfGe3ocWkYAT8emK8Co.jpg",
+    "runtime": 104,
+    "director": "Bryan Singer",
+    "cast": [
+      "Hugh Jackman",
+      "Patrick Stewart",
+      "Ian McKellen",
+      "Famke Janssen"
+    ],
+    "language": "English",
+    "fetched_at": 1791369531.8770142,
+    "validation_status": "VALID_TMDB"
+  },
+  "10": {
+    "tmdb_id": 710,
+    "title": "GoldenEye",
+    "release_date": "1995-11-16",
+    "overview": "When a powerful secret defense system is stolen, James Bond is assigned to stop a Russian crime syndicate from using it.",
+    "poster": "/z0ljRnNxIO7CRBhLEO0DvLgAFPR.jpg",
+    "backdrop": "/fIWsCpYR9iGDMSbMTSAzy8L7Kg5.jpg",
+    "runtime": 130,
+    "director": "Martin Campbell",
+    "cast": [
+      "Pierce Brosnan",
+      "Sean Bean",
+      "Izabella Scorupco",
+      "Famke Janssen"
+    ],
+    "language": "English",
+    "fetched_at": 1791369535.3132415,
+    "validation_status": "VALID_TMDB"
+  },
+  "1240": {
+    "tmdb_id": 218,
+    "title": "The Terminator",
+    "release_date": "1984-10-26",
+    "overview": "In the post-apocalyptic future, reigning tyrannical supercomputers teleport a cyborg assassin known as the \"Terminator\" back to 1984 to kill Sarah Connor, whose unborn son is destined to lead insurgents against 21st century mechanical hegemony. Meanwhile, the human-resistance movement dispatches a lone warrior to safeguard Sarah. Can he stop the virtually indestructible killing machine?",
+    "poster": "/qvktm0BHcnmDpul4Hz01GIazWPr.jpg",
+    "backdrop": "/ffdqHMWkh1h9MABwIfbfRJhgFW6.jpg",
+    "runtime": 108,
+    "director": "James Cameron",
+    "cast": [
+      "Arnold Schwarzenegger",
+      "Michael Biehn",
+      "Linda Hamilton",
+      "Paul Winfield"
+    ],
+    "language": "English",
+    "fetched_at": 1791369540.086031,
+    "validation_status": "VALID_TMDB"
+  },
+  "7361": {
+    "tmdb_id": 38,
+    "title": "Eternal Sunshine of the Spotless Mind",
+    "release_date": "2004-03-19",
+    "overview": "Joel Barish, heartbroken that his girlfriend underwent a procedure to erase him from her memory, decides to do the same. However, as he watches his memories of her fade away, he realises that he still loves her, and may be too late to correct his mistake.",
+    "poster": "/5MwkWH9tYHv3mV9OdYTMR5qreIz.jpg",
+    "backdrop": "/W1ffLQGHoxfAOq0ZYdPtJlvAdb.jpg",
+    "runtime": 108,
+    "director": "Michel Gondry",
+    "cast": [
+      "Jim Carrey",
+      "Kate Winslet",
+      "Kirsten Dunst",
+      "Mark Ruffalo"
+    ],
+    "language": "English",
+    "fetched_at": 1791369544.8354406,
+    "validation_status": "VALID_TMDB"
+  },
+  "1200": {
+    "tmdb_id": 679,
+    "title": "Aliens",
+    "release_date": "1986-07-18",
+    "overview": "Ripley, the sole survivor of the Nostromo's deadly encounter with the monstrous Alien, returns to Earth after drifting through space in hypersleep for 57 years. Although her story is initially met with skepticism, she agrees to accompany a team of Colonial Marines back to LV-426.",
+    "poster": "/r1x5JGpyqZU8PYhbs4UcrO1Xb6x.jpg",
+    "backdrop": "/4kix6fAblJIH6eMs0Ku2loyZJXK.jpg",
+    "runtime": 137,
+    "director": "James Cameron",
+    "cast": [
+      "Sigourney Weaver",
+      "Carrie Henn",
+      "Michael Biehn",
+      "Paul Reiser"
+    ],
+    "language": "English",
+    "fetched_at": 1791369554.8390665,
+    "validation_status": "VALID_TMDB"
+  },
+  "1213": {
+    "tmdb_id": 769,
+    "title": "GoodFellas",
+    "release_date": "1990-09-12",
+    "overview": "The true story of Henry Hill, a half-Irish, half-Sicilian Brooklyn kid who is adopted by neighbourhood gangsters at an early age and climbs the ranks of a Mafia family under the guidance of Jimmy Conway.",
+    "poster": "/9OkCLM73MIU2CrKZbqiT8Ln1wY2.jpg",
+    "backdrop": "/gILte6Zd7m1YneIr6MVhh30S9pr.jpg",
+    "runtime": 145,
+    "director": "Martin Scorsese",
+    "cast": [
+      "Robert De Niro",
+      "Ray Liotta",
+      "Joe Pesci",
+      "Lorraine Bracco"
+    ],
+    "language": "English",
+    "fetched_at": 1791369556.0791764,
+    "validation_status": "VALID_TMDB"
+  },
+  "1682": {
+    "tmdb_id": 37165,
+    "title": "The Truman Show",
+    "release_date": "1998-06-04",
+    "overview": "In a picture-perfect seaside town, an insurance salesman begins to realize that his entire existence may be staged and observed by a vast unseen audience as part of a long-running real-time reality TV show.",
+    "poster": "/vuza0WqY239yBXOadKlGwJsZJFE.jpg",
+    "backdrop": "/rmiG2uwcNoGFmBKMoa1pIcf514L.jpg",
+    "runtime": 103,
+    "director": "Peter Weir",
+    "cast": [
+      "Jim Carrey",
+      "Laura Linney",
+      "Noah Emmerich",
+      "Natascha McElhone"
+    ],
+    "language": "English",
+    "fetched_at": 1791369557.9628627,
+    "validation_status": "VALID_TMDB"
+  },
+  "8961": {
+    "tmdb_id": 9806,
+    "title": "The Incredibles",
+    "release_date": "2004-10-27",
+    "overview": "Bob Parr has given up his superhero days to log in time as an insurance adjuster and raise his three children with his formerly heroic wife in suburbia. But when he receives a mysterious assignment, it's time to get back into costume.",
+    "poster": "/2LqaLgk4Z226KkgPJuiOQ58wvrm.jpg",
+    "backdrop": "/lxwzY9vNwjDgxWKt3zZ6zcU6rEJ.jpg",
+    "runtime": 115,
+    "director": "Brad Bird",
+    "cast": [
+      "Craig T. Nelson",
+      "Holly Hunter",
+      "Sarah Vowell",
+      "Spencer Fox"
+    ],
+    "language": "English",
+    "fetched_at": 1791369559.1660867,
+    "validation_status": "VALID_TMDB"
+  },
+  "541": {
+    "tmdb_id": 78,
+    "title": "Blade Runner",
+    "release_date": "1982-06-25",
+    "overview": "In the smog-choked dystopian Los Angeles of 2019, blade runner Rick Deckard is called out of retirement to terminate a quartet of replicants who have escaped to Earth seeking their creator for a way to extend their short life spans.",
+    "poster": "/63N9uy8nd9j7Eog2axPQ8lbr3Wj.jpg",
+    "backdrop": "/2spEHYDcyE9r9mS7AFEscfKVDzO.jpg",
+    "runtime": 118,
+    "director": "Ridley Scott",
+    "cast": [
+      "Harrison Ford",
+      "Rutger Hauer",
+      "Sean Young",
+      "Edward James Olmos"
+    ],
+    "language": "English",
+    "fetched_at": 1791369560.2567985,
+    "validation_status": "VALID_TMDB"
+  },
+  "4995": {
+    "tmdb_id": 453,
+    "title": "A Beautiful Mind",
+    "release_date": "2001-12-14",
+    "overview": "From the heights of notoriety to the depths of depravity, John Forbes Nash Jr. experiences it all. As a brilliant but socially awkward mathematician, he made a groundbreaking discovery early in his career and stands on the brink of international acclaim. But as the handsome and arrogant Nash accepts secret work in cryptography, he becomes entangled in a mysterious conspiracy. His life takes a nightmarish turn and he soon finds himself on a painful and harrowing journey of self-discovery.",
+    "poster": "/rEIg5yJdNOt9fmX4P8gU9LeNoTQ.jpg",
+    "backdrop": "/hCJFWTPghXCwwSpvPpAoIB8318Q.jpg",
+    "runtime": 135,
+    "director": "Ron Howard",
+    "cast": [
+      "Russell Crowe",
+      "Jennifer Connelly",
+      "Ed Harris",
+      "Paul Bettany"
+    ],
+    "language": "English",
+    "fetched_at": 1791369564.2583644,
+    "validation_status": "VALID_TMDB"
+  },
+  "1097": {
+    "tmdb_id": 601,
+    "title": "E.T. the Extra-Terrestrial",
+    "release_date": "1982-06-11",
+    "overview": "An alien is left behind on Earth and saved by the 10-year-old Elliott who decides to keep him hidden in his home. While a task force hunts for the extra-terrestrial, Elliott, his brother, and his little sister Gertie form an emotional bond with their new friend, and try to help him find his way home.",
+    "poster": "/an0nD6uq6byfxXCfk6lQBzdL2J1.jpg",
+    "backdrop": "/mXLVA0YL6tcXi6SJSuAh9ONXFj5.jpg",
+    "runtime": 115,
+    "director": "Steven Spielberg",
+    "cast": [
+      "Henry Thomas",
+      "Drew Barrymore",
+      "Robert MacNaughton",
+      "Peter Coyote"
+    ],
+    "language": "English",
+    "fetched_at": 1791369565.412025,
+    "validation_status": "VALID_TMDB"
+  },
+  "733": {
+    "tmdb_id": 9802,
+    "title": "The Rock",
+    "release_date": "1996-06-07",
+    "overview": "When vengeful General Francis X. Hummel seizes control of Alcatraz Island and threatens to launch missiles loaded with deadly chemical weapons into San Francisco, only a young FBI chemical weapons expert and notorious Federal prisoner have the skills to penetrate the impregnable island fortress and take him down.",
+    "poster": "/eBcoxveWzzXQrCrwWMGAROcqgpP.jpg",
+    "backdrop": "/qDVdTL1KqGmGLGsy7UPA3vksku7.jpg",
+    "runtime": 137,
+    "director": "Michael Bay",
+    "cast": [
+      "Sean Connery",
+      "Nicolas Cage",
+      "Ed Harris",
+      "John Spencer"
+    ],
+    "language": "English",
+    "fetched_at": 1791369571.7266738,
+    "validation_status": "VALID_TMDB"
+  },
+  "2683": {
+    "tmdb_id": 817,
+    "title": "Austin Powers: The Spy Who Shagged Me",
+    "release_date": "1999-06-08",
+    "overview": "When diabolical genius Dr. Evil travels back in time to steal superspy Austin Powers's ‘mojo,’ Austin must return to the swingin' '60s himself - with the help of American agent, Felicity Shagwell - to stop the dastardly plan. Once there, Austin faces off against Dr. Evil's army of minions to try to save the world in his own unbelievably groovy way.",
+    "poster": "/jiF7UShERJFn5RtgfBK2lIJrOTc.jpg",
+    "backdrop": "/xI1tAzzUk2v9nON6DLAHzcOLK42.jpg",
+    "runtime": 95,
+    "director": "Jay Roach",
+    "cast": [
+      "Mike Myers",
+      "Heather Graham",
+      "Verne Troyer",
+      "Michael York"
+    ],
+    "language": "English",
+    "fetched_at": 1791369572.9049218,
+    "validation_status": "VALID_TMDB"
+  },
+  "2716": {
+    "tmdb_id": 620,
+    "title": "Ghostbusters",
+    "release_date": "1984-06-08",
+    "overview": "After losing their university jobs, three parapsychologists start a ghost-catching business in New York City and uncover a supernatural threat that could destroy the world.",
+    "poster": "/7E8nLijS9AwwUEPu2oFYOVKhdFA.jpg",
+    "backdrop": "/c6yfABGVKuB5cjoOwdX4AJMlzUz.jpg",
+    "runtime": 105,
+    "director": "Ivan Reitman",
+    "cast": [
+      "Bill Murray",
+      "Dan Aykroyd",
+      "Harold Ramis",
+      "Sigourney Weaver"
+    ],
+    "language": "English",
+    "fetched_at": 1791369577.657863,
+    "validation_status": "VALID_TMDB"
+  },
+  "1073": {
+    "tmdb_id": 252,
+    "title": "Willy Wonka & the Chocolate Factory",
+    "release_date": "1971-06-29",
+    "overview": "When eccentric candy man Willy Wonka promises a lifetime supply of sweets and a tour of his chocolate factory to five lucky kids, penniless Charlie Bucket seeks the golden ticket that will make him a winner.",
+    "poster": "/vmpsZkrs4Uvkp9r1atL8B3frA63.jpg",
+    "backdrop": "/ko7hMSCtXoJFfpYAIbrowwgH0eq.jpg",
+    "runtime": 100,
+    "director": "Mel Stuart",
+    "cast": [
+      "Peter Ostrum",
+      "Gene Wilder",
+      "Jack Albertson",
+      "Diana Sowle"
+    ],
+    "language": "English",
+    "fetched_at": 1791369582.4833455,
+    "validation_status": "VALID_TMDB"
+  },
+  "1527": {
+    "tmdb_id": 18,
+    "title": "The Fifth Element",
+    "release_date": "1997-05-02",
+    "overview": "In 2257, a taxi driver is unintentionally given the task of saving a young girl who is part of the key that will ensure the survival of humanity.",
+    "poster": "/fPtlCO1yQtnoLHOwKtWz7db6RGU.jpg",
+    "backdrop": "/jW21PoKwqs79wk6bfiYezox63mK.jpg",
+    "runtime": 126,
+    "director": "Luc Besson",
+    "cast": [
+      "Bruce Willis",
+      "Milla Jovovich",
+      "Gary Oldman",
+      "Ian Holm"
+    ],
+    "language": "French",
+    "fetched_at": 1791369590.2749124,
+    "validation_status": "VALID_TMDB"
+  },
+  "33794": {
+    "tmdb_id": 272,
+    "title": "Batman Begins",
+    "release_date": "2005-06-10",
+    "overview": "Driven by tragedy, billionaire Bruce Wayne dedicates his life to uncovering and defeating the corruption that plagues his home, Gotham City.  Unable to work within the system, he instead creates a new identity, a symbol of fear for the criminal underworld - The Batman.",
+    "poster": "/sPX89Td70IDDjVr85jdSBb4rWGr.jpg",
+    "backdrop": "/9IIBboV7MCT0bTxzXHmWK1Hq558.jpg",
+    "runtime": 140,
+    "director": "Christopher Nolan",
+    "cast": [
+      "Christian Bale",
+      "Michael Caine",
+      "Liam Neeson",
+      "Katie Holmes"
+    ],
+    "language": "English",
+    "fetched_at": 1791369591.8949118,
+    "validation_status": "VALID_TMDB"
+  },
+  "208": {
+    "tmdb_id": 9804,
+    "title": "Waterworld",
+    "release_date": "1995-07-28",
+    "overview": "In a futuristic world where the polar ice caps have melted and made Earth a liquid planet, a beautiful barmaid rescues a mutant seafarer from a floating island prison. They escape, along with her young charge, Enola, and sail off aboard his ship. But the trio soon becomes the target of a menacing pirate who covets the map to 'Dryland'—which is tattooed on Enola's back.",
+    "poster": "/X4UyUO5jgzs3c5YafnmYKLKKYw.jpg",
+    "backdrop": "/yaIu82UiD9QZEkKCGrAd8VAmc0V.jpg",
+    "runtime": 135,
+    "director": "Kevin Reynolds",
+    "cast": [
+      "Kevin Costner",
+      "Dennis Hopper",
+      "Jeanne Tripplehorn",
+      "Tina Majorino"
+    ],
+    "language": "English",
+    "fetched_at": 1791369595.2869706,
+    "validation_status": "VALID_TMDB"
+  },
+  "587": {
+    "tmdb_id": 251,
+    "title": "Ghost",
+    "release_date": "1990-07-13",
+    "overview": "After a young man is murdered, his spirit stays behind to warn his lover of impending danger, with the help of a reluctant psychic.",
+    "poster": "/w9RaPHov8oM5cnzeE27isnFMsvS.jpg",
+    "backdrop": "/6nLdSON3ErniBZTXWG7WRqs5jGz.jpg",
+    "runtime": 127,
+    "director": "Jerry Zucker",
+    "cast": [
+      "Patrick Swayze",
+      "Demi Moore",
+      "Whoopi Goldberg",
+      "Tony Goldwyn"
+    ],
+    "language": "English",
+    "fetched_at": 1791369597.3295715,
+    "validation_status": "VALID_TMDB"
+  },
+  "5989": {
+    "tmdb_id": 640,
+    "title": "Catch Me If You Can",
+    "release_date": "2002-12-16",
+    "overview": "A true story about Frank Abagnale Jr. who, before his 19th birthday, successfully conned millions of dollars worth of checks as a Pan Am pilot, doctor, and legal prosecutor. An FBI agent makes it his mission to put him behind bars. But Frank not only eludes capture, he revels in the pursuit.",
+    "poster": "/ctjEj2xM32OvBXCq8zAdK3ZrsAj.jpg",
+    "backdrop": "/ggC3Brchf4RqPitEh7cROFoeAWn.jpg",
+    "runtime": 141,
+    "director": "Steven Spielberg",
+    "cast": [
+      "Leonardo DiCaprio",
+      "Tom Hanks",
+      "Christopher Walken",
+      "Martin Sheen"
+    ],
+    "language": "English",
+    "fetched_at": 1791369598.4626791,
+    "validation_status": "VALID_TMDB"
+  },
+  "1968": {
+    "tmdb_id": 2108,
+    "title": "The Breakfast Club",
+    "release_date": "1985-02-15",
+    "overview": "Five high school students from different walks of life endure a Saturday detention under a power-hungry principal. The disparate group includes rebel John, princess Claire, outcast Allison, brainy Brian and Andrew, the jock. Each has a chance to tell his or her story, making the others see them a little differently -- and when the day ends, they question whether school will ever be the same.",
+    "poster": "/gp4zlj7wgbiofLMNsTPndMuO3PN.jpg",
+    "backdrop": "/s5HDOmFZaPVQFjk9BxxDrLu1T0g.jpg",
+    "runtime": 98,
+    "director": "John Hughes",
+    "cast": [
+      "Emilio Estevez",
+      "Judd Nelson",
+      "Molly Ringwald",
+      "Anthony Michael Hall"
+    ],
+    "language": "English",
+    "fetched_at": 1791369601.8448837,
+    "validation_status": "VALID_TMDB"
+  },
+  "3147": {
+    "tmdb_id": 497,
+    "title": "The Green Mile",
+    "release_date": "1999-12-10",
+    "overview": "A supernatural tale set on death row in a Southern prison, where gentle giant John Coffey possesses the mysterious power to heal people's ailments. When the cell block's head guard, Paul Edgecomb, recognizes Coffey's miraculous gift, he tries desperately to help stave off the condemned man's execution.",
+    "poster": "/8VG8fDNiy50H4FedGwdSVUPoaJe.jpg",
+    "backdrop": "/amZavErrjrdgDwhsIdpWxHNenIx.jpg",
+    "runtime": 189,
+    "director": "Frank Darabont",
+    "cast": [
+      "Tom Hanks",
+      "David Morse",
+      "Bonnie Hunt",
+      "Michael Clarke Duncan"
+    ],
+    "language": "English",
+    "fetched_at": 1791369610.9690921,
+    "validation_status": "VALID_TMDB"
+  },
+  "2": {
+    "tmdb_id": 8844,
+    "title": "Jumanji",
+    "release_date": "1995-12-15",
+    "overview": "When siblings Judy and Peter discover an enchanted board game that opens the door to a magical world, they unwittingly invite Alan -- an adult who's been trapped inside the game for 26 years -- into their living room. Alan's only hope for freedom is to finish the game, which proves risky as all three find themselves running from giant rhinoceroses, evil monkeys and other terrifying creatures.",
+    "poster": "/bdHG5Mo83VPobeZZdlSz0Y7HQHB.jpg",
+    "backdrop": "/qSxeCfWUUyht9hZgaaYmtPtTkw2.jpg",
+    "runtime": 104,
+    "director": "Joe Johnston",
+    "cast": [
+      "Robin Williams",
+      "Kirsten Dunst",
+      "Bradley Pierce",
+      "Bonnie Hunt"
+    ],
+    "language": "English",
+    "fetched_at": 1791369612.9836876,
+    "validation_status": "VALID_TMDB"
+  },
+  "349": {
+    "tmdb_id": 9331,
+    "title": "Clear and Present Danger",
+    "release_date": "1994-08-03",
+    "overview": "Agent Jack Ryan becomes acting Deputy Director of Intelligence for the CIA when Admiral Greer is diagnosed with cancer. When an American businessman, and friend of the president, is murdered on his yacht, Ryan starts discovering links between the man and drug dealers. As former CIA agent John Clark is sent to Colombia to kill drug cartel kingpins in retaliation, Ryan must fight through multiple cover-ups to figure out what happened and who's responsible.",
+    "poster": "/6xTM8FPxrLRYwz6I3fqtwh7xybs.jpg",
+    "backdrop": "/hEMxuwywh3FmWjhkIrfo57k3M2n.jpg",
+    "runtime": 141,
+    "director": "Phillip Noyce",
+    "cast": [
+      "Harrison Ford",
+      "Willem Dafoe",
+      "Joaquim de Almeida",
+      "Henry Czerny"
+    ],
+    "language": "English",
+    "fetched_at": 1791369616.250952,
+    "validation_status": "VALID_TMDB"
+  },
+  "3996": {
+    "tmdb_id": 146,
+    "title": "Crouching Tiger, Hidden Dragon",
+    "release_date": "2000-07-06",
+    "overview": "Two warriors in pursuit of a stolen sword and a notorious fugitive are led to an impetuous, physically-skilled, teenage nobleman's daughter, who is at a crossroads in her life.",
+    "poster": "/iNDVBFNz4XyYzM9Lwip6atSTFqf.jpg",
+    "backdrop": "/nSm9cij9VRrGDoZoS16CPnX0FqK.jpg",
+    "runtime": 120,
+    "director": "Ang Lee",
+    "cast": [
+      "Chow Yun-Fat",
+      "Michelle Yeoh",
+      "Zhang Ziyi",
+      "Chang Chen"
+    ],
+    "language": "Chinese",
+    "fetched_at": 1791369618.4198039,
+    "validation_status": "VALID_TMDB"
+  },
+  "7438": {
+    "tmdb_id": 393,
+    "title": "Kill Bill: Vol. 2",
+    "release_date": "2004-04-16",
+    "overview": "The Bride unwaveringly continues on her roaring rampage of revenge against the band of assassins who had tried to kill her and her unborn child. She visits each of her former associates one-by-one, checking off the victims on her Death List Five until there's nothing left to do … but kill Bill.",
+    "poster": "/2yhg0mZQMhDyvUQ4rG1IZ4oIA8L.jpg",
+    "backdrop": "/pgG6tzJzC8mjGqhaT8IWwEk00xf.jpg",
+    "runtime": 136,
+    "director": "Quentin Tarantino",
+    "cast": [
+      "Uma Thurman",
+      "David Carradine",
+      "Daryl Hannah",
+      "Michael Madsen"
+    ],
+    "language": "English",
+    "fetched_at": 1791369619.5809243,
+    "validation_status": "VALID_TMDB"
+  },
+  "1258": {
+    "tmdb_id": 694,
+    "title": "The Shining",
+    "release_date": "1980-05-23",
+    "overview": "Jack Torrance accepts a caretaker job at the Overlook Hotel, where he, along with his wife Wendy and their son Danny, must live isolated from the rest of the world for the winter. But they aren't prepared for the madness that lurks within.",
+    "poster": "/uAR0AWqhQL1hQa69UDEbb2rE5Wx.jpg",
+    "backdrop": "/AdKA2F1SzYPhSZdEbjH1Zh75UVQ.jpg",
+    "runtime": 144,
+    "director": "Stanley Kubrick",
+    "cast": [
+      "Jack Nicholson",
+      "Shelley Duvall",
+      "Danny Lloyd",
+      "Scatman Crothers"
+    ],
+    "language": "English",
+    "fetched_at": 1791369627.1743383,
+    "validation_status": "VALID_TMDB"
+  },
+  "2918": {
+    "tmdb_id": 9377,
+    "title": "Ferris Bueller's Day Off",
+    "release_date": "1986-06-11",
+    "overview": "After high school slacker Ferris Bueller successfully fakes an illness in order to skip school for the day, he goes on a series of adventures throughout Chicago with his girlfriend Sloane and best friend Cameron, all the while trying to outwit his wily school principal and fed-up sister.",
+    "poster": "/9LTQNCvoLsKXP0LtaKAaYVtRaQL.jpg",
+    "backdrop": "/jehzP4JKiFzgTWIaASLFOJocJke.jpg",
+    "runtime": 103,
+    "director": "John Hughes",
+    "cast": [
+      "Matthew Broderick",
+      "Alan Ruck",
+      "Mia Sara",
+      "Jeffrey Jones"
+    ],
+    "language": "English",
+    "fetched_at": 1791369628.3215237,
+    "validation_status": "VALID_TMDB"
+  },
+  "1208": {
+    "tmdb_id": 28,
+    "title": "Apocalypse Now",
+    "release_date": "1979-05-19",
+    "overview": "At the height of the Vietnam war, Captain Benjamin Willard is sent on a dangerous mission that, officially, \"does not exist, nor will it ever exist.\" His goal is to locate - and eliminate - a mysterious Green Beret Colonel named Walter Kurtz, who has been leading his personal army on illegal guerrilla missions into enemy territory.",
+    "poster": "/gQB8Y5RCMkv2zwzFHbUJX3kAhvA.jpg",
+    "backdrop": "/49fzLedFVKgGgFChLMuulDJBY1c.jpg",
+    "runtime": 147,
+    "director": "Francis Ford Coppola",
+    "cast": [
+      "Martin Sheen",
+      "Marlon Brando",
+      "Frederic Forrest",
+      "Albert Hall"
+    ],
+    "language": "English",
+    "fetched_at": 1791369638.0623486,
+    "validation_status": "VALID_TMDB"
+  },
+  "4896": {
+    "tmdb_id": 671,
+    "title": "Harry Potter and the Philosopher's Stone",
+    "release_date": "2001-11-16",
+    "overview": "Harry Potter has lived under the stairs at his aunt and uncle's house his whole life. But on his 11th birthday, he learns he's a powerful wizard—with a place waiting for him at the Hogwarts School of Witchcraft and Wizardry. As he learns to harness his newfound powers with the help of the school's kindly headmaster, Harry uncovers the truth about his parents' deaths—and about the villain who's to blame.",
+    "poster": "/wuMc08IPKEatf9rnMNXvIDxqP4W.jpg",
+    "backdrop": "/lvOLivVeX3DVVcwfVkxKf0R22D8.jpg",
+    "runtime": 152,
+    "director": "Chris Columbus",
+    "cast": [
+      "Daniel Radcliffe",
+      "Rupert Grint",
+      "Emma Watson",
+      "Richard Harris"
+    ],
+    "language": "English",
+    "fetched_at": 1791369640.0644453,
+    "validation_status": "VALID_TMDB"
+  },
+  "48516": {
+    "tmdb_id": 1422,
+    "title": "The Departed",
+    "release_date": "2006-10-04",
+    "overview": "To take down South Boston's Irish Mafia, the police send in one of their own to infiltrate the underworld, not realizing the syndicate has done likewise. While an undercover cop curries favor with the mob kingpin, a career criminal rises through the police ranks. But both sides soon discover there's a mole among them.",
+    "poster": "/nT97ifVT2J1yMQmeq20Qblg61T.jpg",
+    "backdrop": "/6WRrGYalXXveItfpnipYdayFkQB.jpg",
+    "runtime": 151,
+    "director": "Martin Scorsese",
+    "cast": [
+      "Leonardo DiCaprio",
+      "Matt Damon",
+      "Jack Nicholson",
+      "Mark Wahlberg"
+    ],
+    "language": "English",
+    "fetched_at": 1791369641.3254066,
+    "validation_status": "VALID_TMDB"
+  },
+  "1732": {
+    "tmdb_id": 115,
+    "title": "The Big Lebowski",
+    "release_date": "1998-03-06",
+    "overview": "Jeffrey 'The Dude' Lebowski, a Los Angeles slacker who only wants to bowl and drink White Russians, is mistaken for another Jeffrey Lebowski, a wheelchair-bound millionaire, and finds himself dragged into a strange series of events involving nihilists, adult film producers, ferrets, errant toes, and large sums of money.",
+    "poster": "/3bv6WAp6BSxxYvB5ozKFUYuRA8C.jpg",
+    "backdrop": "/77ElMccPnTMPouRxSdbJ4nEjf69.jpg",
+    "runtime": 117,
+    "director": "Joel Coen",
+    "cast": [
+      "Jeff Bridges",
+      "John Goodman",
+      "Julianne Moore",
+      "Steve Buscemi"
+    ],
+    "language": "English",
+    "fetched_at": 1791369645.1917703,
+    "validation_status": "VALID_TMDB"
+  },
+  "1923": {
+    "tmdb_id": 544,
+    "title": "There's Something About Mary",
+    "release_date": "1998-07-15",
+    "overview": "For Ted, prom night went about as bad as it’s possible for any night to go. Thirteen years later, he finally gets another chance with his old prom date, only to run up against other suitors including the sleazy detective he hired to find her.",
+    "poster": "/slJD1Dvnsf15LoeqhERsyzisAdn.jpg",
+    "backdrop": "/egJQ3nIon5fT8wyXcKRHzvmtZpD.jpg",
+    "runtime": 120,
+    "director": "Bobby Farrelly",
+    "cast": [
+      "Cameron Diaz",
+      "Matt Dillon",
+      "Ben Stiller",
+      "Lee Evans"
+    ],
+    "language": "English",
+    "fetched_at": 1791369646.3598025,
+    "validation_status": "VALID_TMDB"
+  },
+  "68954": {
+    "tmdb_id": 14160,
+    "title": "Up",
+    "release_date": "2009-05-28",
+    "overview": "Carl Fredricksen spent his entire life dreaming of exploring the globe and experiencing life to its fullest. But at age 78, life seems to have passed him by, until a twist of fate (and a persistent 8-year old Wilderness Explorer named Russell) gives him a new lease on life.",
+    "poster": "/mFvoEwSfLqbcWwFsDjQebn9bzFe.jpg",
+    "backdrop": "/hGGC9gKo7CFE3fW07RA587e5kol.jpg",
+    "runtime": 96,
+    "director": "Pete Docter",
+    "cast": [
+      "Ed Asner",
+      "Christopher Plummer",
+      "Jordan Nagai",
+      "Bob Peterson"
+    ],
+    "language": "English",
+    "fetched_at": 1791369647.5897796,
+    "validation_status": "VALID_TMDB"
+  },
+  "39": {
+    "tmdb_id": 9603,
+    "title": "Clueless",
+    "release_date": "1995-07-19",
+    "overview": "Shallow, rich and socially successful Cher is at the top of her Beverly Hills high school's pecking scale. Seeing herself as a matchmaker, Cher first coaxes two teachers into dating each other. Emboldened by her success, she decides to give hopelessly klutzy new student Tai a makeover. When Tai becomes more popular than she is, Cher realizes that her disapproving ex-stepbrother was right about how misguided she was -- and falls for him.",
+    "poster": "/8AwVTcgpTnmeOs4TdTWqcFDXEsA.jpg",
+    "backdrop": "/65d0MccsiRSPTVicregKQL8owoo.jpg",
+    "runtime": 97,
+    "director": "Amy Heckerling",
+    "cast": [
+      "Alicia Silverstone",
+      "Stacey Dash",
+      "Brittany Murphy",
+      "Paul Rudd"
+    ],
+    "language": "English",
+    "fetched_at": 1791369648.7448008,
+    "validation_status": "VALID_TMDB"
+  },
+  "111": {
+    "tmdb_id": 103,
+    "title": "Taxi Driver",
+    "release_date": "1976-02-09",
+    "overview": "Suffering from insomnia, disturbed loner Travis Bickle takes a job as a New York City cabbie, haunting the streets nightly, growing increasingly detached from reality as he dreams of cleaning up the filthy city.",
+    "poster": "/ekstpH614fwDX8DUln1a2Opz0N8.jpg",
+    "backdrop": "/9uddYYTNcLWpzUkl5iw1RUYhLhY.jpg",
+    "runtime": 114,
+    "director": "Martin Scorsese",
+    "cast": [
+      "Robert De Niro",
+      "Jodie Foster",
+      "Cybill Shepherd",
+      "Harvey Keitel"
+    ],
+    "language": "English",
+    "fetched_at": 1791369651.9962432,
+    "validation_status": "VALID_TMDB"
+  },
+  "161": {
+    "tmdb_id": 8963,
+    "title": "Crimson Tide",
+    "release_date": "1995-05-12",
+    "overview": "After the Cold War, a breakaway Russian republic with nuclear warheads becomes a possible worldwide threat. U.S. submarine Capt. Frank Ramsey signs on a relatively green but highly recommended Lt. Cmdr. Ron Hunter to the USS Alabama, which may be the only ship able to stop a possible Armageddon. When Ramsey insists that the Alabama must act aggressively, Hunter, fearing they will start rather than stop a disaster, leads a potential mutiny to stop him.",
+    "poster": "/21nqRJ6ofEgVvEl68J4O9V26Xzy.jpg",
+    "backdrop": "/mjlRoaURNhcW5YmXev8Z4UrV7x6.jpg",
+    "runtime": 116,
+    "director": "Tony Scott",
+    "cast": [
+      "Denzel Washington",
+      "Gene Hackman",
+      "Matt Craven",
+      "George Dzundza"
+    ],
+    "language": "English",
+    "fetched_at": 1791369658.8004057,
+    "validation_status": "VALID_TMDB"
+  },
+  "357": {
+    "tmdb_id": 712,
+    "title": "Four Weddings and a Funeral",
+    "release_date": "1994-03-09",
+    "overview": "Over the course of five social occasions, a committed bachelor must consider the notion that he may have discovered love.",
+    "poster": "/qa72G2VS0bpxms6yo0tI9vsHm2e.jpg",
+    "backdrop": "/ejFaHWnDP29z7ePw2cJVOsWvOvH.jpg",
+    "runtime": 117,
+    "director": "Mike Newell",
+    "cast": [
+      "Hugh Grant",
+      "Andie MacDowell",
+      "Kristin Scott Thomas",
+      "Simon Callow"
+    ],
+    "language": "English",
+    "fetched_at": 1791369662.2296345,
+    "validation_status": "VALID_TMDB"
+  },
+  "2706": {
+    "tmdb_id": 2105,
+    "title": "American Pie",
+    "release_date": "1999-07-09",
+    "overview": "At a high-school party, four friends find that losing their collective virginity isn't as easy as they had thought. But they still believe that they need to do so before college. To motivate themselves, they enter a pact to all \"score\" by their senior prom.",
+    "poster": "/5P68by2Thn8wHAziyWGEw2O7hco.jpg",
+    "backdrop": "/cvH1gNIMRITdLzoWv1HNAbRyH3n.jpg",
+    "runtime": 95,
+    "director": "Paul Weitz",
+    "cast": [
+      "Jason Biggs",
+      "Chris Klein",
+      "Thomas Ian Nicholas",
+      "Alyson Hannigan"
+    ],
+    "language": "English",
+    "fetched_at": 1791369664.5190654,
+    "validation_status": "VALID_TMDB"
+  },
+  "6": {
+    "tmdb_id": 949,
+    "title": "Heat",
+    "release_date": "1995-12-15",
+    "overview": "Obsessive master thief Neil McCauley leads a top-notch crew on various daring heists throughout Los Angeles while determined detective Vincent Hanna pursues him without rest. Each man recognizes and respects the ability and the dedication of the other even though they are aware their cat-and-mouse game may end in violence.",
+    "poster": "/umSVjVdbVwtx5ryCA2QXL44Durm.jpg",
+    "backdrop": "/uI22JkEMediWyiRqhllNqeeGtW0.jpg",
+    "runtime": 170,
+    "director": "Michael Mann",
+    "cast": [
+      "Al Pacino",
+      "Robert De Niro",
+      "Val Kilmer",
+      "Jon Voight"
+    ],
+    "language": "English",
+    "fetched_at": 1791369666.6064267,
+    "validation_status": "VALID_TMDB"
+  },
+  "778": {
+    "tmdb_id": 627,
+    "title": "Trainspotting",
+    "release_date": "1996-02-23",
+    "overview": "Heroin addict Mark Renton stumbles through bad ideas and sobriety attempts with his unreliable friends --Sick Boy, Begbie, Spud and Tommy. He also has an underage girlfriend, Diane, along for the ride. After cleaning up and moving from Edinburgh to London, Mark finds he can't escape the life he left behind as Begbie and Sick Boy come knocking.",
+    "poster": "/1jUC02qsqS2NxBMFarbIhcQtazV.jpg",
+    "backdrop": "/dkfBKDUIWP1peEszdqK10MkMZCP.jpg",
+    "runtime": 94,
+    "director": "Danny Boyle",
+    "cast": [
+      "Ewan McGregor",
+      "Ewen Bremner",
+      "Jonny Lee Miller",
+      "Kevin McKidd"
+    ],
+    "language": "English",
+    "fetched_at": 1791369668.6414714,
+    "validation_status": "VALID_TMDB"
+  },
+  "1222": {
+    "tmdb_id": 600,
+    "title": "Full Metal Jacket",
+    "release_date": "1987-06-26",
+    "overview": "A pragmatic U.S. Marine observes the dehumanizing effects the U.S.-Vietnam War has on his fellow recruits from their brutal boot camp training to the bloody street fighting in Hue.",
+    "poster": "/kMKyx1k8hWWscYFnPbnxxN4Eqo4.jpg",
+    "backdrop": "/3k2TRmqMjgt7tcwkYwZQdctnty3.jpg",
+    "runtime": 117,
+    "director": "Stanley Kubrick",
+    "cast": [
+      "Matthew Modine",
+      "Adam Baldwin",
+      "Vincent D'Onofrio",
+      "R. Lee Ermey"
+    ],
+    "language": "English",
+    "fetched_at": 1791369671.995918,
+    "validation_status": "VALID_TMDB"
+  },
+  "434": {
+    "tmdb_id": 9350,
+    "title": "Cliffhanger",
+    "release_date": "1993-05-28",
+    "overview": "A year after losing his friend in a tragic 4,000-foot fall, former ranger Gabe Walker and his partner, Hal, are called to return to the same peak to rescue a group of stranded climbers, only to learn the climbers are actually thieving hijackers who are looking for boxes full of money.",
+    "poster": "/b28DOM54OHb1c7Lsk6Nu7Kwuonj.jpg",
+    "backdrop": "/hPTaANKrpghMQeRIOcPJbJA4Yia.jpg",
+    "runtime": 113,
+    "director": "Renny Harlin",
+    "cast": [
+      "Sylvester Stallone",
+      "John Lithgow",
+      "Michael Rooker",
+      "Janine Turner"
+    ],
+    "language": "English",
+    "fetched_at": 1791369678.9406025,
+    "validation_status": "VALID_TMDB"
+  },
+  "454": {
+    "tmdb_id": 37233,
+    "title": "The Firm",
+    "release_date": "1993-06-30",
+    "overview": "Mitch McDeere is a young man with a promising future in Law. About to sit his Bar exam, he is approached by 'The Firm' and made an offer he doesn't refuse. Seduced by the money and gifts showered on him, he is totally oblivious to the more sinister side of his company. Then, two Associates are murdered. The FBI contact him, asking him for information and suddenly his life is ruined. He has a choice - work with the FBI, or stay with the Firm. Either way he will lose his life as he knows it. Mitch figures the only way out is to follow his own plan...",
+    "poster": "/kFexXCzidkm4LwlgZqxsJsDQB5v.jpg",
+    "backdrop": "/jlUTfePS1XRyMpgZvjFvDk7yEi0.jpg",
+    "runtime": 154,
+    "director": "Sydney Pollack",
+    "cast": [
+      "Tom Cruise",
+      "Jeanne Tripplehorn",
+      "Gene Hackman",
+      "Hal Holbrook"
+    ],
+    "language": "English",
+    "fetched_at": 1791369681.043098,
+    "validation_status": "VALID_TMDB"
+  },
+  "1517": {
+    "tmdb_id": 816,
+    "title": "Austin Powers: International Man of Mystery",
+    "release_date": "1997-05-02",
+    "overview": "As a swinging fashion photographer by day and a groovy British superagent by night, Austin Powers is the '60s' most shagadelic spy. But can he stop megalomaniac Dr. Evil after the bald villain freezes himself and unthaws in the '90s? With the help of sexy sidekick Vanessa Kensington, he just might.",
+    "poster": "/5uD4dxNX8JKFjWKYMHyOsqhi5pN.jpg",
+    "backdrop": "/wSm5McaHSAyOx4gGRYdlDHzj00y.jpg",
+    "runtime": 89,
+    "director": "Jay Roach",
+    "cast": [
+      "Mike Myers",
+      "Elizabeth Hurley",
+      "Michael York",
+      "Mimi Rogers"
+    ],
+    "language": "English",
+    "fetched_at": 1791369682.2645159,
+    "validation_status": "VALID_TMDB"
+  },
+  "44191": {
+    "tmdb_id": 752,
+    "title": "V for Vendetta",
+    "release_date": "2006-02-23",
+    "overview": "In a world in which Great Britain has become a fascist state, a masked vigilante known only as “V” conducts guerrilla warfare against the oppressive British government. When V rescues a young woman from the secret police, he finds in her an ally with whom he can continue his fight to free the people of Britain.",
+    "poster": "/1avD1JeaRiJX5M4ahPdZPypGoGN.jpg",
+    "backdrop": "/sFEYsEfzTx7hhjetlNrme8B5OUo.jpg",
+    "runtime": 132,
+    "director": "James McTeigue",
+    "cast": [
+      "Natalie Portman",
+      "Hugo Weaving",
+      "Stephen Rea",
+      "Stephen Fry"
+    ],
+    "language": "English",
+    "fetched_at": 1791369686.4445727,
+    "validation_status": "VALID_TMDB"
+  },
+  "2997": {
+    "tmdb_id": 492,
+    "title": "Being John Malkovich",
+    "release_date": "1999-10-29",
+    "overview": "One day at work, unsuccessful puppeteer Craig finds a portal into the head of actor John Malkovich. The portal soon becomes a passion for anybody who enters its mad and controlling world of overtaking another human body.",
+    "poster": "/31FGQu3OnwdmS4COquENe0vMZc0.jpg",
+    "backdrop": "/1Nyjb7aeRKynWgmOl8he5ZcvWLm.jpg",
+    "runtime": 113,
+    "director": "Spike Jonze",
+    "cast": [
+      "John Cusack",
+      "Cameron Diaz",
+      "John Malkovich",
+      "Catherine Keener"
+    ],
+    "language": "English",
+    "fetched_at": 1791369691.3379285,
+    "validation_status": "VALID_TMDB"
+  },
+  "339": {
+    "tmdb_id": 2064,
+    "title": "While You Were Sleeping",
+    "release_date": "1995-04-21",
+    "overview": "A transit worker pulls commuter Peter off railway tracks after he's mugged, but—while he's in a coma—his family mistakenly thinks she's Peter's fiancée, and she doesn't correct them. Things get more complicated when she falls for his brother, who's not quite sure that she's who she claims to be.",
+    "poster": "/qNGO3ETcNwlWqK2kNRpbJSJRlos.jpg",
+    "backdrop": "/r4ZkyhfwcpnHNGdn2QULEBTClZG.jpg",
+    "runtime": 103,
+    "director": "Jon Turteltaub",
+    "cast": [
+      "Sandra Bullock",
+      "Bill Pullman",
+      "Peter Gallagher",
+      "Peter Boyle"
+    ],
+    "language": "English",
+    "fetched_at": 1791369692.4042118,
+    "validation_status": "VALID_TMDB"
+  },
+  "750": {
+    "tmdb_id": 935,
+    "title": "Dr. Strangelove or: How I Learned to Stop Worrying and Love the Bomb",
+    "release_date": "1964-01-29",
+    "overview": "After the insane General Jack D. Ripper initiates a nuclear strike on the Soviet Union, a war room full of politicians, generals and a Russian diplomat all frantically try to stop it.",
+    "poster": "/gHm96BRW4GoI339rF1vYoYTB6Qe.jpg",
+    "backdrop": "/7i0L2ee4Iy0aXV6vR5u1ZmblOrx.jpg",
+    "runtime": 95,
+    "director": "Stanley Kubrick",
+    "cast": [
+      "Peter Sellers",
+      "George C. Scott",
+      "Sterling Hayden",
+      "Keenan Wynn"
+    ],
+    "language": "English",
+    "fetched_at": 1791369693.5721974,
+    "validation_status": "VALID_TMDB"
+  },
+  "1617": {
+    "tmdb_id": 2118,
+    "title": "L.A. Confidential",
+    "release_date": "1997-09-19",
+    "overview": "Three detectives in the corrupt and brutal L.A. police force of the 1950s use differing methods to uncover a conspiracy behind the shotgun slayings of the patrons at an all-night diner.",
+    "poster": "/lWCgf5sD5FpMljjpkRhcC8pXcch.jpg",
+    "backdrop": "/hUn13Hom8OWMYpR1ay0diwswwdP.jpg",
+    "runtime": 138,
+    "director": "Curtis Hanson",
+    "cast": [
+      "Kevin Spacey",
+      "Russell Crowe",
+      "Guy Pearce",
+      "James Cromwell"
+    ],
+    "language": "English",
+    "fetched_at": 1791369694.7268226,
+    "validation_status": "VALID_TMDB"
+  },
+  "3114": {
+    "tmdb_id": 863,
+    "title": "Toy Story 2",
+    "release_date": "1999-10-30",
+    "overview": "Andy heads off to Cowboy Camp, leaving his toys to their own devices. Things shift into high gear when an obsessive toy collector named Al McWhiggen, owner of Al's Toy Barn kidnaps Woody. Andy's toys mount a daring rescue mission, Buzz Lightyear meets his match and Woody has to decide where he and his heart truly belong.",
+    "poster": "/4rbcp3ng8n1MKHjpeqW0L7Fnpzz.jpg",
+    "backdrop": "/nsfVr4QbbunUrHINN9N7JdVAMTf.jpg",
+    "runtime": 92,
+    "director": "John Lasseter",
+    "cast": [
+      "Tom Hanks",
+      "Tim Allen",
+      "Joan Cusack",
+      "Kelsey Grammer"
+    ],
+    "language": "English",
+    "fetched_at": 1791369699.6186507,
+    "validation_status": "VALID_TMDB"
+  },
+  "72998": {
+    "tmdb_id": 19995,
+    "title": "Avatar",
+    "release_date": "2009-12-16",
+    "overview": "In the 22nd century, a paraplegic Marine is dispatched to the moon Pandora on a unique mission, but becomes torn between following orders and protecting an alien civilization.",
+    "poster": "/gKY6q7SjCkAU6FqvqWybDYgUKIF.jpg",
+    "backdrop": "/vL5LR6WdxWPjLPFRLe133jXWsh5.jpg",
+    "runtime": 162,
+    "director": "James Cameron",
+    "cast": [
+      "Sam Worthington",
+      "Zoe Saldaña",
+      "Sigourney Weaver",
+      "Stephen Lang"
+    ],
+    "language": "English",
+    "fetched_at": 1791369703.1114943,
+    "validation_status": "VALID_TMDB"
+  },
+  "1784": {
+    "tmdb_id": 2898,
+    "title": "As Good as It Gets",
+    "release_date": "1997-12-19",
+    "overview": "A misanthropic author, a single mother and waitress, and a gay artist form an unlikely friendship after the artist is assaulted in a robbery.",
+    "poster": "/xXxuJPNUDZ0vjsAXca0O5p3leVB.jpg",
+    "backdrop": "/x7y8ezKtU1vRInk0dmbvDoKgJ8u.jpg",
+    "runtime": 139,
+    "director": "James L. Brooks",
+    "cast": [
+      "Jack Nicholson",
+      "Helen Hunt",
+      "Greg Kinnear",
+      "Cuba Gooding Jr."
+    ],
+    "language": "English",
+    "fetched_at": 1791369704.3088238,
+    "validation_status": "VALID_TMDB"
+  },
+  "1961": {
+    "tmdb_id": 380,
+    "title": "Rain Man",
+    "release_date": "1988-12-12",
+    "overview": "When car dealer Charlie Babbitt learns that his estranged father has died, he returns home to Cincinnati, where he discovers that he has a savant older brother named Raymond and that his father's $3 million fortune is being left to the mental institution in which Raymond lives. Motivated by his father's money, Charlie checks Raymond out of the facility in order to return with him to Los Angeles. The brothers' cross-country trip ends up changing both their lives.",
+    "poster": "/iTNHwO896WKkaoPtpMMS74d8VNi.jpg",
+    "backdrop": "/b3tos7Tsd6lsTe52Nn4TMrEQg65.jpg",
+    "runtime": 134,
+    "director": "Barry Levinson",
+    "cast": [
+      "Dustin Hoffman",
+      "Tom Cruise",
+      "Valeria Golino",
+      "Gerald R. Molen"
+    ],
+    "language": "English",
+    "fetched_at": 1791369707.713804,
+    "validation_status": "VALID_TMDB"
+  },
+  "3949": {
+    "tmdb_id": 641,
+    "title": "Requiem for a Dream",
+    "release_date": "2000-10-06",
+    "overview": "The drug-induced utopias of four Coney Island residents are shattered when their addictions run deep.",
+    "poster": "/9BTwsLaMVHOGFlmsSlx5QYCaXb.jpg",
+    "backdrop": "/fAGYRJCujRBMw7TCuTp893eSG8e.jpg",
+    "runtime": 102,
+    "director": "Darren Aronofsky",
+    "cast": [
+      "Ellen Burstyn",
+      "Jared Leto",
+      "Jennifer Connelly",
+      "Marlon Wayans"
+    ],
+    "language": "English",
+    "fetched_at": 1791369709.725438,
+    "validation_status": "VALID_TMDB"
+  },
+  "100": {
+    "tmdb_id": 11062,
+    "title": "City Hall",
+    "release_date": "1996-02-16",
+    "overview": "The accidental shooting of a boy in New York City leads to an investigation by the Deputy Mayor, and unexpectedly far-reaching consequences.",
+    "poster": "/w7EkAl4Oi8Lc6VQKaqRHrOV3CxR.jpg",
+    "backdrop": "/9z9SwlbhlV1oaai2gPhyRE8xpIG.jpg",
+    "runtime": 111,
+    "director": "Harold Becker",
+    "cast": [
+      "Al Pacino",
+      "John Cusack",
+      "Bridget Fonda",
+      "Danny Aiello"
+    ],
+    "language": "English",
+    "fetched_at": 1791369959.1579905,
+    "validation_status": "VALID_TMDB"
   }
 }

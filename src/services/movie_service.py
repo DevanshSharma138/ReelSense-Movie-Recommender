@@ -12,7 +12,44 @@ class MovieService:
 
     @staticmethod
     def get_movie_by_id(movie_id):
-        return get_by_id().get(int(movie_id))
+        try:
+            m = get_by_id().get(int(movie_id))
+        except (ValueError, TypeError):
+            return None
+
+        if m and ("data:image/svg" in m.get("poster_url", "") or not m.get("backdrop_url")):
+            try:
+                from src.services.tmdb_service import get_tmdb_service
+                from src.utils.metadata_validator import resolve_movie_images
+                svc = get_tmdb_service()
+                if svc.is_available():
+                    cached = svc.get_cached_metadata(m["id"])
+                    if not cached:
+                        res = svc.enrich_movie(m["id"], m["title"], m.get("release_year"))
+                        cached = res.get("metadata")
+                    if cached:
+                        poster, backdrop, _ = resolve_movie_images(
+                            m["title"],
+                            m.get("release_year"),
+                            m["genres"][0] if m.get("genres") else "Cinema",
+                            tmdb_meta=cached,
+                            expected_tmdb_id=cached.get("tmdb_id"),
+                        )
+                        m["poster_url"] = poster
+                        m["backdrop_url"] = backdrop
+                        if cached.get("overview"):
+                            m["overview"] = cached["overview"]
+                        if cached.get("runtime"):
+                            m["runtime"] = f"{cached['runtime']} MIN"
+                        if cached.get("director"):
+                            m["director"] = cached["director"]
+                        if cached.get("cast"):
+                            m["cast"] = cached["cast"]
+                        if cached.get("language"):
+                            m["language"] = cached["language"]
+            except Exception:
+                pass
+        return m
 
     @staticmethod
     def get_all_genres():
