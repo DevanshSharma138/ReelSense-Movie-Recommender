@@ -156,6 +156,125 @@ class HybridModel:
         pcts = _percent([s[j] for j in order])
         return [self._out(j, pc, s[j], ["Matches your search on plot, genre and mood"]) for j, pc in zip(order, pcts)]
 
+    def get_breakdown_signals(self, movie_id, ratings):
+        """
+        Computes mathematically grounded signals for a specific movie given user ratings.
+        Returns a dict containing exact normalized scores, contributions, and reference movies.
+        """
+        p = self.pos.get(movie_id)
+        if p is None:
+            return {"in_catalog": False}
+
+        target_movie = self.cat[p]
+        raw_r = ratings or {}
+        # Convert ratings to 0.5-5.0 scale if provided on 10.0 scale
+        if any(float(v) > 5.0 for v in raw_r.values()):
+            r = {int(k): float(v) / 2.0 for k, v in raw_r.items() if int(k) in self.pos}
+            orig_ratings = {int(k): float(v) for k, v in raw_r.items() if int(k) in self.pos}
+        else:
+            r = {int(k): float(v) for k, v in raw_r.items() if int(k) in self.pos}
+            orig_ratings = {int(k): float(v) * 2.0 for k, v in raw_r.items() if int(k) in self.pos}
+
+        # Check cold-start threshold
+        if len(r) < MIN_RATINGS:
+            ref_movies = []
+            if len(r) > 0:
+                for rid, rval in r.items():
+                    rp = self.pos[rid]
+                    sim_val = float(self.content_sim[p, rp])
+                    ref_m = self.cat[rp]
+                    shared_g = sorted(list(set(target_movie.get("genres", [])) & set(ref_m.get("genres", []))))
+                    shared_m = sorted(list(set(target_movie.get("moods", [])) & set(ref_m.get("moods", []))))
+                    ref_movies.append({
+                        "id": rid,
+                        "title": ref_m["title"],
+                        "user_rating": orig_ratings.get(rid, rval * 2.0),
+                        "similarity": round(sim_val, 2),
+                        "shared_genres": shared_g,
+                        "shared_moods": shared_m,
+                    })
+                ref_movies.sort(key=lambda x: x["similarity"], reverse=True)
+
+            return {
+                "in_catalog": True,
+                "is_cold_start": True,
+                "movie_id": movie_id,
+                "title": target_movie["title"],
+                "content_score": None,
+                "collab_score": None,
+                "hybrid_score": None,
+                "content_contrib": None,
+                "collab_contrib": None,
+                "reference_movies": ref_movies,
+                "popularity": float(target_movie.get("popularity", 0.0)),
+                "community_rating": float(target_movie.get("rating", 0.0)),
+                "n_ratings": int(target_movie.get("n_ratings", 0)),
+                "trending_rank": target_movie.get("trending_rank"),
+                "is_hidden_gem": bool(target_movie.get("is_hidden_gem", False)),
+            }
+
+        # Hybrid model computation
+        ids = list(r)
+        pos = np.array([self.pos[i] for i in ids])
+        vals = np.array([r[i] for i in ids])
+
+        w = np.clip(vals - 2.5, 0, None)
+        if w.sum() > 0:
+            prof = np.asarray(self.X[pos].T @ w).ravel()
+            prof /= (np.linalg.norm(prof) or 1.0)
+            s_content = np.asarray(self.X @ prof).ravel()
+        else:
+            s_content = np.zeros(len(self.ids))
+
+        u = np.zeros(self.V.shape[1])
+        u[[self.midx[i] for i in ids]] = vals - self.mean
+        s_collab = (u @ self.V.T) @ self.Vcat
+
+        norm_c = _norm(s_content)
+        norm_cl = _norm(s_collab)
+
+        content_val = float(norm_c[p])
+        collab_val = float(norm_cl[p])
+        hybrid_val = float(self.alpha * content_val + (1.0 - self.alpha) * collab_val)
+
+        # Reference movies among positively rated (stars >= 3.5 or all rated)
+        liked_ids = [i for i in ids if r[i] >= 3.5] or ids
+        ref_movies = []
+        for rid in liked_ids:
+            rp = self.pos[rid]
+            sim_val = float(self.content_sim[p, rp])
+            ref_m = self.cat[rp]
+            shared_g = sorted(list(set(target_movie.get("genres", [])) & set(ref_m.get("genres", []))))
+            shared_m = sorted(list(set(target_movie.get("moods", [])) & set(ref_m.get("moods", []))))
+            ref_movies.append({
+                "id": rid,
+                "title": ref_m["title"],
+                "user_rating": orig_ratings.get(rid, r[rid] * 2.0),
+                "similarity": round(sim_val, 2),
+                "shared_genres": shared_g,
+                "shared_moods": shared_m,
+            })
+        ref_movies.sort(key=lambda x: x["similarity"], reverse=True)
+        ref_movies = ref_movies[:3]
+
+        return {
+            "in_catalog": True,
+            "is_cold_start": False,
+            "movie_id": movie_id,
+            "title": target_movie["title"],
+            "content_score": round(content_val, 3),
+            "collab_score": round(collab_val, 3),
+            "hybrid_score": round(hybrid_val, 3),
+            "content_contrib": round(self.alpha * content_val, 3),
+            "collab_contrib": round((1.0 - self.alpha) * collab_val, 3),
+            "reference_movies": ref_movies,
+            "popularity": float(target_movie.get("popularity", 0.0)),
+            "community_rating": float(target_movie.get("rating", 0.0)),
+            "n_ratings": int(target_movie.get("n_ratings", 0)),
+            "trending_rank": target_movie.get("trending_rank"),
+            "is_hidden_gem": bool(target_movie.get("is_hidden_gem", False)),
+        }
+
 
 _model = None
 def get_model():

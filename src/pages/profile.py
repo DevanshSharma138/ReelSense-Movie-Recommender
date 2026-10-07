@@ -6,6 +6,7 @@ import textwrap
 import streamlit as st
 from src.config import DEFAULT_USER
 from src.services.movie_service import MovieService
+from src.services.taste_service import TasteService
 from src.services import user_store
 
 def render_profile_page():
@@ -249,7 +250,179 @@ def render_profile_page():
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
 
     # ---------------------------------------------------------
-    # 3. NOT INTERESTED EXCLUSIONS MANAGEMENT
+    # 3. TASTE EVOLUTION (Phase 6)
+    # ---------------------------------------------------------
+    evolution_data = TasteService.get_taste_evolution(ratings)
+    total_rated_evo = evolution_data.get("total_rated", 0)
+
+    st.markdown(
+        textwrap.dedent("""
+        <div style="margin-bottom: 1rem;">
+            <div style="font-size: 0.75rem; color: #f2ca50; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;">
+                Dynamic Preference Learning
+            </div>
+            <h2 style="font-family: 'Outfit'; font-size: 1.5rem; font-weight: 700; color: #e5e1e4; margin: 0;">
+                Taste Evolution
+            </h2>
+            <p style="font-size: 0.85rem; color: #99907c; margin: 2px 0 0 0;">
+                How ReelSense progressively learned your cinematic preferences across rating milestones.
+            </p>
+        </div>
+        """).strip(),
+        unsafe_allow_html=True
+    )
+
+    st.markdown(
+        textwrap.dedent("""
+        <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 1.5rem; max-width: 840px; box-shadow: 0 4px 20px rgba(0,0,0,0.4); margin-bottom: 2rem;">
+        """).strip(),
+        unsafe_allow_html=True
+    )
+
+    if evolution_data["is_empty"]:
+        st.markdown(
+            textwrap.dedent("""
+            <div style="text-align: center; padding: 2rem 1rem;">
+                <div style="font-size: 2.2rem; margin-bottom: 0.5rem;">📈</div>
+                <h4 style="font-family: var(--font-display); font-size: 1.15rem; color: #e5e1e4; margin-bottom: 0.5rem;">No Taste Evolution History Yet</h4>
+                <p style="font-size: 0.88rem; color: #99907c; max-width: 480px; margin: 0 auto; line-height: 1.6;">
+                    Rate a few movies across the catalog to begin tracking your taste history. As you evaluate films, ReelSense records how your genre weights evolve from your 1st rating to full hybrid calibration.
+                </p>
+            </div>
+            """).strip(),
+            unsafe_allow_html=True
+        )
+    elif evolution_data["is_minimal"]:
+        milestones = evolution_data.get("milestones", [])
+        m0 = milestones[0] if milestones else None
+        dom = m0["dominant_genre"] if m0 else "Developing"
+        st.markdown(
+            textwrap.dedent(f"""
+            <div style="padding: 0.5rem 0;">
+                <div style="display: flex; align-items: center; gap: 8px; margin-bottom: 0.75rem;">
+                    <span class="material-symbols-outlined" style="color: #f2ca50; font-size: 20px;">hourglass_top</span>
+                    <span style="font-weight: 700; color: #e5e1e4; font-size: 0.95rem;">Taste Profile Developing ({total_rated_evo}/3 Ratings Recorded)</span>
+                </div>
+                <p style="font-size: 0.88rem; color: #d0c5af; line-height: 1.6; margin-bottom: 1rem;">
+                    Your rating history currently anchors in <strong style="color: #f2ca50;">{dom}</strong>.
+                    Rate <strong>3 or more films</strong> to unlock milestone comparison charts, taste shift detection, and personalized collaborative filtering.
+                </p>
+                <div style="background: var(--bg-surface-low); border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 10px; padding: 1rem;">
+                    <div style="font-size: 0.75rem; color: #99907c; font-weight: 700; text-transform: uppercase; margin-bottom: 6px;">Early Taste Anchor</div>
+                    <div style="font-size: 0.86rem; color: #e5e1e4;">Dominant Genre: <strong style="color: #f2ca50;">{dom}</strong> · Average Rating: <strong>⭐ {m0['avg_rating'] if m0 else 0:.1f}/10</strong></div>
+                </div>
+            </div>
+            """).strip(),
+            unsafe_allow_html=True
+        )
+    else:
+        milestones = evolution_data.get("milestones", [])
+        top_genres = evolution_data.get("top_genres", [])
+        evo_matrix = evolution_data.get("evolution_matrix", {})
+        shifts = evolution_data.get("taste_shifts", [])
+        insights = evolution_data.get("insights", {})
+
+        m_cards = []
+        for m in milestones:
+            m_cards.append(
+                f"""<div style="background: var(--bg-surface-low); border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 10px; padding: 0.85rem 1rem; flex: 1; min-width: 140px;">
+                    <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700; letter-spacing: 0.05em; margin-bottom: 2px;">{m['label']}</div>
+                    <div style="font-family: 'Outfit'; font-size: 1.15rem; font-weight: 700; color: #f2ca50;">{m['dominant_genre']}</div>
+                    <div style="font-size: 0.76rem; color: #d0c5af; margin-top: 2px;">⭐ {m['avg_rating']:.1f} mean · {m['total_points']:.0f} pts</div>
+                </div>"""
+            )
+
+        st.markdown(
+            f"""<div style="display: flex; gap: 10px; flex-wrap: wrap; margin-bottom: 1.5rem;">{''.join(m_cards)}</div>""",
+            unsafe_allow_html=True
+        )
+
+        st.markdown(
+            """<h4 style="font-family: var(--font-display); font-size: 1rem; font-weight: 700; color: #e5e1e4; margin-bottom: 0.8rem;">Genre Preference Trajectory (% Share across Milestones)</h4>""",
+            unsafe_allow_html=True
+        )
+
+        for g in top_genres:
+            shares = evo_matrix.get(g, [])
+            curr_share = shares[-1] if shares else 0.0
+            first_share = shares[0] if shares else 0.0
+            delta = curr_share - first_share
+
+            if delta >= 4.0:
+                shift_tag = f"<span style='color: #f2ca50; font-weight: 700; font-size: 0.76rem;'>↑ +{delta:.1f}% shift</span>"
+            elif delta <= -4.0:
+                shift_tag = f"<span style='color: #99907c; font-weight: 600; font-size: 0.76rem;'>↓ {delta:.1f}% shift</span>"
+            else:
+                shift_tag = "<span style='color: #6e6758; font-size: 0.76rem;'>— Steady</span>"
+
+            stage_items = []
+            for idx, m in enumerate(milestones):
+                sh = shares[idx] if idx < len(shares) else 0.0
+                bar = "█" * max(1, int(round((sh / 50.0) * 8)))
+                stage_items.append(
+                    f"<div style='flex: 1; min-width: 90px; background: #181719; border: 1px solid rgba(77, 70, 53, 0.25); border-radius: 6px; padding: 6px 8px; text-align: center;'>"
+                    f"  <div style='font-size: 0.68rem; color: #99907c;'>{m['label'][:9]}</div>"
+                    f"  <div style='font-family: monospace; font-size: 0.82rem; color: #f2ca50; font-weight: 700; margin: 2px 0;'>{sh:.1f}%</div>"
+                    f"  <div style='font-family: monospace; font-size: 0.72rem; color: #e7c17c;'>{bar}</div>"
+                    f"</div>"
+                )
+
+            st.markdown(
+                textwrap.dedent(f"""
+                <div style="background: var(--bg-surface-low); border: 1px solid rgba(77, 70, 53, 0.3); border-radius: 10px; padding: 0.85rem 1rem; margin-bottom: 0.85rem;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 8px;">
+                        <span style="font-weight: 700; color: #e5e1e4; font-size: 0.92rem;">{g}</span>
+                        <div>{shift_tag}</div>
+                    </div>
+                    <div style="display: flex; gap: 8px; flex-wrap: wrap;">
+                        {''.join(stage_items)}
+                    </div>
+                </div>
+                """).strip(),
+                unsafe_allow_html=True
+            )
+
+        st.markdown(
+            textwrap.dedent(f"""
+            <div style="margin-top: 1.5rem; background: rgba(242, 202, 80, 0.05); border: 1px solid rgba(242, 202, 80, 0.25); border-radius: 12px; padding: 1.25rem;">
+                <div style="font-family: 'Outfit'; font-size: 1.05rem; font-weight: 700; color: #f2ca50; margin-bottom: 0.75rem; display: flex; align-items: center; gap: 6px;">
+                    <span class="material-symbols-outlined" style="font-size: 20px;">analytics</span>
+                    <span>Taste Evolution Insights</span>
+                </div>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 12px; margin-bottom: 0.85rem;">
+                    <div>
+                        <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700;">Strongest Emerging Preference</div>
+                        <div style="font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; color: #e5e1e4; margin-top: 2px;">
+                            {insights.get('emerging') or 'None (Balanced)'}
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700;">Most Consistent Genre</div>
+                        <div style="font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; color: #e5e1e4; margin-top: 2px;">
+                            {insights.get('consistent') or 'Diverse'}
+                        </div>
+                    </div>
+                    <div>
+                        <div style="font-size: 0.72rem; color: #99907c; text-transform: uppercase; font-weight: 700;">Biggest Taste Shift</div>
+                        <div style="font-family: 'Outfit'; font-size: 1.1rem; font-weight: 700; color: #e5e1e4; margin-top: 2px;">
+                            {insights.get('biggest_change') or 'Stable distribution'}
+                        </div>
+                    </div>
+                </div>
+                <p style="font-size: 0.84rem; color: #d0c5af; margin: 0; line-height: 1.5; border-top: 1px solid rgba(77, 70, 53, 0.2); padding-top: 0.6rem;">
+                    {insights.get('summary', '')}
+                </p>
+            </div>
+            """).strip(),
+            unsafe_allow_html=True
+        )
+
+    st.markdown('</div>', unsafe_allow_html=True)
+
+    st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
+
+    # ---------------------------------------------------------
+    # 4. NOT INTERESTED EXCLUSIONS MANAGEMENT
     # ---------------------------------------------------------
     not_interested_set = set(st.session_state.get("not_interested", set()))
     n_hidden = len(not_interested_set)

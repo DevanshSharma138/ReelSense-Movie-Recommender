@@ -110,12 +110,21 @@ with $\alpha = 0.40$ (giving 40% weight to content similarity and 60% weight to 
 
 ---
 
-## 10. Explainable Recommendations
-Every recommendation surfaces human-understandable rationale derived directly from underlying data:
-- *Rating Overlap:* `"Because you rated 'Toy Story' highly (Shared genres: Adventure, Animation)"`
-- *Collaborative Signal:* `"Calibrated with your preference for 'Star Wars: Episode IV'"`
-- *Trending Velocity:* `"Trending #1 among active community viewers"`
-- *Curator Consensus:* `"Rated ⭐ 8.8/10 across 215 MovieLens viewers"`
+## 10. Explainable Recommendations & Recommendation Intelligence (Phase 6)
+Every recommendation surfaces human-understandable, mathematically grounded rationale derived directly from the underlying models and persisted user state (zero synthetic or hardcoded AI metrics):
+- **Recommendation Breakdown / Why Recommended 2.0 (Movie Details):**
+  - **Content Match:** Normalized TF-IDF cosine similarity between movie features and user preference centroid.
+  - **Taste Alignment:** User rating-weighted genre preference alignment against movie genre distribution.
+  - **Collaborative Signal:** Normalized SVD latent concept alignment from community viewer factorization.
+  - **Score Contribution Transparency:** Exact formula display: `Final Hybrid Score = 0.40 × Content + 0.60 × Collaborative`.
+  - **Positive Reference Anchors:** Top 2–3 positively rated reference titles with real TF-IDF cosine similarities and shared genres/moods.
+  - **Cold-Start Fallback:** Truthful catalog curation rationale (MovieLens review consensus, Bayesian ranking, trending status) when user has fewer than 3 ratings without claiming unavailable personalization.
+
+- **Taste Evolution (Profile):**
+  - Visual timeline tracking how user genre preferences shift across rating milestones (`1st Rating` $\to$ `3rd Rating` $\to$ `5th Rating` $\to$ `10th Rating` $\to$ `Current`).
+  - Reconstructed from persisted rating history in `data/user_data.json` preserving evaluation order (no synthetic timestamps).
+  - Reuses identical rating-weighted genre formula ($\sum \text{score}$) for mathematical consistency.
+  - Automated taste shift detection: identifies emerging preferences, most consistent genres, and biggest percentage shifts.
 
 ---
 
@@ -175,11 +184,17 @@ Open your browser at `http://localhost:8501`.
 
 ## 17. How to Run Tests & Evaluation
 ```powershell
-# Run the complete automated test suite (30 tests)
+# Run the complete automated test suite (51 tests)
 pytest -v
+
+# Run the Phase 6 recommendation intelligence verification flow
+python tests/manual_test_phase6_flow.py
 
 # Run the 16-step end-to-end user journey test
 python tests/manual_test_phase3_flow.py
+
+# Run the 10-step persistence and restart flow test
+python tests/manual_test_flow.py
 
 # Run offline recommender evaluation on MovieLens
 python src/evaluation/evaluate.py

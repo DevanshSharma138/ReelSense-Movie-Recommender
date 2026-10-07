@@ -125,3 +125,10 @@ class RecommendationService:
             for mood in m.get("moods", []):
                 counts[mood] = counts.get(mood, 0) + 1
         return counts
+
+    @staticmethod
+    def get_recommendation_breakdown(movie, user_ratings=None):
+        """Phase 6: Returns comprehensive, mathematically grounded breakdown dictionary."""
+        from src.services.taste_service import TasteService
+        return TasteService.get_recommendation_breakdown(movie, user_ratings=user_ratings)
+

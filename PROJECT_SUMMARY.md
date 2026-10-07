@@ -2,7 +2,7 @@
 
 > **Target Audience:** B.Tech CSE (AI & ML) Capstone Review Committee, Viva Examiners, and Technical Evaluators  
 > **Project:** ReelSense Movie Recommendation Platform  
-> **Status:** Phase 4 Completed · Fully Functional · Evaluated  
+> **Status:** Phase 6 Completed · Fully Functional · Evaluated  
 
 ---
 
@@ -64,10 +64,13 @@ ReelSense is an end-to-end personalized movie discovery system designed to allev
 3. **User State Persistence (`src/services/user_store.py`):**
    - Provides thread-safe, atomic JSON persistence into `data/user_data.json`.
    - Employs temporary write-and-replace mechanics with exponential backoff retry to defeat Windows transient file locking (`WinError 32`).
-4. **Interactive Feedback Subsystem:**
+4. **Recommendation Intelligence & Taste Evolution (`src/services/taste_service.py` - Phase 6):**
+   - **Recommendation Breakdown 2.0:** Exposes Content Match, Taste Alignment, Collaborative Signal, Hybrid score equation ($0.4 \times \text{Content} + 0.6 \times \text{Collab}$), and positive reference films with cosine similarities without fake AI metrics or LLMs.
+   - **Taste Evolution:** Reconstructs genre preference progression across milestones ($1 \to 3 \to 5 \to 10 \to \text{Current}$) using persisted ratings, detecting emerging genres and shifts with zero synthetic timestamps.
+5. **Interactive Feedback Subsystem:**
    - **Positive:** Interactive rating sliders with real-time UI feedback.
    - **Negative ("Not Interested"):** Instant exclusion action (`🚫`) that removes movies from recommendations across restarts.
-5. **Evaluation Suite (`src/evaluation/evaluate.py`):**
+6. **Evaluation Suite (`src/evaluation/evaluate.py`):**
    - Evaluates offline Precision@K, Recall@K, HitRate@10, Catalog Coverage, and Genre Diversity.
 
 ---
