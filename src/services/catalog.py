@@ -9,11 +9,11 @@ import numpy as np
 import pandas as pd
 
 from data.loader import load_movies, load_ratings, DATA_DIR
+from src.utils.metadata_validator import resolve_movie_images, audit_catalog_integrity
 
-from src.utils.image_utils import generate_fallback_poster, generate_fallback_backdrop
-
-CATALOG_SIZE = 600                      # most-rated movies shown in the app
+CATALOG_SIZE = 2000                     # Expanded active catalog size (Phase 5.5)
 META_FILE = DATA_DIR / "tmdb_metadata.json"
+LINKS_FILE = DATA_DIR / "links.csv"
 TMDB = "https://image.tmdb.org/t/p/"
 
 GENRE_MOODS = {
@@ -46,6 +46,16 @@ def _meta():
         return {}
 
 
+def _links_map():
+    if not LINKS_FILE.exists():
+        return {}
+    try:
+        df = pd.read_csv(LINKS_FILE).dropna(subset=["tmdbId"])
+        return dict(zip(df["movieId"].astype(int), df["tmdbId"].astype(int)))
+    except Exception:
+        return {}
+
+
 def _tags():
     p = DATA_DIR / "tags.csv"
     if not p.exists():
@@ -68,7 +78,7 @@ def get_catalog():
     trend_ids = recent.reindex(ids).fillna(0).nlargest(10).index.tolist()
     median_cnt = stats.loc[ids, "count"].median()
 
-    meta, tags, out = _meta(), _tags(), []
+    meta, tags, links_map, out = _meta(), _tags(), _links_map(), []
     for i in ids:
         row, st, md = movies.loc[i], stats.loc[i], meta.get(str(i), {})
         title = _clean_title(row.title)
@@ -76,21 +86,30 @@ def get_catalog():
         moods = [m for m, gs in GENRE_MOODS.items() if gs & set(genres)] or ["Emotional"]
         primary_genre = genres[0] if genres else "Cinema"
         rel_year = int(row.year) if pd.notna(row.year) else None
+        expected_tmdb = links_map.get(int(i))
 
-        # Tiered image hierarchy: 1. real poster -> 2. real backdrop -> 3. attractive SVG -> 4. placeholder
-        if md.get("poster"):
-            poster = f"{TMDB}w500{md['poster']}"
-        elif md.get("backdrop"):
-            poster = f"{TMDB}w780{md['backdrop']}"
-        else:
-            poster = generate_fallback_poster(title, year=rel_year, genre=primary_genre)
+        # Verified 4-tier image hierarchy & metadata cross-validation
+        poster, backdrop, audit = resolve_movie_images(
+            movie_title=row.title,
+            release_year=rel_year,
+            genre=primary_genre,
+            tmdb_meta=md if md else None,
+            expected_tmdb_id=expected_tmdb,
+        )
 
-        if md.get("backdrop"):
-            backdrop = f"{TMDB}w1280{md['backdrop']}"
-        elif md.get("poster"):
-            backdrop = f"{TMDB}w780{md['poster']}"
+        # Overview and crew from TMDB only if cross-source validation passed
+        if audit["is_valid"] and md:
+            overview = md.get("overview") or f"A {', '.join(genres[:3]).lower() or 'feature'} film from {int(row.year) if pd.notna(row.year) else 'unknown year'}."
+            runtime = f"{md['runtime']} MIN" if md.get("runtime") else "N/A"
+            director = md.get("director", "")
+            cast = md.get("cast", [])
+            language = md.get("language", "English")
         else:
-            backdrop = generate_fallback_backdrop(title, year=rel_year, genre=primary_genre)
+            overview = f"A {', '.join(genres[:3]).lower() or 'feature'} film from {int(row.year) if pd.notna(row.year) else 'unknown year'}."
+            runtime = "N/A"
+            director = ""
+            cast = []
+            language = "English"
 
         rank = trend_ids.index(i) + 1 if i in trend_ids else None
         out.append({
@@ -101,11 +120,11 @@ def get_catalog():
             "n_ratings": int(st["count"]),
             "popularity": float(st["bayes"]),
             "vector_match": 0,
-            "overview": md.get("overview") or f"A {', '.join(genres[:3]).lower() or 'feature'} film from {int(row.year) if pd.notna(row.year) else 'unknown year'}.",
-            "runtime": f"{md['runtime']} MIN" if md.get("runtime") else "N/A",
-            "director": md.get("director", ""),
-            "cast": md.get("cast", []),
-            "language": md.get("language", "English"),
+            "overview": overview,
+            "runtime": runtime,
+            "director": director,
+            "cast": cast,
+            "language": language,
             "poster_url": poster, "backdrop_url": backdrop,
             "moods": moods,
             "tags": tags.get(i, ""),

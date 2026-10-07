@@ -131,7 +131,7 @@ def test_taste_profile_calculation():
 # -------------------------------------------------------------------------
 def test_dynamic_mood_counts():
     catalog = get_catalog()
-    assert len(catalog) == 600
+    assert len(catalog) == 2000
 
     all_counts = RecommendationService.get_all_mood_counts()
     assert isinstance(all_counts, dict)

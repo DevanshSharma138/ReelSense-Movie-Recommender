@@ -15,7 +15,7 @@ import requests
 
 DATA = Path(__file__).resolve().parent
 OUT = DATA / "tmdb_metadata.json"
-CATALOG_SIZE = int(sys.argv[1]) if len(sys.argv) > 1 else 600   # keep same as catalog.py
+CATALOG_SIZE = int(sys.argv[1]) if len(sys.argv) > 1 else 2000   # keep same as catalog.py
 KEY = os.environ.get("TMDB_API_KEY", "").strip()
 LANG = {"en": "English", "ja": "Japanese", "ko": "Korean", "fr": "French", "it": "Italian",
         "es": "Spanish", "de": "German", "hi": "Hindi", "zh": "Chinese", "ru": "Russian",
@@ -53,6 +53,9 @@ for r in todo.itertuples():
         d = res.json()
         crew = d.get("credits", {}).get("crew", [])
         meta[str(r.movieId)] = {
+            "tmdb_id": int(r.tmdbId),
+            "title": d.get("title") or d.get("original_title") or "",
+            "release_date": d.get("release_date") or "",
             "overview": d.get("overview") or "",
             "poster": d.get("poster_path"),
             "backdrop": d.get("backdrop_path"),

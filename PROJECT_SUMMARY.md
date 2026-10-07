@@ -26,7 +26,7 @@ ReelSense is an end-to-end personalized movie discovery system designed to allev
 │                          SERVICE ORCHESTRATION LAYER                   │
 │  - RecommendationService (Public API, Modes, Real Explanations)        │
 │  - MovieService (Search, Filter, Facet Aggregation)                    │
-│  - CatalogService (600 Catalog Items, Bayesian Ranking, 4-Tier Fallback)│
+│  - CatalogService (2,000 Catalog Items, Bayesian Ranking, 4-Tier Fallback)│
 │  - UserStore (Atomic JSON Persistence, WinError 32 Lock Resilience)    │
 └──────────────────┬─────────────────────────────────┬───────────────────┘
                    │                                 │
@@ -58,9 +58,9 @@ ReelSense is an end-to-end personalized movie discovery system designed to allev
      - **Content branch:** Measures textual and categorical affinity using cosine similarity between the user's rating-weighted preference vector and movie TF-IDF embeddings.
      - **Collaborative branch:** Projects the user's ratings into a 50-dimensional latent concept space learned from 610 MovieLens users via TruncatedSVD.
    - Combines normalized score vectors using parameter $\alpha = 0.40$.
-2. **Catalog & Image Manager (`src/services/catalog.py`, `src/utils/image_utils.py`):**
-   - Curates the top 600 movies by Bayesian review volume.
-   - Implements a resilient 4-tier image hierarchy (TMDB Poster -> TMDB Backdrop -> Procedural Local SVG Vector Fallback -> Placeholder), guaranteeing zero broken layout dependency.
+2. **Catalog & Image Manager (`src/services/catalog.py`, `src/utils/image_utils.py`, `src/utils/metadata_validator.py`):**
+   - Curates the top 2,000 movies by Bayesian review volume (expanded in Phase 5.5 for high diversity across 1922-2018).
+   - Enforces MovieLens ↔ TMDB metadata integrity validation and a resilient 4-tier image hierarchy (TMDB Poster -> TMDB Backdrop -> Procedural Local SVG Vector Fallback -> Placeholder), guaranteeing zero broken layout dependency.
 3. **User State Persistence (`src/services/user_store.py`):**
    - Provides thread-safe, atomic JSON persistence into `data/user_data.json`.
    - Employs temporary write-and-replace mechanics with exponential backoff retry to defeat Windows transient file locking (`WinError 32`).

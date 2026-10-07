@@ -37,10 +37,10 @@ ReelSense solves this by implementing an explainable, interactive, hybrid recomm
 ## 4. Dataset
 ReelSense is powered by the benchmark **MovieLens (ml-latest-small)** dataset:
 - **100,836 real ratings** across **9,742 movies** created by **610 users**.
-- **Active Curated Catalog:** Top 600 most-rated films indexed with Bayesian popularity ranking:
+- **Active Curated Catalog:** Top 2,000 most-rated films indexed with Bayesian popularity ranking (expanded in Phase 5.5 from 600 for rich discovery across 1922-2018):
   $$BayesScore = \frac{v \cdot R + m \cdot C}{v + m}$$
   where $v$ is vote count, $R$ is average rating, $C$ is catalog mean, and $m$ is the 60th-percentile minimum vote threshold.
-- Enhanced with MovieLens user tags (`tags.csv`), sensory mood mappings, and cached TMDB metadata.
+- Enhanced with MovieLens user tags (`tags.csv`), sensory mood mappings, and cross-validated TMDB metadata / procedural SVG fallbacks.
 
 ---
 
@@ -90,7 +90,7 @@ ReelSense utilizes a dual-engine architecture coordinated through a centralized 
 ## 7. Collaborative Filtering
 1. **Matrix Factorization:** Forms the sparse user-item interaction matrix $\mathbf{M} \in \mathbb{R}^{610 \times 9742}$ from MovieLens community ratings, centered by global mean rating:
    $$\mathbf{M}_{u, i} = R_{u, i} - \mu$$
-2. **SVD Decomposition:** `TruncatedSVD(n_components=50, random_state=42)` decomposes $\mathbf{M} \approx \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T$, yielding latent item concept factors $\mathbf{V}_{\text{cat}} \in \mathbb{R}^{50 \times 600}$.
+2. **SVD Decomposition:** `TruncatedSVD(n_components=50, random_state=42)` decomposes $\mathbf{M} \approx \mathbf{U} \mathbf{\Sigma} \mathbf{V}^T$, yielding latent item concept factors $\mathbf{V}_{\text{cat}} \in \mathbb{R}^{50 \times 2000}$.
 3. **Fold-In Projection:** The active session user vector $\mathbf{u} \in \mathbb{R}^{9742}$ is projected into the latent feature space without retraining:
    $$S_{\text{collab}} = (\mathbf{u} \mathbf{V}^T) \mathbf{V}_{\text{cat}}$$
 
@@ -224,18 +224,20 @@ RS Project/
 │   │   ├── sense_ai.py                 # Natural language vector search
 │   │   └── about.py                    # Academic ML architecture breakdown
 │   ├── services/
-│   │   ├── catalog.py                  # 600-title catalog & 4-tier image fallback
+│   │   ├── catalog.py                  # 2,000-title active catalog & 4-tier image fallback
 │   │   ├── hybrid_model.py             # TF-IDF + TruncatedSVD hybrid engine
 │   │   ├── movie_service.py            # Catalog query & filter service
 │   │   ├── recommendation_service.py   # Public recommender API & explanations
 │   │   └── user_store.py               # Atomic JSON persistence service
 │   ├── utils/
-│   │   └── image_utils.py              # Procedural SVG fallback poster generators
+│   │   ├── image_utils.py              # Procedural SVG fallback poster generators
+│   │   └── metadata_validator.py       # MovieLens ↔ TMDB metadata & poster integrity validator
 │   └── evaluation/
 │       └── evaluate.py                 # Offline evaluation engine (P@K, R@K, Diversity)
 └── tests/
     ├── test_persistence.py             # User store & restart persistence tests (12 tests)
     ├── test_phase3.py                  # Personalization & metadata tests (7 tests)
+    ├── test_metadata_integrity.py      # Catalog expansion & poster integrity tests (7 tests)
     ├── test_recommendation_quality.py  # Profile differentiation & threshold tests (2 tests)
     ├── test_error_empty_states.py      # Edge case & empty state tests (5 tests)
     ├── test_smoke.py                   # Basic sanity & import tests (4 tests)

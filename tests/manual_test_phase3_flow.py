@@ -159,12 +159,12 @@ print(f"  -> Passed: Movie Details explanations generated: {explanations[0]}")
 # Step 16: Poster & metadata fallback hierarchy
 print("[Step 16] Verify poster/backdrop metadata and local SVG fallback...")
 catalog = get_catalog()
-assert len(catalog) == 600
+assert len(catalog) == 2000
 for movie in catalog[:10]:
     assert movie["poster_url"].startswith("http") or movie["poster_url"].startswith("data:image/svg+xml")
     assert movie["backdrop_url"].startswith("http") or movie["backdrop_url"].startswith("data:image/svg+xml")
     assert movie["overview"]
-print("  -> Passed: 600 catalog items have validated metadata and image fallback.")
+print("  -> Passed: 2000 catalog items have validated metadata and image fallback.")
 
 # Clean up test artifact
 if user_store.DEFAULT_STORE_PATH.exists():
