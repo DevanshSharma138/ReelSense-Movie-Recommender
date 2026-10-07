@@ -67,10 +67,15 @@ ReelSense is an end-to-end personalized movie discovery system designed to allev
 4. **Recommendation Intelligence & Taste Evolution (`src/services/taste_service.py` - Phase 6):**
    - **Recommendation Breakdown 2.0:** Exposes Content Match, Taste Alignment, Collaborative Signal, Hybrid score equation ($0.4 \times \text{Content} + 0.6 \times \text{Collab}$), and positive reference films with cosine similarities without fake AI metrics or LLMs.
    - **Taste Evolution:** Reconstructs genre preference progression across milestones ($1 \to 3 \to 5 \to 10 \to \text{Current}$) using persisted ratings, detecting emerging genres and shifts with zero synthetic timestamps.
-5. **Interactive Feedback Subsystem:**
+5. **TMDB Enrichment & Image Vault (`src/services/tmdb_service.py` - Phase 6.5):**
+   - Implements resilient API client with finite 8.0s timeout, exponential backoff for 5xx/network errors, strict non-retry for 401/404, and HTTP 429 Retry-After rate-limit handling.
+   - Atomic persistence to `data/tmdb_metadata.json` with Windows file lock resilience, 30-day TTL, and corrupt-cache recovery.
+   - Separates authoritative MovieLens identity from optional TMDB enrichment; validates title similarity ($\ge 0.45$) and year divergence ($\le 4$ years) via `MetadataValidator`.
+   - Powers the 4-tier image hierarchy (TMDB Poster -> TMDB Backdrop -> Procedural Local SVG -> Placeholder), ensuring zero crashes when offline.
+6. **Interactive Feedback Subsystem:**
    - **Positive:** Interactive rating sliders with real-time UI feedback.
    - **Negative ("Not Interested"):** Instant exclusion action (`🚫`) that removes movies from recommendations across restarts.
-6. **Evaluation Suite (`src/evaluation/evaluate.py`):**
+7. **Evaluation Suite (`src/evaluation/evaluate.py`):**
    - Evaluates offline Precision@K, Recall@K, HitRate@10, Catalog Coverage, and Genre Diversity.
 
 ---

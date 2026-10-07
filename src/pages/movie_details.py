@@ -83,10 +83,17 @@ def render_movie_details_page():
     cast_cell = f"<div><strong style='color: #e5e1e4;'>Principal Cast:</strong> {cast}</div>" if cast else ""
     meta_row = f"""<div style="display: grid; grid-template-columns: 1fr 1fr; gap: 12px; font-size: 0.85rem; color: #99907c; margin-bottom: 1.5rem; padding-top: 1rem; border-top: 1px solid rgba(77, 70, 53, 0.25);">{dir_cell}{cast_cell}</div>""" if (dir_cell or cast_cell) else ""
 
+    backdrop_url = movie.get("backdrop_url")
+    card_bg = (
+        f"background: linear-gradient(135deg, rgba(32, 31, 34, 0.92) 0%, rgba(20, 19, 22, 0.97) 100%), url('{backdrop_url}'); background-size: cover; background-position: center;"
+        if backdrop_url
+        else "background: #201f22;"
+    )
+
     with col_info:
         st.markdown(
             textwrap.dedent(f"""
-            <div style="background: #201f22; border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
+            <div style="{card_bg} border: 1px solid rgba(77, 70, 53, 0.35); border-radius: 16px; padding: 2rem; box-shadow: 0 8px 24px rgba(0,0,0,0.5);">
                 <div style="display: flex; gap: 8px; align-items: center; margin-bottom: 0.75rem; flex-wrap: wrap;">
                     {match_badge_html}
                     <span style="background: #2a2a2c; color: #e5e1e4; padding: 3px 10px; border-radius: 9999px; font-size: 0.75rem; font-weight: 700;">⭐ {rating}/10</span>

@@ -41,9 +41,13 @@ def _placeholder(title, size="600x900"):
 
 def _meta():
     try:
-        return json.loads(META_FILE.read_text(encoding="utf-8")) if META_FILE.exists() else {}
-    except (OSError, ValueError):
-        return {}
+        from src.services.tmdb_service import get_tmdb_service
+        return get_tmdb_service().get_all_cached_metadata()
+    except Exception:
+        try:
+            return json.loads(META_FILE.read_text(encoding="utf-8")) if META_FILE.exists() else {}
+        except (OSError, ValueError):
+            return {}
 
 
 def _links_map():

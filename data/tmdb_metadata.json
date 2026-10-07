@@ -1,0 +1,287 @@
+{
+  "1": {
+    "tmdb_id": 862,
+    "title": "Toy Story",
+    "release_date": "1995-11-22",
+    "overview": "Led by Woody, Andy's toys live happily in his room until Andy's birthday brings Buzz Lightyear onto the scene. Afraid of losing his place in Andy's heart, Woody plots against Buzz. But when circumstances separate Buzz and Woody from their owner, the duo eventually learns to put aside their differences.",
+    "poster": "/uXDfjJbdP4ijW5hWSBrPrlKpxab.jpg",
+    "backdrop": "/3Rfvhy1Nl6sSGJwyjb0QiZzZYlB.jpg",
+    "runtime": 81,
+    "director": "John Lasseter",
+    "cast": [
+      "Tom Hanks",
+      "Tim Allen",
+      "Don Rickles",
+      "Jim Varney"
+    ],
+    "language": "English",
+    "fetched_at": 1791367213.8772812,
+    "validation_status": "VALID_TMDB"
+  },
+  "2571": {
+    "tmdb_id": 603,
+    "title": "The Matrix",
+    "release_date": "1999-03-31",
+    "overview": "Set in the 22nd century, The Matrix tells the story of a computer hacker who joins a group of underground insurgents fighting the vast and powerful computers who now rule the earth.",
+    "poster": "/dXNAPwY7VrqMAo51EKhhCJfaGb5.jpg",
+    "backdrop": "/tlm8UkiQsitc8rSuIAscQDCnP8d.jpg",
+    "runtime": 136,
+    "director": "Lana Wachowski",
+    "cast": [
+      "Keanu Reeves",
+      "Laurence Fishburne",
+      "Carrie-Anne Moss",
+      "Hugo Weaving"
+    ],
+    "language": "English",
+    "fetched_at": 1791367215.7783208,
+    "validation_status": "VALID_TMDB"
+  },
+  "79132": {
+    "tmdb_id": 27205,
+    "title": "Inception",
+    "release_date": "2010-07-15",
+    "overview": "Cobb, a skilled thief who commits corporate espionage by infiltrating the subconscious of his targets is offered a chance to regain his old life as payment for a task considered to be impossible: \"inception\", the implantation of another person's idea into a target's subconscious.",
+    "poster": "/xlaY2zyzMfkhk0HSC5VUwzoZPU1.jpg",
+    "backdrop": "/8ZTVqvKDQ8emSGUEMjsS4yHAwrp.jpg",
+    "runtime": 148,
+    "director": "Christopher Nolan",
+    "cast": [
+      "Leonardo DiCaprio",
+      "Joseph Gordon-Levitt",
+      "Ken Watanabe",
+      "Tom Hardy"
+    ],
+    "language": "English",
+    "fetched_at": 1791367217.799268,
+    "validation_status": "VALID_TMDB"
+  },
+  "858": {
+    "tmdb_id": 238,
+    "title": "The Godfather",
+    "release_date": "1972-03-14",
+    "overview": "Spanning the years 1945 to 1955, a chronicle of the fictional Italian-American Corleone crime family. When organized crime family patriarch, Vito Corleone barely survives an attempt on his life, his youngest son, Michael steps in to take care of the would-be killers, launching a campaign of bloody revenge.",
+    "poster": "/3bhkrj58Vtu7enYsRolD1fZdja1.jpg",
+    "backdrop": "/ejdD20cdHNFAYAN2DlqPToXKyzx.jpg",
+    "runtime": 175,
+    "director": "Francis Ford Coppola",
+    "cast": [
+      "Marlon Brando",
+      "Al Pacino",
+      "James Caan",
+      "Robert Duvall"
+    ],
+    "language": "English",
+    "fetched_at": 1791367220.9017746,
+    "validation_status": "VALID_TMDB"
+  },
+  "109487": {
+    "tmdb_id": 157336,
+    "title": "Interstellar",
+    "release_date": "2014-11-04",
+    "overview": "The adventures of a group of explorers who make use of a newly discovered wormhole to surpass the limitations on human space travel and conquer the vast distances involved in an interstellar voyage.",
+    "poster": "/yQvGrMoipbRoddT0ZR8tPoR7NfX.jpg",
+    "backdrop": "/8sNiAPPYU14PUepFNeSNGUTiHW.jpg",
+    "runtime": 169,
+    "director": "Christopher Nolan",
+    "cast": [
+      "Matthew McConaughey",
+      "Anne Hathaway",
+      "Michael Caine",
+      "Jessica Chastain"
+    ],
+    "language": "English",
+    "fetched_at": 1791366967.4227295,
+    "validation_status": "VALID_TMDB"
+  },
+  "177765": {
+    "tmdb_id": 354912,
+    "title": "Coco",
+    "release_date": "2017-10-27",
+    "overview": "Despite his family’s baffling generations-old ban on music, Miguel dreams of becoming an accomplished musician like his idol, Ernesto de la Cruz. Desperate to prove his talent, Miguel finds himself in the stunning and colorful Land of the Dead following a mysterious chain of events. Along the way, he meets charming trickster Hector, and together, they set off on an extraordinary journey to unlock the real story behind Miguel's family history.",
+    "poster": "/6Ryitt95xrO8KXuqRGm1fUuNwqF.jpg",
+    "backdrop": "/g7CHF8gTLGooTbP4GznIGwaqAGL.jpg",
+    "runtime": 105,
+    "director": "Lee Unkrich",
+    "cast": [
+      "Anthony Gonzalez",
+      "Gael García Bernal",
+      "Benjamin Bratt",
+      "Alanna Ubach"
+    ],
+    "language": "English",
+    "fetched_at": 1791367228.7583244,
+    "validation_status": "VALID_TMDB"
+  },
+  "7": {
+    "tmdb_id": 11860,
+    "title": "Sabrina",
+    "release_date": "1995-12-15",
+    "overview": "After her return from school in Paris, a playboy finally takes notice of his family's chauffeur's daughter Sabrina, who's long had a crush on him, but he questions his more serious brother's motives when he warns against getting involved with her.",
+    "poster": "/i8PbLJDPU7vCwwscWD625oHbJy.jpg",
+    "backdrop": "/oMGV48EGhsNavC1PL8HMeWs5Udq.jpg",
+    "runtime": 127,
+    "director": "Sydney Pollack",
+    "cast": [
+      "Harrison Ford",
+      "Julia Ormond",
+      "Greg Kinnear",
+      "Nancy Marchand"
+    ],
+    "language": "English",
+    "fetched_at": 1791367136.4929938,
+    "validation_status": "VALID_TMDB"
+  },
+  "915": {
+    "tmdb_id": 6620,
+    "title": "Sabrina",
+    "release_date": "1954-09-01",
+    "overview": "After two years in Paris, chauffeur's daughter Sabrina returns home elegantly transformed and immediately catches the attention of David, the playboy son of her father's rich employers. David woos and wins Sabrina, who has always been in love with him, however their romance is threatened by David's serious older brother Linus, who runs the family business and is relying on David to marry an heiress in order for a crucial merger to take place.",
+    "poster": "/e1Po9NDrH7IJZhv89467gJH5FS0.jpg",
+    "backdrop": "/3y8NgBIey8sivJAHaeIiyOnkDOz.jpg",
+    "runtime": 114,
+    "director": "Billy Wilder",
+    "cast": [
+      "Humphrey Bogart",
+      "Audrey Hepburn",
+      "William Holden",
+      "Walter Hampden"
+    ],
+    "language": "English",
+    "fetched_at": 1791367138.2808557,
+    "validation_status": "VALID_TMDB"
+  },
+  "1089": {
+    "tmdb_id": 500,
+    "title": "Reservoir Dogs",
+    "release_date": "1992-09-02",
+    "overview": "A botched robbery indicates a police informant, and the pressure mounts in the aftermath at a warehouse. Crime begets violence as the survivors -- veteran Mr. White, newcomer Mr. Orange, psychopathic parolee Mr. Blonde, bickering weasel Mr. Pink and Nice Guy Eddie -- unravel.",
+    "poster": "/xi8Iu6qyTfyZVDVy60raIOYJJmk.jpg",
+    "backdrop": "/jwt159hXWA9Q5xpBo8hWb3zwLi7.jpg",
+    "runtime": 99,
+    "director": "Quentin Tarantino",
+    "cast": [
+      "Harvey Keitel",
+      "Tim Roth",
+      "Michael Madsen",
+      "Chris Penn"
+    ],
+    "language": "English",
+    "fetched_at": 1791367236.4674098,
+    "validation_status": "VALID_TMDB"
+  },
+  "4993": {
+    "tmdb_id": 120,
+    "title": "The Lord of the Rings: The Fellowship of the Ring",
+    "release_date": "2001-12-18",
+    "overview": "Young hobbit Frodo Baggins, after inheriting a mysterious ring from his uncle Bilbo, must leave his home in order to keep it from falling into the hands of its evil creator. Along the way, a fellowship is formed to protect the ringbearer and make sure that the ring arrives at its final destination: Mt. Doom, the only place where it can be destroyed.",
+    "poster": "/6oom5QYQ2yQTMJIbnvbkBL9cHo6.jpg",
+    "backdrop": "/z51Wzj94hvAIsWfknifKTqKJRwp.jpg",
+    "runtime": 179,
+    "director": "Peter Jackson",
+    "cast": [
+      "Elijah Wood",
+      "Ian McKellen",
+      "Viggo Mortensen",
+      "Sean Astin"
+    ],
+    "language": "English",
+    "fetched_at": 1791367143.3517153,
+    "validation_status": "VALID_TMDB"
+  },
+  "2019": {
+    "tmdb_id": 346,
+    "title": "Seven Samurai",
+    "release_date": "1954-04-26",
+    "overview": "A samurai answers a village's request for protection after he falls on hard times. The town needs protection from bandits, so the samurai gathers six others to help him teach the people how to defend themselves, and the villagers provide the soldiers with food.",
+    "poster": "/lOMGc8bnSwQhS4XyE1S99uH8NXf.jpg",
+    "backdrop": "/qvZ91FwMq6O47VViAr8vZNQz3WI.jpg",
+    "runtime": 207,
+    "director": "Akira Kurosawa",
+    "cast": [
+      "Toshirō Mifune",
+      "Takashi Shimura",
+      "Yoshio Inaba",
+      "Seiji Miyaguchi"
+    ],
+    "language": "Japanese",
+    "fetched_at": 1791367148.6292253,
+    "validation_status": "VALID_TMDB"
+  },
+  "912": {
+    "tmdb_id": 289,
+    "title": "Casablanca",
+    "release_date": "1943-01-15",
+    "overview": "In Casablanca, Morocco in December 1941, a cynical American expatriate meets a former lover, with unforeseen complications.",
+    "poster": "/lGCEKlJo2CnWydQj7aamY7s1S7Q.jpg",
+    "backdrop": "/87wqeMeUeMRLjsE1IWNKJcPlpuC.jpg",
+    "runtime": 102,
+    "director": "Michael Curtiz",
+    "cast": [
+      "Humphrey Bogart",
+      "Ingrid Bergman",
+      "Paul Henreid",
+      "Claude Rains"
+    ],
+    "language": "English",
+    "fetched_at": 1791367219.7782772,
+    "validation_status": "VALID_TMDB"
+  },
+  "122882": {
+    "tmdb_id": 76341,
+    "title": "Mad Max: Fury Road",
+    "release_date": "2015-05-13",
+    "overview": "An apocalyptic story set in the furthest reaches of our planet, in a stark desert landscape where humanity is broken, and most everyone is crazed fighting for the necessities of life. Within this world exist two rebels on the run who just might be able to restore order.",
+    "poster": "/ulcAi4dKpAjHwYGS08vNyx9H6I9.jpg",
+    "backdrop": "/gqrnQA6Xppdl8vIb2eJc58VC1tW.jpg",
+    "runtime": 121,
+    "director": "George Miller",
+    "cast": [
+      "Tom Hardy",
+      "Charlize Theron",
+      "Nicholas Hoult",
+      "Hugh Keays-Byrne"
+    ],
+    "language": "English",
+    "fetched_at": 1791367133.5741212,
+    "validation_status": "VALID_TMDB"
+  },
+  "4973": {
+    "tmdb_id": 194,
+    "title": "Amélie",
+    "release_date": "2001-04-25",
+    "overview": "At a tiny Parisian café, the adorable yet painfully shy Amélie accidentally discovers a gift for helping others. Soon Amelie is spending her days as a matchmaker, guardian angel, and all-around do-gooder. But when she bumps into a handsome stranger, will she find the courage to become the star of her very own love story?",
+    "poster": "/nSxDa3M9aMvGVLoItzWTepQ5h5d.jpg",
+    "backdrop": "/6n53UI4mX9QMfe2S0Pgt8mGebY1.jpg",
+    "runtime": 122,
+    "director": "Jean-Pierre Jeunet",
+    "cast": [
+      "Audrey Tautou",
+      "Mathieu Kassovitz",
+      "Rufus",
+      "Serge Merlin"
+    ],
+    "language": "French",
+    "fetched_at": 1791367242.6195319,
+    "validation_status": "VALID_TMDB"
+  },
+  "1203": {
+    "tmdb_id": 389,
+    "title": "12 Angry Men",
+    "release_date": "1957-04-10",
+    "overview": "The defense and the prosecution have rested and the jury is filing into the jury room to decide if a young Spanish-American is guilty or innocent of murdering his father. What begins as an open and shut case soon becomes a mini-drama of each of the jurors' prejudices and preconceptions about the trial, the accused, and each other.",
+    "poster": "/zhG3vKWyDRaZYoaww1UVAi29T9h.jpg",
+    "backdrop": "/qqHQsStV6exghCM7zbObuYBiYxw.jpg",
+    "runtime": 97,
+    "director": "Sidney Lumet",
+    "cast": [
+      "Martin Balsam",
+      "John Fiedler",
+      "Lee J. Cobb",
+      "E.G. Marshall"
+    ],
+    "language": "English",
+    "fetched_at": 1791367221.930446,
+    "validation_status": "VALID_TMDB"
+  }
+}

@@ -184,16 +184,22 @@ Open your browser at `http://localhost:8501`.
 
 ## 17. How to Run Tests & Evaluation
 ```powershell
-# Run the complete automated test suite (51 tests)
+# Run the complete automated test suite (71 tests: 51 legacy + 20 Phase 6.5 tests)
 pytest -v
 
-# Run the Phase 6 recommendation intelligence verification flow
+# Run the Phase 6.5 TMDB mocked unit tests
+pytest tests/test_phase6_5_tmdb.py -v
+
+# Run the live TMDB representative verification audit (requires configured TMDB_API_KEY)
+python tests/live_tmdb_audit.py
+
+# Run the Phase 6 recommendation intelligence verification flow (7/7 passed)
 python tests/manual_test_phase6_flow.py
 
-# Run the 16-step end-to-end user journey test
+# Run the 16-step end-to-end user journey test (16/16 passed)
 python tests/manual_test_phase3_flow.py
 
-# Run the 10-step persistence and restart flow test
+# Run the 10-step persistence and restart flow test (10/10 passed)
 python tests/manual_test_flow.py
 
 # Run offline recommender evaluation on MovieLens
@@ -202,7 +208,73 @@ python src/evaluation/evaluate.py
 
 ---
 
-## 18. Project Structure
+## 18. TMDB API Integration & Caching Architecture (Phase 6.5)
+
+ReelSense integrates The Movie Database (TMDB) strictly as an **optional, non-authoritative enrichment layer**. TMDB is never a hard dependency for recommendations:
+
+```
+                    ┌─────────────────────────┐
+                    │        MovieLens        │
+                    │   Authoritative Data    │
+                    └───────────┬─────────────┘
+                                │
+                 ┌──────────────┴──────────────┐
+                 │                             │
+                 ▼                             ▼
+       Recommendation Engine         links.csv (TMDB Mapping)
+       (TF-IDF + SVD Hybrid)                   │
+                 │                             ▼
+                 │                      TMDB API Client
+                 │                    (Bounded, Backoff)
+                 │                             │
+                 │                             ▼
+                 │                   Persistent JSON Cache
+                 │                 (tmdb_metadata.json, 30d TTL)
+                 │                             │
+                 │                             ▼
+                 │                    Metadata Validator
+                 │                   (Cross-Source Verify)
+                 │                             │
+                 │                             ▼
+                 │                     4-Tier Image Engine
+                 │                   (Poster/Backdrop/SVG)
+                 │                             │
+                 └──────────────┬──────────────┘
+                                ▼
+                         ReelSense UI
+```
+
+### Key Integration Guarantees:
+1. **Security & Credential Hierarchy:**
+   - **Hierarchy:** 1) Streamlit secrets (`.streamlit/secrets.toml`), 2) Environment variable (`TMDB_API_KEY`), 3) Offline fallback.
+   - Example configuration (`.streamlit/secrets.toml.example`):
+     ```toml
+     TMDB_API_KEY = "your_tmdb_api_key_here"
+     ```
+   - Zero hardcoded keys; secrets file is protected by `.gitignore` and never committed or logged.
+2. **Resilient HTTP Engine & Rate Limiting (`src/services/tmdb_service.py`):**
+   - Finite explicit timeout (8.0s).
+   - Exponential backoff for transient failures (timeouts, network errors, 5xx server errors).
+   - Strict non-retry on 401 (unauthorized) and 404 (not found).
+   - HTTP 429 rate limit backoff respecting server `Retry-After` header.
+3. **Persistent Atomic Metadata Cache (`data/tmdb_metadata.json`):**
+   - Atomic replacement via temporary file (`os.replace`) with Windows lock retry backoff.
+   - 30-day freshness policy; stale cache remains safe and usable if TMDB API goes offline.
+   - Corruption-resilient: malformed or unreadable cache recovers safely to empty dict without crashing.
+4. **4-Tier Image Hierarchy & Metadata Validation (`src/utils/metadata_validator.py`):**
+   - **Tier 1:** Verified TMDB Poster (`/w500/...`)
+   - **Tier 2:** Verified TMDB Backdrop (`/w780/...`)
+   - **Tier 3:** Procedural local SVG data URI (zero network dependency)
+   - **Tier 4:** Safe external placeholder
+   - Strict title similarity ($\ge 0.45$), year divergence threshold ($\le 4$ years), and regex path validation (`/^[a-zA-Z0-9_\-\.]+\.(jpg|png|webp)$/`).
+5. **Bulk Catalog Enrichment (`data/enrich_tmdb.py`):**
+   - Manual, resumable utility (never runs automatically at startup).
+   - Paced requests (80ms delay) with progress logging.
+   - Run sample verification: `python data/enrich_tmdb.py --sample 20`
+
+---
+
+## 19. Project Structure
 ```
 RS Project/
 ├── app.py                              # Streamlit entry point & global layout shell
@@ -215,8 +287,13 @@ RS Project/
 │   ├── movies.csv                      # MovieLens raw movies
 │   ├── ratings.csv                     # MovieLens 100k ratings
 │   ├── links.csv                       # TMDB / IMDb identifier mappings
+│   ├── tmdb_metadata.json              # Persistent validated TMDB cache
 │   ├── loader.py                       # High-performance cached data loader
+│   ├── enrich_tmdb.py                  # Resumable bulk TMDB enrichment script
 │   └── user_data.json                  # Persistent JSON storage (ignored in git)
+├── .streamlit/
+│   ├── secrets.toml.example            # Safe secret template
+│   └── secrets.toml                    # Real local secret (ignored by git)
 ├── src/
 │   ├── config.py                       # App constants, moods, color tokens
 │   ├── components/
@@ -232,7 +309,7 @@ RS Project/
 │   │   ├── home.py                     # Home feed & personalized carousels
 │   │   ├── discover.py                 # Filter & multi-faceted search
 │   │   ├── mood_explorer.py            # Atmospheric resonance explorer
-│   │   ├── movie_details.py            # Rich metadata, ratings & explanations
+│   │   ├── movie_details.py            # Rich metadata, ratings, backdrop & explanations
 │   │   ├── watchlist.py                # Vault saved screening queue
 │   │   ├── ratings.py                  # Interactive rating manager
 │   │   ├── profile.py                  # Taste profile & excluded films manager
@@ -243,6 +320,8 @@ RS Project/
 │   │   ├── hybrid_model.py             # TF-IDF + TruncatedSVD hybrid engine
 │   │   ├── movie_service.py            # Catalog query & filter service
 │   │   ├── recommendation_service.py   # Public recommender API & explanations
+│   │   ├── taste_service.py            # Recommendation breakdown & taste evolution
+│   │   ├── tmdb_service.py             # Resilient TMDB API client & atomic caching (Phase 6.5)
 │   │   └── user_store.py               # Atomic JSON persistence service
 │   ├── utils/
 │   │   ├── image_utils.py              # Procedural SVG fallback poster generators
@@ -250,18 +329,23 @@ RS Project/
 │   └── evaluation/
 │       └── evaluate.py                 # Offline evaluation engine (P@K, R@K, Diversity)
 └── tests/
+    ├── test_phase6_5_tmdb.py           # TMDB client, caching, validation & offline tests (20 tests)
+    ├── live_tmdb_audit.py              # Controlled live TMDB 15-movie representative audit
+    ├── test_phase6_intelligence.py     # Recommendation breakdown & taste evolution tests (14 tests)
     ├── test_persistence.py             # User store & restart persistence tests (12 tests)
     ├── test_phase3.py                  # Personalization & metadata tests (7 tests)
     ├── test_metadata_integrity.py      # Catalog expansion & poster integrity tests (7 tests)
     ├── test_recommendation_quality.py  # Profile differentiation & threshold tests (2 tests)
     ├── test_error_empty_states.py      # Edge case & empty state tests (5 tests)
     ├── test_smoke.py                   # Basic sanity & import tests (4 tests)
-    └── manual_test_phase3_flow.py      # 16-step end-to-end integration test
+    ├── manual_test_phase6_flow.py      # Interactive Phase 6 intelligence flow test
+    ├── manual_test_phase3_flow.py      # 16-step end-to-end integration test
+    └── manual_test_flow.py             # 10-step persistence flow test
 ```
 
 ---
 
-## 19. Evaluation Results
+## 20. Evaluation Results
 Evaluated on MovieLens *ml-latest-small* across 50 active users using temporal 80/20 train/test splits (Ground truth: held-out ratings $\ge 3.5 / 5.0$):
 
 | Recommendation Model | Precision@5 | Precision@10 | Recall@5 | Recall@10 | HitRate@10 | Catalog Coverage | Intra-List Diversity |
