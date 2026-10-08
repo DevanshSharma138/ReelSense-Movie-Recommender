@@ -29,8 +29,13 @@ class MovieService:
                 cached = svc.get_cached_metadata(m_id)
                 if not cached and svc.is_available() and m_id not in _attempted_tmdb_enrichment:
                     _attempted_tmdb_enrichment.add(m_id)
-                    res = svc.enrich_movie(m_id, m["title"], m.get("release_year"))
-                    cached = res.get("metadata")
+                    import threading
+                    def _async_enrich(mid, title, yr):
+                        try:
+                            svc.enrich_movie(mid, title, yr)
+                        except Exception:
+                            pass
+                    threading.Thread(target=_async_enrich, args=(m_id, m["title"], m.get("release_year")), daemon=True).start()
                 if cached:
                     poster, backdrop, _ = resolve_movie_images(
                         m["title"],
