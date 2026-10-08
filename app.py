@@ -39,7 +39,6 @@ st.markdown(
 )
 from functools import lru_cache
 
-@lru_cache(maxsize=1)
 def _load_custom_css():
     css_path = os.path.join(os.path.dirname(__file__), "assets", "styles.css")
     if os.path.exists(css_path):
