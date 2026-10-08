@@ -14,6 +14,7 @@ def _on_discover_search_callback():
     st.session_state.discover_search = q
     st.session_state.global_search = q
     st.session_state.topbar_search_input = q
+    st.session_state.discover_display_limit = 48
 
 
 def _reset_discover_filters_callback():
@@ -21,6 +22,7 @@ def _reset_discover_filters_callback():
     st.session_state.global_search = ""
     st.session_state.disc_search_input = ""
     st.session_state.topbar_search_input = ""
+    st.session_state.discover_display_limit = 48
     st.session_state.filter_genres = []
     st.session_state.filter_min_rating = 0.0
     st.session_state.filter_language = "All"
@@ -181,14 +183,34 @@ def render_discover_page():
 
     # Display Movie Grid
     if filtered_movies:
+        if "discover_display_limit" not in st.session_state:
+            st.session_state.discover_display_limit = 48
+
+        display_limit = st.session_state.discover_display_limit
+        display_movies = filtered_movies[:display_limit]
         n_cols = 4
-        for i in range(0, len(filtered_movies), n_cols):
-            row_movies = filtered_movies[i : i + n_cols]
+        for i in range(0, len(display_movies), n_cols):
+            row_movies = display_movies[i : i + n_cols]
             cols = st.columns(n_cols)
             for j, movie in enumerate(row_movies):
                 with cols[j]:
                     render_movie_card(movie, key_prefix=f"disc_grid_{movie['id']}")
             st.markdown("<div style='margin-bottom: 1.25rem;'></div>", unsafe_allow_html=True)
+
+        if len(filtered_movies) > display_limit:
+            def _on_load_more_discover():
+                st.session_state.discover_display_limit += 48
+
+            col_lm1, col_lm2, col_lm3 = st.columns([3, 4, 3])
+            with col_lm2:
+                remaining_cnt = len(filtered_movies) - display_limit
+                st.button(
+                    f"⬇️ Load More Films ({min(48, remaining_cnt)} of {remaining_cnt} remaining)",
+                    key="disc_load_more_btn",
+                    use_container_width=True,
+                    type="primary",
+                    on_click=_on_load_more_discover
+                )
     else:
         render_html(f"""
         <div style="background: var(--bg-surface-container); border: 1px solid var(--border-subtle); border-radius: 14px; padding: 3.5rem 1rem; text-align: center; margin-top: 1rem; box-shadow: 0 4px 16px rgba(0,0,0,0.4);">

@@ -37,11 +37,19 @@ st.markdown(
     """,
     unsafe_allow_html=True
 )
-CSS_PATH = os.path.join(os.path.dirname(__file__), "assets", "styles.css")
-if os.path.exists(CSS_PATH):
-    with open(CSS_PATH, "r", encoding="utf-8") as f:
-        custom_css = f.read()
-        st.markdown(f"<style>{custom_css}</style>", unsafe_allow_html=True)
+from functools import lru_cache
+
+@lru_cache(maxsize=1)
+def _load_custom_css():
+    css_path = os.path.join(os.path.dirname(__file__), "assets", "styles.css")
+    if os.path.exists(css_path):
+        with open(css_path, "r", encoding="utf-8") as f:
+            return f.read()
+    return ""
+
+_custom_css = _load_custom_css()
+if _custom_css:
+    st.markdown(f"<style>{_custom_css}</style>", unsafe_allow_html=True)
 
 # 3. Initialize Session State Variables from UserStore
 if "user_store_initialized" not in st.session_state:

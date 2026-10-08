@@ -70,6 +70,8 @@ class HybridModel:
         self.Vcat = self.V[:, cols]                                # k x n_catalog
         Vn = self.Vcat.T / (np.linalg.norm(self.Vcat.T, axis=1, keepdims=True) + 1e-9)
         self.item_sim = Vn @ Vn.T
+        self._similar_cache = {}
+        self._query_cache = {}
 
     # ---------------------------------------------------------------- helpers
     def _out(self, p, pct, sim, why):
@@ -139,22 +141,32 @@ class HybridModel:
         return out, "hybrid"
 
     def similar(self, movie_id, limit=6):
+        cache_key = (movie_id, limit)
+        if cache_key in self._similar_cache:
+            return self._similar_cache[cache_key]
         p = self.pos.get(movie_id)
         if p is None:
             return []
         sim = self.alpha * self.content_sim[p] + (1 - self.alpha) * self.item_sim[p]
         order = [j for j in np.argsort(-sim) if j != p][:limit]
         pcts = _percent([sim[j] for j in order])
-        return [self._out(j, pc, sim[j], [f"Similar to {self.cat[p]['title']}",
+        res = [self._out(j, pc, sim[j], [f"Similar to {self.cat[p]['title']}",
                                            f"Content {self.content_sim[p, j]:.2f} \u00b7 audience {self.item_sim[p, j]:.2f}"])
                 for j, pc in zip(order, pcts)]
+        self._similar_cache[cache_key] = res
+        return res
 
     def query(self, text, limit=6):
+        cache_key = (str(text).strip().lower(), limit)
+        if cache_key in self._query_cache:
+            return self._query_cache[cache_key]
         q = self.vec.transform([re.sub(r"[-/]", "_", str(text).lower())])
         s = cosine_similarity(q, self.X).ravel()
         order = [j for j in np.argsort(-s)[:limit] if s[j] > 0]
         pcts = _percent([s[j] for j in order])
-        return [self._out(j, pc, s[j], ["Matches your search on plot, genre and mood"]) for j, pc in zip(order, pcts)]
+        res = [self._out(j, pc, s[j], ["Matches your search on plot, genre and mood"]) for j, pc in zip(order, pcts)]
+        self._query_cache[cache_key] = res
+        return res
 
     def get_breakdown_signals(self, movie_id, ratings):
         """

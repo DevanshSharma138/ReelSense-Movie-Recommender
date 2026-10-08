@@ -50,6 +50,7 @@ def _meta():
             return {}
 
 
+@lru_cache(maxsize=1)
 def _links_map():
     if not LINKS_FILE.exists():
         return {}
@@ -60,6 +61,7 @@ def _links_map():
         return {}
 
 
+@lru_cache(maxsize=1)
 def _tags():
     p = DATA_DIR / "tags.csv"
     if not p.exists():
@@ -138,14 +140,17 @@ def get_catalog():
             "trending_rank": rank,
             "trending_growth": f"{int(recent.get(i, 0))} ratings this year" if rank else "",
             "why_recommended": [],
+            "_search_blob": f"{title} {overview} {director} {' '.join(cast)} {' '.join(genres)}".lower(),
         })
     return out
 
 
+@lru_cache(maxsize=1)
 def get_by_id():
     return {m["id"]: m for m in get_catalog()}
 
 
+@lru_cache(maxsize=256)
 def search_movies(query: str = "", limit: int = None):
     """
     Search catalog by title, normalized title, director, genres, and cast.
@@ -167,13 +172,14 @@ def search_movies(query: str = "", limit: int = None):
             starts.append(m)
         elif q in t_low:
             contains.append(m)
-        elif (q in m.get("overview", "").lower() or
+        elif (m.get("_search_blob") and q in m["_search_blob"]) or (
+              q in m.get("overview", "").lower() or
               q in m.get("director", "").lower() or
               any(q in str(g).lower() for g in m.get("genres", [])) or
               any(q in str(a).lower() for a in m.get("cast", []))):
             other.append(m)
     res = exact + starts + contains + other
-    return res[:limit] if limit else res
+    return tuple(res[:limit]) if limit else tuple(res)
 
 
 class Catalog:

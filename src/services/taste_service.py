@@ -27,8 +27,11 @@ class TasteService:
         """
         # Resolve movie dict and ID
         if isinstance(movie_or_id, dict):
-            movie = movie_or_id
-            movie_id = movie.get("id")
+            movie_id = movie_or_id.get("id")
+            if "title" in movie_or_id:
+                movie = movie_or_id
+            else:
+                movie = MovieService.get_movie_by_id(movie_id)
         else:
             try:
                 movie_id = int(movie_or_id)
@@ -47,7 +50,9 @@ class TasteService:
             return {"in_catalog": False}
 
         # Calculate user's overall genre weights from ratings
-        cat_by_id = {m["id"]: m for m in get_catalog()}
+        cat_by_id = MovieService.get_movie_by_id(movie_id)  # warm check
+        from src.services.catalog import get_by_id
+        cat_by_id = get_by_id()
         user_genre_weights = {}
         for mid, score in raw_ratings.items():
             try:
@@ -208,8 +213,8 @@ class TasteService:
         Does not invent fake timestamps; uses rating-count stages (1st, 3rd, 5th, 10th, Current).
         """
         raw = ratings or {}
-        # Filter to valid catalog movie ratings preserving dict order
-        catalog_by_id = {m["id"]: m for m in get_catalog()}
+        from src.services.catalog import get_by_id
+        catalog_by_id = get_by_id()
         valid_items: List[Tuple[int, float]] = []
         for k, v in raw.items():
             try:

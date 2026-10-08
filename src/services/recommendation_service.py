@@ -1,8 +1,5 @@
-"""
-ReelSense - Recommendation Engine Service (Phase 3: hybrid)
-Same public methods as before. get_recommended_for_user now takes real ratings.
-"""
-from src.services.catalog import get_catalog
+from functools import lru_cache
+from src.services.catalog import get_catalog, get_by_id
 from src.services.hybrid_model import get_model
 
 
@@ -35,18 +32,21 @@ class RecommendationService:
         return "hybrid" if n >= 3 else "cold_start"
 
     @staticmethod
+    @lru_cache(maxsize=16)
     def get_trending_movies(limit=6):
         t = [dict(m) for m in get_catalog() if m["is_trending"]]
         t.sort(key=lambda x: (x["trending_rank"] or 99, -x["rating"]))
         return t[:limit]
 
     @staticmethod
+    @lru_cache(maxsize=1)
     def get_movies_by_rank():
         r = [dict(m) for m in get_catalog() if m["trending_rank"] is not None]
         r.sort(key=lambda x: x["trending_rank"])
         return r[:5]
 
     @staticmethod
+    @lru_cache(maxsize=16)
     def get_hidden_gems(limit=6):
         g = [dict(m) for m in get_catalog() if m["is_hidden_gem"]]
         g.sort(key=lambda x: -x["rating"])
@@ -80,7 +80,7 @@ class RecommendationService:
         # Build dynamic signals from real data
         reasons = []
         ratings = user_ratings or {}
-        cat_by_id = {m["id"]: m for m in get_catalog()}
+        cat_by_id = get_by_id()
 
         # 1. Real rating overlap signal
         if ratings:
@@ -114,10 +114,7 @@ class RecommendationService:
         return reasons or ["Curated title from the MovieLens master library"]
 
     @staticmethod
-    def get_mood_count(mood_id):
-        return sum(1 for m in get_catalog() if mood_id in m.get("moods", []))
-
-    @staticmethod
+    @lru_cache(maxsize=1)
     def get_all_mood_counts():
         cat = get_catalog()
         counts = {}
@@ -125,6 +122,10 @@ class RecommendationService:
             for mood in m.get("moods", []):
                 counts[mood] = counts.get(mood, 0) + 1
         return counts
+
+    @staticmethod
+    def get_mood_count(mood_id):
+        return RecommendationService.get_all_mood_counts().get(mood_id, 0)
 
     @staticmethod
     def get_recommendation_breakdown(movie, user_ratings=None):

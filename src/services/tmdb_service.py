@@ -263,8 +263,8 @@ class TMDBService:
         self,
         endpoint: str,
         params: Optional[Dict[str, Any]] = None,
-        timeout: float = 8.0,
-        max_retries: int = 2,
+        timeout: float = 2.5,
+        max_retries: int = 1,
     ) -> Optional[Dict[str, Any]]:
         """Execute a secure, rate-limit protected request against TMDB API.
         
@@ -360,7 +360,7 @@ class TMDBService:
         data = self._execute_api_request(
             f"/movie/{int(tmdb_id)}",
             params={"append_to_response": "credits"},
-            timeout=8.0,
+            timeout=2.5,
         )
         if not data or not isinstance(data, dict):
             return None

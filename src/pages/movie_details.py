@@ -208,7 +208,7 @@ def render_movie_details_page():
     # -------------------------------------------------------------------------
     user_ratings = st.session_state.get("ratings", {})
     breakdown = TasteService.get_recommendation_breakdown(movie, user_ratings=user_ratings)
-    legacy_reasons = RecommendationService.get_recommendation_explanation(movie, user_ratings=user_ratings)
+    legacy_reasons = [] if breakdown.get("narrative") else RecommendationService.get_recommendation_explanation(movie, user_ratings=user_ratings)
 
     is_cold = breakdown.get("is_cold_start", True)
 
