@@ -60,15 +60,9 @@ def test_app_top_navigation_flow():
     assert not at.exception
     assert at.session_state.current_page == "about"
 
-    # Click Curator AI
-    at.button(key="topbar_curator_ai_btn").click().run()
-    assert not at.exception
-    assert at.session_state.current_page == "about-the-ai"
-
-    # Click User Profile button
-    at.button(key="topbar_user_profile_btn").click().run()
-    assert not at.exception
-    assert at.session_state.current_page == "my-profile"
+    # Verify removed buttons do not exist in UI
+    assert len([b for b in at.button if b.key == "topbar_curator_ai_btn"]) == 0
+    assert len([b for b in at.button if b.key == "topbar_user_profile_btn"]) == 0
 
     # Click Home nav pill
     at.button(key="top_nav_home").click().run()

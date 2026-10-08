@@ -57,8 +57,6 @@ def _on_topbar_search_callback():
 
 def render_topbar():
     """Renders the compact horizontal top navigation system above page content."""
-    user = st.session_state.get("user_profile", {})
-    user_name = user.get("name", "Film Curator")
     current_page = st.session_state.get("current_page", "home")
     active_normalized = PAGE_ALIASES.get(current_page, current_page)
 
@@ -67,10 +65,10 @@ def render_topbar():
 
     with st.container(key="top_nav_container"):
         # =========================================================================
-        # ROW 1: BRAND HEADER + SEARCH BAR + CURATOR AI + PROFILE
+        # ROW 1: BRAND HEADER + SEARCH BAR
         # =========================================================================
-        col_brand, col_search, col_curator, col_user = st.columns(
-            [2.4, 5.2, 1.8, 1.6],
+        col_brand, col_search = st.columns(
+            [2.4, 8.6],
             vertical_alignment="center"
         )
 
@@ -120,27 +118,6 @@ def render_topbar():
                     on_click=_on_topbar_search_callback,
                     type="primary"
                 )
-
-        with col_curator:
-            st.button(
-                "✨ Curator AI",
-                key="topbar_curator_ai_btn",
-                use_container_width=True,
-                help="Explore Sense AI Vector Matching",
-                on_click=_on_nav_route_click,
-                args=("about-the-ai",)
-            )
-
-        with col_user:
-            profile_label = f"👤 {user_name[:12]}"
-            st.button(
-                profile_label,
-                key="topbar_user_profile_btn",
-                use_container_width=True,
-                help=f"Curator Profile: {user_name}",
-                on_click=_on_nav_route_click,
-                args=("my-profile",)
-            )
 
         # =========================================================================
         # DIVIDER: SUBTLE LUXURY GOLDEN GRADIENT HAIRLINE

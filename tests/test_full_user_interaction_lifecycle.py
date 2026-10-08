@@ -169,7 +169,7 @@ def test_section_29_full_user_journey_lifecycle(tmp_path, monkeypatch):
     assert prof_slider.min == 2.0
 
     # 15. Open Sense AI
-    at.button(key="topbar_curator_ai_btn").click().run()
+    at.button(key="top_nav_about-the-ai").click().run()
     assert not at.exception
     assert at.session_state.current_page == "about-the-ai"
 
