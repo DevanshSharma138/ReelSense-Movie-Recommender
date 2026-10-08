@@ -42,9 +42,11 @@ def render_home_page():
     user_ratings = st.session_state.get("ratings", {})
     user_profile = st.session_state.get("user_profile", {})
     not_interested = list(st.session_state.get("not_interested", set()))
+    watchlist = list(st.session_state.get("watchlist", []))
 
     rec_prefs = {
         "ratings": user_ratings,
+        "watchlist": watchlist,
         "favorite_genres": user_profile.get("favorite_genres", []),
         "hidden_ids": not_interested,
     }
@@ -52,13 +54,18 @@ def render_home_page():
     rec_mode = RecommendationService.get_recommendation_mode(rec_prefs)
 
     n_ratings = len(user_ratings)
+    n_wl = len(watchlist)
     if rec_mode == "hybrid":
         rec_title = "Recommended For You (Hybrid Personalization)"
         rec_subtitle = f"Calibrated from your {n_ratings} ratings using TF-IDF content similarity & SVD collaborative taste vectors."
         rec_tag = "Hybrid Recommendation Active"
+    elif n_ratings > 0 or n_wl > 0:
+        rec_title = "Recommended For You (Personalized for Your Taste)"
+        rec_subtitle = f"Calibrated from your {n_ratings} ratings and {n_wl} saved vault titles."
+        rec_tag = "Personalized Picks Active"
     else:
         rec_title = "Recommended For You (Community Favorites)"
-        rec_subtitle = f"Rate {max(0, 3 - n_ratings)} more movie{'s' if (3 - n_ratings) != 1 else ''} to unlock personalized hybrid recommendations."
+        rec_subtitle = "Rate movies or save titles to your Vault to unlock personalized recommendations."
         rec_tag = "Trending Fallback Active"
 
     render_movie_carousel(

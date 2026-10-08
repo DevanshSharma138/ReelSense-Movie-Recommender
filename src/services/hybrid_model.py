@@ -82,7 +82,8 @@ class HybridModel:
     def cold_start(self, genres=None, n=12, exclude=()):
         order = sorted(range(len(self.cat)),
                        key=lambda p: (self.cat[p]["trending_rank"] or 99, -self.cat[p]["popularity"]))
-        order = [p for p in order if self.ids[p] not in set(exclude)]
+        exclude_set = set(exclude or ())
+        order = [p for p in order if self.ids[p] not in exclude_set]
         if genres:
             g = set(genres)
             order = [p for p in order if g & set(self.cat[p]["genres"])] or order
@@ -91,54 +92,166 @@ class HybridModel:
         return [self._out(p, pc, self.cat[p]["popularity"] / 5,
                           ["Trending with the community right now" if self.cat[p]["trending_rank"]
                            else "Highly rated by thousands of viewers",
-                           "Rate 3 films to unlock personalised picks"]) for p, pc in zip(order, pcts)]
+                           "Rate films or save titles to unlock personalized picks"]) for p, pc in zip(order, pcts)]
 
     # ---------------------------------------------------------------- public
-    def recommend(self, ratings, n=12, genres=None, exclude=()):
-        """ratings: {movieId: stars 0.5-5}. Returns (list[movie], mode)."""
-        r = {int(k): float(v) for k, v in (ratings or {}).items() if int(k) in self.pos}
-        if len(r) < MIN_RATINGS:
-            return self.cold_start(genres, n, exclude), "cold_start"
-
-        ids = list(r)
-        pos = np.array([self.pos[i] for i in ids])
-        vals = np.array([r[i] for i in ids])
-
-        w = np.clip(vals - 2.5, 0, None)                          # only liked films shape taste
-        if w.sum() > 0:
-            prof = np.asarray(self.X[pos].T @ w).ravel()
-            prof /= (np.linalg.norm(prof) or 1.0)
-            s_content = np.asarray(self.X @ prof).ravel()
+    def recommend(self, ratings=None, n=12, genres=None, exclude=(), watchlist=None):
+        """
+        Personalized Recommendation Pipeline.
+        
+        Args:
+            ratings: Dict[int, float] user movie ratings (0.0 to 5.0 scale).
+            n: int number of recommendations to return.
+            genres: Optional[list[str]] favorite genres to filter by.
+            exclude: Iterable[int] movie IDs to strictly exclude (hidden_ids/not_interested).
+            watchlist: Optional[Iterable[int]] movie IDs saved to user's Watchlist/Vault.
+            
+        Returns:
+            Tuple[List[dict], str]: (recommended_movies, mode)
+        """
+        raw_r = ratings or {}
+        # Normalize ratings ensuring 0.0-5.0 scale
+        if any(float(v) > 5.0 for v in raw_r.values()):
+            r = {int(k): float(v) / 2.0 for k, v in raw_r.items() if int(k) in self.pos}
         else:
-            s_content = np.zeros(len(self.ids))
+            r = {int(k): float(v) for k, v in raw_r.items() if int(k) in self.pos}
 
-        u = np.zeros(self.V.shape[1])
-        u[[self.midx[i] for i in ids]] = vals - self.mean
-        s_collab = (u @ self.V.T) @ self.Vcat
+        wl = [int(k) for k in (watchlist or ()) if int(k) in self.pos]
+        banned = set(int(k) for k in (exclude or ())) | set(r.keys()) | set(wl)
 
-        score = self.alpha * _norm(s_content) + (1 - self.alpha) * _norm(s_collab)
-        banned = set(ids) | set(exclude)
-        mask = np.array([i in banned for i in self.ids])
+        if len(r) == 0 and len(wl) == 0:
+            return self.cold_start(genres, n, banned), "cold_start"
+
+        # -------------------------------------------------------------
+        # 1. TASTE PROFILE GENERATION (Explicit Ratings + Watchlist)
+        # -------------------------------------------------------------
+        # Weight mapping: 5★: +1.0, 4★: +0.5, 3★: 0.0, 2★: -0.5, 0-1★: -1.0
+        # Watchlist (unrated): +0.35 (moderate positive intent)
+        rated_weights = {}
+        for mid, val in r.items():
+            rated_weights[mid] = max(-1.0, min(1.0, (val - 3.0) / 2.0))
+
+        # Add watchlist items that have not been explicitly rated
+        all_weights = dict(rated_weights)
+        for wid in wl:
+            if wid not in all_weights:
+                all_weights[wid] = 0.35
+
+        pos_items = [(self.pos[mid], w) for mid, w in all_weights.items() if w > 0]
+        neg_items = [(self.pos[mid], abs(w)) for mid, w in all_weights.items() if w < 0]
+
+        # A. Positive Content Profile
+        if pos_items:
+            pos_idx = [p for p, _ in pos_items]
+            pos_w = np.array([w for _, w in pos_items], dtype=float)
+            pos_vec = np.asarray(self.X[pos_idx].T @ pos_w).ravel()
+            p_norm = np.linalg.norm(pos_vec)
+            pos_prof = pos_vec / p_norm if p_norm > 0 else np.zeros_like(pos_vec)
+        else:
+            pos_prof = np.zeros(self.X.shape[1], dtype=float)
+
+        # B. Negative Content Profile (Avoidance Signal)
+        if neg_items:
+            neg_idx = [p for p, _ in neg_items]
+            neg_w = np.array([w for _, w in neg_items], dtype=float)
+            neg_vec = np.asarray(self.X[neg_idx].T @ neg_w).ravel()
+            n_norm = np.linalg.norm(neg_vec)
+            neg_prof = neg_vec / n_norm if n_norm > 0 else np.zeros_like(neg_vec)
+        else:
+            neg_prof = np.zeros(self.X.shape[1], dtype=float)
+
+        # C. Combined Profile & Content Scoring
+        if pos_items:
+            user_prof = pos_prof - 0.45 * neg_prof
+            u_norm = np.linalg.norm(user_prof)
+            user_prof = user_prof / u_norm if u_norm > 0 else pos_prof
+            s_content = np.asarray(self.X @ user_prof).ravel()
+        else:
+            s_content = -np.asarray(self.X @ neg_prof).ravel()
+
+        # D. Direct Item Similarity Penalty for Negatively Rated Titles
+        if neg_items:
+            neg_idx = [p for p, _ in neg_items]
+            neg_w = np.array([w for _, w in neg_items], dtype=float)
+            neg_sims = self.content_sim[:, neg_idx] @ (neg_w / (neg_w.sum() or 1.0))
+            s_content = s_content - 0.40 * np.maximum(0.0, neg_sims - 0.15)
+
+        # -------------------------------------------------------------
+        # 2. COLLABORATIVE SCORING (TruncatedSVD Latent Space)
+        # -------------------------------------------------------------
+        u = np.zeros(self.V.shape[1], dtype=float)
+        valid_rated = [i for i in r if i in self.midx]
+        if valid_rated:
+            vals = np.array([r[i] for i in valid_rated], dtype=float)
+            u[[self.midx[i] for i in valid_rated]] = vals - self.mean
+            s_collab = (u @ self.V.T) @ self.Vcat
+        else:
+            s_collab = np.zeros(len(self.ids), dtype=float)
+
+        # -------------------------------------------------------------
+        # 3. HYBRID WEIGHTING & CALIBRATION
+        # -------------------------------------------------------------
+        if len(r) >= 3:
+            alpha = self.alpha  # 0.4 content, 0.6 collab
+            score = alpha * _norm(s_content) + (1.0 - alpha) * _norm(s_collab)
+            mode = "hybrid"
+        elif len(r) >= 1:
+            score = 0.85 * _norm(s_content) + 0.15 * _norm(s_collab)
+            mode = "cold_start"
+        else:
+            score = _norm(s_content)
+            mode = "cold_start"
+
+        # -------------------------------------------------------------
+        # 4. EXCLUSIONS & GENRE FILTERING
+        # -------------------------------------------------------------
+        mask = np.array([i in banned for i in self.ids], dtype=bool)
         if genres:
             g = set(genres)
-            mask |= np.array([not (g & set(m["genres"])) for m in self.cat])
-        score[mask] = -1
+            mask |= np.array([not (g & set(m.get("genres", []))) for m in self.cat], dtype=bool)
+        score[mask] = -1.0
+
         top = [p for p in np.argsort(-score)[:n] if score[p] >= 0]
+        if len(top) < n:
+            candidates = sorted(
+                range(len(self.cat)),
+                key=lambda p: (self.cat[p]["trending_rank"] or 99, -self.cat[p]["popularity"])
+            )
+            for p in candidates:
+                if p not in top and self.ids[p] not in banned:
+                    top.append(p)
+                    if len(top) == n:
+                        break
+
         pcts = _percent([score[p] for p in top])
 
-        liked = [(self.pos[i], r[i]) for i in ids if r[i] >= 4] or [(self.pos[i], r[i]) for i in ids]
+        # -------------------------------------------------------------
+        # 5. REASON GENERATION & EXPLANATIONS
+        # -------------------------------------------------------------
+        liked = [(self.pos[i], r[i]) for i in r if r[i] >= 3.5] or [(self.pos[i], r[i]) for i in r]
         out = []
         for p, pc in zip(top, pcts):
-            src_p, src_r = max(liked, key=lambda x: self.content_sim[p, x[0]])
-            why = [f"Because you rated {self.cat[src_p]['title']} {src_r:g}\u2605"]
-            shared = set(self.cat[p]["genres"]) & set(self.cat[src_p]["genres"])
-            if shared:
-                why.append("Shared genres: " + ", ".join(sorted(shared)))
-            if _norm(s_collab)[p] > 0.6:
+            why = []
+            if liked:
+                src_p, src_r = max(liked, key=lambda x: self.content_sim[p, x[0]])
+                why.append(f"Because you rated {self.cat[src_p]['title']} {src_r:g}\u2605")
+                shared = set(self.cat[p]["genres"]) & set(self.cat[src_p]["genres"])
+                if shared:
+                    why.append("Shared genres: " + ", ".join(sorted(shared)))
+            elif wl:
+                src_p = max([self.pos[w] for w in wl], key=lambda x: self.content_sim[p, x])
+                why.append(f"Based on your saved vault title '{self.cat[src_p]['title']}'")
+                shared = set(self.cat[p]["genres"]) & set(self.cat[src_p]["genres"])
+                if shared:
+                    why.append("Shared genres: " + ", ".join(sorted(shared)))
+            else:
+                why.append("Curated title based on community favorites")
+
+            if len(r) >= 3 and _norm(s_collab)[p] > 0.6:
                 why.append("Viewers with similar taste rated it highly")
             why.append(f"Hybrid score {score[p]:.2f} (content {_norm(s_content)[p]:.2f}, collaborative {_norm(s_collab)[p]:.2f})")
             out.append(self._out(p, pc, score[p], why))
-        return out, "hybrid"
+        return out, mode
 
     def similar(self, movie_id, limit=6):
         cache_key = (movie_id, limit)
