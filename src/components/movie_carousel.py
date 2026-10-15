@@ -1,5 +1,6 @@
 """
 ReelSense - Movie Carousel & Section Container Component
+Renders responsive rows of movie cards (supports up to 12 items across 6-column rows)
 """
 
 import streamlit as st
@@ -9,7 +10,7 @@ from src.utils.ui_helpers import render_html
 
 def render_movie_carousel(title, subtitle=None, movies=None, tag=None, view_all_page=None, carousel_id="row"):
     if not movies:
-        st.info("No movies found for this category.")
+        st.info("No eligible movies found for this category.")
         return
 
     # Section Header Container
@@ -27,14 +28,20 @@ def render_movie_carousel(title, subtitle=None, movies=None, tag=None, view_all_
         """)
 
     with col_action:
+        if view_all_page:
             def _on_vall_click(target_page=view_all_page):
                 st.session_state.current_page = target_page
 
             st.button("View All →", key=f"vall_{carousel_id}", on_click=_on_vall_click)
 
-    # Render movie cards in columns
-    n_display = min(len(movies), 6)
-    cols = st.columns(n_display if n_display > 0 else 1)
-    for idx, movie in enumerate(movies[:n_display]):
-        with cols[idx]:
-            render_movie_card(movie, key_prefix=f"{carousel_id}_{idx}")
+    # Render movie cards in chunks of 6 (supports up to 12 or more in neat rows)
+    chunk_size = 6
+    for row_start in range(0, len(movies), chunk_size):
+        row_movies = movies[row_start:row_start + chunk_size]
+        cols = st.columns(len(row_movies))
+        for col_idx, movie in enumerate(row_movies):
+            global_idx = row_start + col_idx
+            with cols[col_idx]:
+                render_movie_card(movie, key_prefix=f"{carousel_id}_{global_idx}")
+        if row_start + chunk_size < len(movies):
+            st.markdown("<div style='margin-bottom: 1rem;'></div>", unsafe_allow_html=True)

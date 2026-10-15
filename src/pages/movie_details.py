@@ -154,52 +154,83 @@ def render_movie_details_page():
                 args=(movie_id,)
             )
 
-        def _on_rate_slider_change(m_id):
-            new_val = st.session_state.get(f"user_rate_slider_{m_id}", 0.0)
-            cur_ratings = st.session_state.get("ratings", {}).copy()
-            if new_val > 0.0:
-                cur_ratings[m_id] = float(new_val)
-            else:
-                cur_ratings.pop(m_id, None)
-            st.session_state.ratings = cur_ratings
-            user_store.save_ratings(cur_ratings)
-
-        def _on_save_rating_click(m_id):
-            new_val = st.session_state.get(f"user_rate_slider_{m_id}", 0.0)
-            cur_ratings = st.session_state.get("ratings", {}).copy()
-            if new_val > 0.0:
-                cur_ratings[m_id] = float(new_val)
-                st.session_state.ratings = cur_ratings
-                user_store.save_ratings(cur_ratings)
-
-        def _on_del_rating_click(m_id):
-            cur_ratings = st.session_state.get("ratings", {}).copy()
-            cur_ratings.pop(m_id, None)
-            st.session_state.ratings = cur_ratings
-            user_store.save_ratings(cur_ratings)
-            st.session_state[f"user_rate_slider_{m_id}"] = 0.0
+        is_liked = (user_saved_rating >= 3.5)
+        is_disliked = (0.0 < user_saved_rating < 3.5)
 
         with col_r_box:
-            new_user_rating = st.slider(
-                "Your Personal Rating",
-                min_value=0.0,
-                max_value=5.0,
-                value=float(min(5.0, user_saved_rating)),
-                step=0.5,
-                key=f"user_rate_slider_{movie_id}",
-                format="⭐ %.1f / 5",
-                on_change=_on_rate_slider_change,
-                args=(movie_id,)
-            )
+            st.markdown("""
+            <div style="font-size: 0.85rem; font-weight: 700; color: #99907c; text-transform: uppercase; letter-spacing: 0.08em; margin-bottom: 0.5rem;">
+                Your Taste Feedback
+            </div>
+            """, unsafe_allow_html=True)
 
-            col_sub1, col_sub2 = st.columns([1, 1])
+            col_sub1, col_sub2, col_sub3 = st.columns([1.2, 1.2, 0.9])
             with col_sub1:
-                if st.button("⭐ Save Rating", key=f"save_rate_btn_{movie_id}", on_click=_on_save_rating_click, args=(movie_id,), use_container_width=True, type="primary"):
-                    st.toast(f"Saved rating for {title}!", icon="⭐")
+                like_btn_label = "👍 Liked" if is_liked else "👍 Like"
+                like_btn_type = "primary" if is_liked else "secondary"
+                def _on_like_details_click(target_mid=movie_id):
+                    cur_ratings = dict(st.session_state.get("ratings", {}))
+                    cur_val = cur_ratings.get(target_mid, 0.0)
+                    if float(cur_val) >= 3.5:
+                        user_store.remove_rating(target_mid)
+                        st.session_state.ratings = user_store.get_ratings()
+                    else:
+                        user_store.rate_movie(target_mid, 5.0)
+                        st.session_state.ratings = user_store.get_ratings()
+
+                st.button(
+                    like_btn_label,
+                    key=f"det_like_{movie_id}",
+                    use_container_width=True,
+                    type=like_btn_type,
+                    help="Like this film — ReelSense will prioritize similar cinema",
+                    on_click=_on_like_details_click,
+                    args=(movie_id,)
+                )
+
             with col_sub2:
-                if user_saved_rating > 0.0:
-                    if st.button("🗑️ Remove Rating", key=f"del_rate_btn_{movie_id}", on_click=_on_del_rating_click, args=(movie_id,), use_container_width=True):
-                        st.toast(f"Removed rating for {title}", icon="🗑️")
+                dislike_btn_label = "👎 Disliked" if is_disliked else "👎 Dislike"
+                dislike_btn_key = f"det_dislike_active_{movie_id}" if is_disliked else f"det_dislike_{movie_id}"
+                def _on_dislike_details_click(target_mid=movie_id):
+                    cur_ratings = dict(st.session_state.get("ratings", {}))
+                    cur_val = cur_ratings.get(target_mid, 0.0)
+                    if 0.0 < float(cur_val) < 3.5:
+                        user_store.remove_rating(target_mid)
+                        st.session_state.ratings = user_store.get_ratings()
+                    else:
+                        user_store.rate_movie(target_mid, 1.0)
+                        st.session_state.ratings = user_store.get_ratings()
+
+                st.button(
+                    dislike_btn_label,
+                    key=dislike_btn_key,
+                    use_container_width=True,
+                    help="Dislike this film — ReelSense will avoid similar traits",
+                    on_click=_on_dislike_details_click,
+                    args=(movie_id,)
+                )
+
+            with col_sub3:
+                if is_liked or is_disliked:
+                    def _on_clear_details_click(target_mid=movie_id):
+                        user_store.remove_rating(target_mid)
+                        st.session_state.ratings = user_store.get_ratings()
+
+                    st.button(
+                        "✕ Clear",
+                        key=f"det_clear_{movie_id}",
+                        use_container_width=True,
+                        help="Clear your feedback",
+                        on_click=_on_clear_details_click,
+                        args=(movie_id,)
+                    )
+
+            if is_liked:
+                st.markdown("<p style='font-size: 0.8rem; color: #f2ca50; font-weight: 600; margin-top: 6px; margin-bottom: 0;'>✨ You liked this film — boosts recommendations with matching traits.</p>", unsafe_allow_html=True)
+            elif is_disliked:
+                st.markdown("<p style='font-size: 0.8rem; color: #ff6b6b; font-weight: 600; margin-top: 6px; margin-bottom: 0;'>🚫 You disliked this film — ReelSense suppresses similar themes.</p>", unsafe_allow_html=True)
+            else:
+                st.markdown("<p style='font-size: 0.78rem; color: #99907c; margin-top: 6px; margin-bottom: 0;'>Select Like or Dislike to tune your recommendation profile.</p>", unsafe_allow_html=True)
 
     st.markdown("<div style='margin-bottom: 2rem;'></div>", unsafe_allow_html=True)
 

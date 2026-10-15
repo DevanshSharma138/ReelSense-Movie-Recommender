@@ -96,9 +96,9 @@ class TasteService:
                 strength_label = "Community Curated"
 
             if n_rated == 0:
-                narrative.append("Taste profile uninitialized. Rate 3 films to activate personalized hybrid recommendations.")
+                narrative.append("Taste profile uninitialized. React to (like/dislike) 3 films to activate personalized hybrid recommendations.")
             else:
-                narrative.append(f"Profile developing ({n_rated}/3 ratings recorded). Collaborative filtering unlocks at 3 ratings.")
+                narrative.append(f"Profile developing ({n_rated}/3 reactions recorded). Collaborative filtering unlocks at 3 reactions.")
 
             if signals.get("reference_movies"):
                 top_ref = signals["reference_movies"][0]
@@ -382,8 +382,8 @@ class TasteService:
         # Generate truthful summary insight
         if total_rated < 3:
             summary = (
-                f"You have rated {total_rated} title{'s' if total_rated != 1 else ''}. "
-                "Taste profile is currently forming; rate 3 or more films to unlock milestone comparisons and hybrid recommendations."
+                f"You have evaluated {total_rated} title{'s' if total_rated != 1 else ''}. "
+                "Taste profile is currently forming; like or dislike 3 or more films to unlock milestone comparisons and hybrid recommendations."
             )
         elif taste_shifts:
             up_genres = [s["genre"] for s in taste_shifts if s["direction"] == "up"]

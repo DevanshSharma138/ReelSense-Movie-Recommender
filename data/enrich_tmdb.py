@@ -69,6 +69,12 @@ def parse_args():
         action="store_true",
         help="Force re-fetching even if valid cached metadata exists",
     )
+    parser.add_argument(
+        "--workers",
+        type=int,
+        default=8,
+        help="Number of concurrent worker threads (default: 8)",
+    )
     return parser.parse_args()
 
 
@@ -147,22 +153,28 @@ def run_enrichment():
         to_process = to_process[: args.limit]
         print(f"Limiting execution to {len(to_process)} movies as requested.")
 
-    success_count = 0
-    rejected_count = 0
-    skipped_count = 0
+    import concurrent.futures
+    import threading
 
-    print("\nStarting rate-controlled enrichment...\n")
+    counter_lock = threading.Lock()
+    counters = {"success": 0, "rejected": 0, "skipped": 0, "done": 0}
+    total = len(to_process)
 
-    for idx, m_id in enumerate(to_process, 1):
+    print(f"\nStarting enrichment with {args.workers} workers for {total} movies...\n")
+
+    def process_item(item):
+        idx, m_id = item
         row = movies_df.loc[m_id]
         ml_title = row.title
         ml_year = int(row.year) if pd.notna(row.year) else None
         expected_tmdb = links_map.get(int(m_id))
 
         if not expected_tmdb:
-            skipped_count += 1
-            print(f"[{idx}/{len(to_process)}] SKIPPED (No TMDB ID in links.csv): movieId={m_id} '{ml_title}'")
-            continue
+            with counter_lock:
+                counters["skipped"] += 1
+                counters["done"] += 1
+                print(f"[{counters['done']}/{total}] SKIPPED: movieId={m_id} '{ml_title}' (No TMDB ID)")
+            return
 
         result = service.enrich_movie(
             movie_id=m_id,
@@ -172,26 +184,37 @@ def run_enrichment():
             force_refresh=args.force,
         )
 
-        if result["is_enriched"]:
-            success_count += 1
-            meta = result["metadata"]
-            poster_tag = "[POSTER]" if is_valid_tmdb_path(meta.get("poster")) else "[NO POSTER]"
-            backdrop_tag = "[BACKDROP]" if is_valid_tmdb_path(meta.get("backdrop")) else ""
-            print(f"[{idx}/{len(to_process)}] OK: movieId={m_id} -> TMDB {meta.get('tmdb_id')} | '{meta.get('title')}' {poster_tag} {backdrop_tag}")
-        else:
-            rejected_count += 1
-            audit_reason = result.get("audit", {}).get("reason", "Unknown")
-            print(f"[{idx}/{len(to_process)}] REJECTED / FALLBACK: movieId={m_id} '{ml_title}' -> {audit_reason}")
+        with counter_lock:
+            counters["done"] += 1
+            cur = counters["done"]
+            if result["is_enriched"]:
+                counters["success"] += 1
+                meta = result["metadata"]
+                poster_tag = "[POSTER]" if is_valid_tmdb_path(meta.get("poster")) else "[NO POSTER]"
+                backdrop_tag = "[BACKDROP]" if is_valid_tmdb_path(meta.get("backdrop")) else ""
+                if cur % 10 == 0 or cur == total or cur <= 20:
+                    print(f"[{cur}/{total}] OK: movieId={m_id} -> TMDB {meta.get('tmdb_id')} | '{meta.get('title')}' {poster_tag} {backdrop_tag}")
+            else:
+                counters["rejected"] += 1
+                audit_reason = result.get("audit", {}).get("reason", "Unknown")
+                print(f"[{cur}/{total}] REJECTED / FALLBACK: movieId={m_id} '{ml_title}' -> {audit_reason}")
 
-        # Controlled pacing: 350ms delay between requests to stay well within TMDB rate limits (approx 3 req/sec)
-        time.sleep(0.35)
+    items = list(enumerate(to_process, 1))
+
+    if args.workers <= 1:
+        for it in items:
+            process_item(it)
+            time.sleep(0.35)
+    else:
+        with concurrent.futures.ThreadPoolExecutor(max_workers=args.workers) as executor:
+            list(executor.map(process_item, items))
 
     print("\n" + "=" * 60)
     print("Enrichment Run Summary")
     print("=" * 60)
-    print(f"Successfully enriched: {success_count}")
-    print(f"Validation rejected / fallback: {rejected_count}")
-    print(f"Skipped (missing mapping): {skipped_count}")
+    print(f"Successfully enriched: {counters['success']}")
+    print(f"Validation rejected / fallback: {counters['rejected']}")
+    print(f"Skipped (missing mapping): {counters['skipped']}")
 
     stats = service.get_cache_stats()
     print(f"Total cached movies in vault: {stats['total_cached']}")

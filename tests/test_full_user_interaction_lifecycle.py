@@ -70,21 +70,16 @@ def test_section_29_full_user_journey_lifecycle(tmp_path, monkeypatch):
     assert at.session_state.current_page == "movie_details"
     assert at.session_state.selected_movie_id == matrix_id
 
-    # 4. Movie Details -> Rate Matrix on 0-5 scale
-    # Locate slider for Matrix
-    rate_sliders = [s for s in at.slider if f"user_rate_slider_{matrix_id}" in s.key]
-    assert len(rate_sliders) == 1
-    slider = rate_sliders[0]
-    assert slider.max == 5.0
-    assert slider.min == 0.0
-
-    slider.set_value(4.5).run()
+    # 4. Movie Details -> Like Matrix
+    like_btn = at.button(key=f"det_like_{matrix_id}")
+    assert like_btn is not None
+    like_btn.click().run()
     assert not at.exception
-    assert at.session_state.ratings.get(matrix_id) == 4.5
+    assert at.session_state.ratings.get(matrix_id) == 5.0
 
     # 5. Save Rating persistence check
     persisted = user_store.load()
-    assert persisted["ratings"].get(matrix_id) == 4.5
+    assert persisted["ratings"].get(matrix_id) == 5.0
 
     # 6. Add to Vault
     at.button(key=f"det_wl_{matrix_id}").click().run()
@@ -117,17 +112,15 @@ def test_section_29_full_user_journey_lifecycle(tmp_path, monkeypatch):
     assert not at.exception
     assert at.session_state.current_page == "my-ratings"
     assert matrix_id in at.session_state.ratings
-    assert at.session_state.ratings[matrix_id] == 4.5
-
-    # 11. Change rating -> verify updated rating
-    rate_page_sliders = [s for s in at.slider if f"rate_page_slider_{matrix_id}" in s.key]
-    assert len(rate_page_sliders) == 1
-    rate_slider = rate_page_sliders[0]
-    assert rate_slider.max == 5.0
-    rate_slider.set_value(5.0).run()
-    assert not at.exception
     assert at.session_state.ratings[matrix_id] == 5.0
-    assert user_store.load()["ratings"][matrix_id] == 5.0
+
+    # 11. Change reaction to Dislike on Taste Hub -> verify updated reaction
+    dislike_btn = at.button(key=f"rate_dislike_{matrix_id}")
+    assert dislike_btn is not None
+    dislike_btn.click().run()
+    assert not at.exception
+    assert at.session_state.ratings[matrix_id] == 1.0
+    assert user_store.load()["ratings"][matrix_id] == 1.0
 
     # 12. Open Discover -> apply filters -> reset filters
     at.button(key="top_nav_discover-movies").click().run()

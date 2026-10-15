@@ -138,7 +138,7 @@ def render_profile_page():
                 <div style="font-size: 2.5rem; margin-bottom: 0.5rem;">📊</div>
                 <h4 style="font-family: var(--font-display); font-size: 1.15rem; color: #e5e1e4; margin-bottom: 0.5rem;">No Evaluation Data Recorded Yet</h4>
                 <p style="font-size: 0.88rem; color: #99907c; max-width: 450px; margin: 0 auto 1.5rem auto; line-height: 1.6;">
-                    Rate 3 films across the catalog to generate your weighted genre preference distribution and activate hybrid collaborative filtering.
+                    Like or dislike 3 films across the catalog to generate your weighted genre preference distribution and activate hybrid collaborative filtering.
                 </p>
             </div>
             """)
@@ -147,9 +147,10 @@ def render_profile_page():
 
             col_c, _ = st.columns([4, 6])
             with col_c:
-                st.button("🔍 Discover Films to Rate", key="prof_empty_rate_btn", on_click=_on_prof_empty_rate_click, type="primary")
+                st.button("🔍 Discover Films to React", key="prof_empty_rate_btn", on_click=_on_prof_empty_rate_click, type="primary")
         else:
-            avg_rating = sum(ratings.values()) / n_rated
+            n_liked = len([v for v in ratings.values() if float(v) >= 3.5])
+            n_disliked = len([v for v in ratings.values() if float(v) < 3.5])
 
             # Weight genre preference using actual user ratings
             genre_weights = {}
@@ -168,15 +169,15 @@ def render_profile_page():
             with m1:
                 render_html(f"""
                 <div style="background: var(--bg-surface-low); border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 12px; padding: 1.1rem; text-align: center;">
-                    <div style="font-size: 0.72rem; color: var(--text-outline); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Rated Titles</div>
+                    <div style="font-size: 0.72rem; color: var(--text-outline); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Evaluated Titles</div>
                     <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: var(--primary-gold); margin-top: 4px;">{n_rated}</div>
                 </div>
                 """)
             with m2:
                 render_html(f"""
                 <div style="background: var(--bg-surface-low); border: 1px solid rgba(77, 70, 53, 0.4); border-radius: 12px; padding: 1.1rem; text-align: center;">
-                    <div style="font-size: 0.72rem; color: var(--text-outline); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Mean Rating</div>
-                    <div style="font-family: 'Outfit'; font-size: 1.8rem; font-weight: 800; color: var(--primary-gold); margin-top: 4px;">⭐ {avg_rating:.1f} / 5</div>
+                    <div style="font-size: 0.72rem; color: var(--text-outline); text-transform: uppercase; font-weight: 700; letter-spacing: 0.08em;">Taste Affinity</div>
+                    <div style="font-family: 'Outfit'; font-size: 1.35rem; font-weight: 800; color: var(--primary-gold); margin-top: 8px;">{n_liked} 👍 &nbsp;·&nbsp; {n_disliked} 👎</div>
                 </div>
                 """)
             with m3:
@@ -413,3 +414,54 @@ def render_profile_page():
                 user_store.save_not_interested(set())
 
             st.button("🔄 Reset All Excluded Films", key="reset_all_not_interested_btn", on_click=_on_reset_all_not_interested_click)
+
+    st.markdown("<div style='margin-bottom: 2.5rem;'></div>", unsafe_allow_html=True)
+
+    # ---------------------------------------------------------
+    # 5. RETAKE TASTE QUIZ (Phase 3)
+    # ---------------------------------------------------------
+    from src.services import user_state
+
+    render_html("""
+    <div style="margin-bottom: 1rem;">
+        <div style="font-size: 0.75rem; color: #f2ca50; font-weight: 700; text-transform: uppercase; letter-spacing: 0.1em; margin-bottom: 2px;">
+            Taste Recalibration
+        </div>
+        <h2 style="font-family: 'Outfit'; font-size: 1.5rem; font-weight: 700; color: #e5e1e4; margin: 0;">
+            Retake Taste Quiz
+        </h2>
+        <p style="font-size: 0.85rem; color: #99907c; margin: 2px 0 0 0;">
+            Restart the first-time taste selection experience. This clears your ratings so you can select fresh favorite films, while preserving your Watchlist and Excluded Films.
+        </p>
+    </div>
+    """)
+
+    with st.container(key="prof_retake_quiz_container"):
+        if "confirm_retake_quiz" not in st.session_state:
+            st.session_state.confirm_retake_quiz = False
+
+        if not st.session_state.confirm_retake_quiz:
+            def _on_start_retake():
+                st.session_state.confirm_retake_quiz = True
+
+            st.button("🎯 Retake Taste Quiz", key="start_retake_quiz_btn", on_click=_on_start_retake)
+        else:
+            st.warning("⚠️ Are you sure you want to retake the taste quiz? This will clear your current ratings history so you can select movies again. Your saved Watchlist and Excluded Films will remain untouched.")
+            col_c1, col_c2 = st.columns([1.5, 1])
+            with col_c1:
+                def _on_confirm_retake():
+                    user_state.reset_onboarding(clear_ratings=True)
+                    st.session_state.ratings = {}
+                    st.session_state.onboarding_completed = False
+                    st.session_state.onboarding_skipped = False
+                    st.session_state.confirm_retake_quiz = False
+                    st.session_state.current_page = "home"
+
+                st.button("✓ Confirm & Retake Taste Quiz", key="confirm_retake_quiz_btn", type="primary", on_click=_on_confirm_retake)
+
+            with col_c2:
+                def _on_cancel_retake():
+                    st.session_state.confirm_retake_quiz = False
+
+                st.button("Cancel", key="cancel_retake_quiz_btn", on_click=_on_cancel_retake)
+

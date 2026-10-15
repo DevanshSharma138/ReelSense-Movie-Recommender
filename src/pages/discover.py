@@ -60,6 +60,86 @@ def render_discover_page():
 
     col_d_search, col_d_btn = st.columns([5.2, 1.2], vertical_alignment="center")
     with col_d_search:
+        st.markdown("""
+        <style>
+        /* Permanently Hide "Press Enter to apply" prompt */
+        [data-testid="InputInstructions"],
+        div[data-testid="InputInstructions"],
+        span[data-testid="InputInstructions"],
+        .stInputInstructions,
+        .e1kt9bl72,
+        div[class*="e1kt9bl72"],
+        .eqy66r58,
+        div[class*="eqy66r58"],
+        .epumps80,
+        span[class*="epumps80"],
+        .stChatInputInstructions {
+            display: none !important;
+            visibility: hidden !important;
+            opacity: 0 !important;
+            height: 0 !important;
+            width: 0 !important;
+            position: absolute !important;
+            left: -9999px !important;
+            pointer-events: none !important;
+        }
+
+        .st-key-disc_search_input div[data-baseweb="input"],
+        .st-key-disc_search_input > div > div {
+            height: 46px !important;
+            min-height: 46px !important;
+            background: rgba(20, 19, 23, 0.96) !important;
+            border: 1.5px solid rgba(212, 175, 55, 0.55) !important;
+            border-radius: 9999px !important;
+            box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.5), 0 2px 8px rgba(0, 0, 0, 0.3) !important;
+        }
+        .st-key-disc_search_input div[data-baseweb="input"]:focus-within,
+        .st-key-disc_search_input > div > div:focus-within {
+            border-color: #f2ca50 !important;
+            box-shadow: 0 0 0 3px rgba(242, 202, 80, 0.22), 0 0 22px rgba(242, 202, 80, 0.45) !important;
+            background: rgba(28, 27, 32, 0.98) !important;
+        }
+
+        /* Pure Crisp White Text while Entering Text & Focused */
+        .st-key-disc_search_input input,
+        .st-key-disc_search_input input[type="text"],
+        .st-key-disc_search_input input[type="search"],
+        .st-key-disc_search_input input.react-aria-Input,
+        .st-key-disc_search_input [data-testid="stTextInputField"],
+        .st-key-disc_search_input input:focus,
+        .st-key-disc_search_input input:active,
+        .st-key-disc_search_input input[data-focused],
+        .st-key-disc_search_input input[data-focused="true"],
+        .st-key-disc_search_input div[data-testid="stTextInputRootElement"]:focus-within input {
+            color: #ffffff !important;
+            -webkit-text-fill-color: #ffffff !important;
+            caret-color: #f2ca50 !important;
+            font-size: 1.05rem !important;
+            font-weight: 600 !important;
+            letter-spacing: 0.015em !important;
+            text-shadow: 0 0 1px rgba(255, 255, 255, 0.35) !important;
+            padding-left: 1.25rem !important;
+            padding-right: 1.25rem !important;
+            background: transparent !important;
+            opacity: 1 !important;
+        }
+        .st-key-disc_search_input input::placeholder,
+        .st-key-disc_search_input input::-webkit-input-placeholder {
+            color: #ede1c8 !important;
+            -webkit-text-fill-color: #ede1c8 !important;
+            opacity: 0.85 !important;
+            font-size: 0.95rem !important;
+            font-weight: 500 !important;
+        }
+        .st-key-disc_search_submit_btn > button {
+            height: 46px !important;
+            min-height: 46px !important;
+            border-radius: 9999px !important;
+            font-weight: 800 !important;
+            font-size: 0.95rem !important;
+        }
+        </style>
+        """, unsafe_allow_html=True)
         st.text_input(
             "Search Movies",
             placeholder="Search by title, director, cast, or genre (e.g. Matrix, Toy Story)...",

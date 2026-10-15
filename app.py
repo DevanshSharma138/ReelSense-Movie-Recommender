@@ -4,6 +4,7 @@ Main Entry Point (app.py)
 """
 
 import os
+# pyrefly: ignore [missing-import]
 import streamlit as st
 from src.config import APP_NAME, APP_TAGLINE, DEFAULT_USER
 from src.services import user_store
@@ -46,9 +47,9 @@ def _load_custom_css():
             return f.read()
     return ""
 
-_custom_css = _load_custom_css()
-if _custom_css:
-    st.markdown(f"<style>{_custom_css}</style>", unsafe_allow_html=True)
+custom_css = _load_custom_css()
+if custom_css:
+    st.markdown(f"<style>{custom_css}</style>", unsafe_allow_html=True)
 
 # 3. Initialize Session State Variables from UserStore
 if "user_store_initialized" not in st.session_state:
@@ -85,6 +86,31 @@ if "selected_movie_id" not in st.session_state:
 
 if "selected_mood" not in st.session_state:
     st.session_state.selected_mood = "Mind-blown"
+
+# Check query params for direct movie link or vault toggle from hero banner
+if hasattr(st, "query_params"):
+    if "movie_id" in st.query_params:
+        try:
+            q_mid = int(st.query_params["movie_id"])
+            st.session_state.previous_page = st.session_state.get("current_page", "home")
+            st.session_state.selected_movie_id = q_mid
+            st.session_state.current_page = "movie_details"
+            del st.query_params["movie_id"]
+        except Exception:
+            pass
+    if "vault_toggle" in st.query_params:
+        try:
+            t_mid = int(st.query_params["vault_toggle"])
+            wl = list(st.session_state.get("watchlist", []))
+            if t_mid in wl:
+                wl.remove(t_mid)
+            else:
+                wl.append(t_mid)
+            st.session_state.watchlist = wl
+            user_store.save_watchlist(wl)
+            del st.query_params["vault_toggle"]
+        except Exception:
+            pass
 
 # 4. Global App Layout Shell
 render_sidebar()

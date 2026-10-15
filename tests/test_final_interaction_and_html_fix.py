@@ -157,7 +157,7 @@ def test_movie_card_selection_and_back_navigation(tmp_path, monkeypatch):
 
 
 def test_rating_scale_zero_to_five_bounds_and_persistence(tmp_path, monkeypatch):
-    """Verify ratings are exclusively on 0-5 scale and persist accurately."""
+    """Verify Like and Dislike reactions persist accurately to user store."""
     test_store = tmp_path / "user_data.json"
     monkeypatch.setattr(user_store, "DEFAULT_STORE_PATH", test_store)
 
@@ -171,15 +171,10 @@ def test_rating_scale_zero_to_five_bounds_and_persistence(tmp_path, monkeypatch)
     at.run()
     assert not at.exception
 
-    rate_sliders = [s for s in at.slider if "user_rate_slider_356" in s.key]
-    assert len(rate_sliders) == 1
-    slider = rate_sliders[0]
-    assert slider.min == 0.0
-    assert slider.max == 5.0
-    assert slider.step == 0.5
-
-    # Set rating to 5.0
-    slider.set_value(5.0).run()
+    # Click Like button (det_like_356)
+    like_btn = at.button(key="det_like_356")
+    assert like_btn is not None
+    like_btn.click().run()
     assert not at.exception
     assert at.session_state.ratings.get(356) == 5.0
 
@@ -187,8 +182,10 @@ def test_rating_scale_zero_to_five_bounds_and_persistence(tmp_path, monkeypatch)
     data = user_store.load()
     assert data["ratings"].get(356) == 5.0
 
-    # Remove rating using del_rate_btn_356
-    at.button(key="del_rate_btn_356").click().run()
+    # Clear reaction using det_clear_356
+    clear_btn = at.button(key="det_clear_356")
+    assert clear_btn is not None
+    clear_btn.click().run()
     assert not at.exception
     assert 356 not in at.session_state.ratings
     data = user_store.load()

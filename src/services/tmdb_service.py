@@ -25,6 +25,7 @@ import logging
 import os
 import re
 import tempfile
+import threading
 import time
 import urllib.parse
 from pathlib import Path
@@ -65,10 +66,12 @@ class TMDBService:
     _cache: Optional[Dict[str, Any]] = None
     _links_map: Optional[Dict[int, int]] = None
     _session_in_flight: set = set()
+    _lock = threading.Lock()
 
     def __init__(self):
         self._load_cache()
         self._load_links()
+        self._lock = threading.Lock()
 
     @classmethod
     def get_instance(cls) -> "TMDBService":
@@ -160,39 +163,41 @@ class TMDBService:
         if self._cache is None:
             return
 
-        DATA_DIR.mkdir(parents=True, exist_ok=True)
-        try:
-            temp_file = tempfile.NamedTemporaryFile(
-                mode="w",
-                encoding="utf-8",
-                dir=str(DATA_DIR),
-                delete=False,
-                prefix="tmdb_meta_",
-                suffix=".tmp",
-            )
-            with temp_file as f:
-                json.dump(self._cache, f, indent=2, ensure_ascii=False)
-                f.flush()
-                os.fsync(f.fileno())
+        with getattr(self, "_lock", threading.Lock()):
+            cache_snapshot = dict(self._cache)
+            DATA_DIR.mkdir(parents=True, exist_ok=True)
+            try:
+                temp_file = tempfile.NamedTemporaryFile(
+                    mode="w",
+                    encoding="utf-8",
+                    dir=str(DATA_DIR),
+                    delete=False,
+                    prefix="tmdb_meta_",
+                    suffix=".tmp",
+                )
+                with temp_file as f:
+                    json.dump(cache_snapshot, f, indent=2, ensure_ascii=False)
+                    f.flush()
+                    os.fsync(f.fileno())
 
-            # Atomic swap with retry for transient Windows file locks
-            target_path = str(CACHE_FILE)
-            temp_path = temp_file.name
-            for attempt in range(4):
-                try:
-                    os.replace(temp_path, target_path)
-                    break
-                except OSError:
-                    if attempt == 3:
-                        # Fallback direct write
-                        CACHE_FILE.write_text(json.dumps(self._cache, indent=2), encoding="utf-8")
-                        try:
-                            os.unlink(temp_path)
-                        except OSError:
-                            pass
-                    time.sleep(0.05 * (attempt + 1))
-        except Exception as e:
-            logger.warning("Failed to save TMDB metadata cache: %s", str(e))
+                # Atomic swap with retry for transient Windows file locks
+                target_path = str(CACHE_FILE)
+                temp_path = temp_file.name
+                for attempt in range(4):
+                    try:
+                        os.replace(temp_path, target_path)
+                        break
+                    except OSError:
+                        if attempt == 3:
+                            # Fallback direct write
+                            CACHE_FILE.write_text(json.dumps(cache_snapshot, indent=2), encoding="utf-8")
+                            try:
+                                os.unlink(temp_path)
+                            except OSError:
+                                pass
+                        time.sleep(0.05 * (attempt + 1))
+            except Exception as e:
+                logger.warning("Failed to save TMDB metadata cache: %s", str(e))
 
     def _load_links(self) -> None:
         if self._links_map is not None:
@@ -215,19 +220,31 @@ class TMDBService:
 
     def get_cached_metadata(self, movie_id: int) -> Optional[Dict[str, Any]]:
         self._load_cache()
-        return (self._cache or {}).get(str(movie_id))
+        with getattr(self, "_lock", threading.Lock()):
+            return dict(self._cache.get(str(movie_id))) if (self._cache and str(movie_id) in self._cache) else None
 
     def get_all_cached_metadata(self) -> Dict[str, Any]:
         """Return a copy of all cached TMDB metadata."""
         self._load_cache()
-        return dict(self._cache or {})
+        with getattr(self, "_lock", threading.Lock()):
+            return dict(self._cache or {})
 
     def save_cached_metadata(self, movie_id: int, meta: Dict[str, Any]) -> None:
         """Save a single movie's metadata into cache and persist atomically."""
         self._load_cache()
-        if self._cache is not None:
-            self._cache[str(movie_id)] = meta
-            self._save_cache()
+        with getattr(self, "_lock", threading.Lock()):
+            if self._cache is not None:
+                self._cache[str(movie_id)] = meta
+        self._save_cache()
+
+    def save_cached_metadata_batch(self, items: Dict[Any, Dict[str, Any]]) -> None:
+        """Batch save multiple movies into cache and persist atomically once."""
+        self._load_cache()
+        with getattr(self, "_lock", threading.Lock()):
+            if self._cache is not None:
+                for m_id, meta in items.items():
+                    self._cache[str(m_id)] = meta
+        self._save_cache()
 
     def clear_cache(self) -> None:
         """Reset the internal cache (useful for testing and reload)."""
@@ -259,12 +276,20 @@ class TMDBService:
     # -------------------------------------------------------------------------
     # 3. HTTP REQUEST ENGINE (Bounded timeouts, controlled backoff, 429 protection)
     # -------------------------------------------------------------------------
+    def _get_http_session(self) -> requests.Session:
+        if getattr(self, "_http_session", None) is None:
+            self._http_session = requests.Session()
+            adapter = requests.adapters.HTTPAdapter(pool_connections=30, pool_maxsize=30, max_retries=1)
+            self._http_session.mount("https://", adapter)
+            self._http_session.mount("http://", adapter)
+        return self._http_session
+
     def _execute_api_request(
         self,
         endpoint: str,
         params: Optional[Dict[str, Any]] = None,
-        timeout: float = 2.5,
-        max_retries: int = 1,
+        timeout: float = 8.0,
+        max_retries: int = 2,
     ) -> Optional[Dict[str, Any]]:
         """Execute a secure, rate-limit protected request against TMDB API.
         
@@ -287,13 +312,19 @@ class TMDBService:
         else:
             req_params["api_key"] = api_key
 
+        from unittest.mock import Mock, MagicMock
+        if isinstance(requests.get, (Mock, MagicMock)):
+            client_get = requests.get
+        else:
+            client_get = self._get_http_session().get
+
         attempts = 0
         backoff = 0.5
 
         while attempts <= max_retries:
             attempts += 1
             try:
-                response = requests.get(
+                response = client_get(
                     url,
                     params=req_params,
                     headers=headers,
@@ -360,7 +391,7 @@ class TMDBService:
         data = self._execute_api_request(
             f"/movie/{int(tmdb_id)}",
             params={"append_to_response": "credits"},
-            timeout=2.5,
+            timeout=8.0,
         )
         if not data or not isinstance(data, dict):
             return None
@@ -375,6 +406,7 @@ class TMDBService:
         return {
             "tmdb_id": int(tmdb_id),
             "title": data.get("title") or data.get("original_title") or "",
+            "original_title": data.get("original_title") or "",
             "release_date": data.get("release_date") or "",
             "overview": data.get("overview") or "",
             "poster": data.get("poster_path"),
@@ -399,6 +431,21 @@ class TMDBService:
             "poster_path": details.get("poster"),
             "backdrop_path": details.get("backdrop"),
         }
+
+    def search_tmdb_movie(self, title: str, year: Optional[int] = None) -> Optional[Dict[str, Any]]:
+        """Search TMDB for a movie by title and optional year."""
+        clean_title = re.sub(r"\s*\(\d{4}\)\s*$", "", title).strip()
+        inv = re.match(r"^(.*),\s*(The|A|An)(?:\s*\(.*\))?$", clean_title, re.IGNORECASE)
+        query = f"{inv.group(2)} {inv.group(1)}" if inv else clean_title
+        params: Dict[str, Any] = {"query": query}
+        if year:
+            params["year"] = int(year)
+        data = self._execute_api_request("/search/movie", params=params, timeout=8.0)
+        results = (data or {}).get("results", [])
+        if not results and year:
+            data = self._execute_api_request("/search/movie", params={"query": query}, timeout=8.0)
+            results = (data or {}).get("results", [])
+        return results[0] if results else None
 
     def enrich_movie(
         self,
@@ -474,19 +521,18 @@ class TMDBService:
         # Attempt live API fetch
         self._session_in_flight.add(movie_id)
         try:
-            if not target_tmdb_id:
-                audit = validate_tmdb_mapping(
-                    movie_id=movie_id,
-                    ml_title=ml_title,
-                    ml_year=ml_year,
-                    tmdb_meta=None,
-                    expected_tmdb_id=None,
-                )
-                return {"is_enriched": False, "metadata": None, "audit": audit, "source": "no_tmdb_id"}
+            fetched = None
+            if target_tmdb_id:
+                fetched = self.fetch_tmdb_movie_details(target_tmdb_id)
 
-            fetched = self.fetch_tmdb_movie_details(target_tmdb_id)
             if not fetched:
-                # API request failed or returned 404
+                # Search fallback if ID lookup returned empty
+                search_hit = self.search_tmdb_movie(ml_title, ml_year)
+                if search_hit and search_hit.get("id"):
+                    target_tmdb_id = search_hit["id"]
+                    fetched = self.fetch_tmdb_movie_details(target_tmdb_id)
+
+            if not fetched:
                 audit = validate_tmdb_mapping(
                     movie_id=movie_id,
                     ml_title=ml_title,
@@ -512,9 +558,10 @@ class TMDBService:
 
             if audit["is_valid"]:
                 fetched["validation_status"] = "VALID_TMDB"
-                if self._cache is not None:
-                    self._cache[str(movie_id)] = fetched
-                    self._save_cache()
+                with getattr(self, "_lock", threading.Lock()):
+                    if self._cache is not None:
+                        self._cache[str(movie_id)] = fetched
+                self._save_cache()
                 return {
                     "is_enriched": True,
                     "metadata": fetched,

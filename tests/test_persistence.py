@@ -225,19 +225,20 @@ def test_11_movie_details_interactive_rating_flow():
         at.session_state.current_page = "movie_details"
         at.run(timeout=10)
 
-        # Set slider to 4.5 on 0-5 scale
-        slider = [s for s in at.slider if "user_rate_slider_356" in s.key][0]
-        slider.set_value(4.5).run(timeout=10)
+        # Click Like button (det_like_356)
+        like_btn = at.button(key="det_like_356")
+        assert like_btn is not None
+        like_btn.click().run(timeout=10)
 
-        assert at.session_state.ratings.get(356) == 4.5
+        assert at.session_state.ratings.get(356) == 5.0
         persisted = user_store.load(real_store)
-        assert persisted["ratings"].get(356) == 4.5
+        assert persisted["ratings"].get(356) == 5.0
 
-        # Navigate to My Ratings and check movie is listed
+        # Navigate to Taste Hub and check movie is listed
         at.session_state.current_page = "my-ratings"
         at.run(timeout=10)
         assert not at.exception
-        assert at.session_state.ratings.get(356) == 4.5
+        assert at.session_state.ratings.get(356) == 5.0
     finally:
         if backup_text is not None:
             real_store.write_text(backup_text, encoding="utf-8")

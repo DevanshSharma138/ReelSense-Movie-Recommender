@@ -148,16 +148,43 @@ def validate_tmdb_mapping(
     result["tmdb_id"] = tmdb_id
     if expected_tmdb_id is not None and tmdb_id is not None:
         if int(expected_tmdb_id) != int(tmdb_id):
-            result["status"] = "MISMATCH_ID"
-            result["reason"] = f"Expected TMDB ID {expected_tmdb_id} but found {tmdb_id}"
-            return result
+            # Check if this is a verified or strong title match (merged/updated TMDB ID)
+            tmdb_title_check = tmdb_meta.get("title") or tmdb_meta.get("original_title") or ""
+            is_verified = tmdb_meta.get("validation_status") == "VALID_TMDB"
+            title_sim = calculate_title_similarity(ml_title, tmdb_title_check) if tmdb_title_check else 0
+            if not is_verified and title_sim < 0.65:
+                result["status"] = "MISMATCH_ID"
+                result["reason"] = f"Expected TMDB ID {expected_tmdb_id} but found {tmdb_id}"
+                return result
 
     # 2. Title verification if TMDB title recorded
     tmdb_title = tmdb_meta.get("title") or tmdb_meta.get("original_title")
+    tmdb_orig_title = tmdb_meta.get("original_title")
     result["tmdb_title"] = tmdb_title
     if tmdb_title:
-        similarity = calculate_title_similarity(ml_title, tmdb_title)
-        if similarity < 0.45:
+        # Check against ml_title, clean title, and any parenthetical variations (e.g. foreign titles)
+        candidate_ml_titles = [ml_title]
+        parens = re.findall(r"\((.*?)\)", str(ml_title))
+        for p in parens:
+            p_clean = p.strip()
+            if not p_clean.isdigit() and len(p_clean) > 1:
+                # e.g. "Cidade de Deus" from "City of God (Cidade de Deus) (2002)"
+                candidate_ml_titles.append(p_clean)
+
+        candidate_tmdb_titles = [tmdb_title]
+        if tmdb_orig_title and tmdb_orig_title != tmdb_title:
+            candidate_tmdb_titles.append(tmdb_orig_title)
+
+        similarity = max(
+            calculate_title_similarity(ml, tm)
+            for ml in candidate_ml_titles
+            for tm in candidate_tmdb_titles
+        )
+
+        # If ID strictly matches expected_tmdb_id, allow slightly lower similarity (0.35) for translations
+        threshold = 0.35 if (expected_tmdb_id is not None and tmdb_id is not None and int(expected_tmdb_id) == int(tmdb_id)) else 0.45
+
+        if similarity < threshold:
             result["status"] = "MISMATCH_TITLE"
             result["reason"] = f"Title similarity too low: '{ml_title}' vs '{tmdb_title}' ({similarity:.2f})"
             return result
@@ -172,7 +199,7 @@ def validate_tmdb_mapping(
             year_diff = abs(ml_year - tmdb_year)
             # Legitimate festival/foreign release dates can differ by up to 2 years.
             # Differences > 4 years indicate a remake, sequel, or different production.
-            if year_diff > 4 or (year_diff > 2 and tmdb_title and calculate_title_similarity(ml_title, tmdb_title) < 0.85):
+            if year_diff > 4 or (year_diff > 2 and tmdb_title and similarity < 0.85):
                 result["status"] = "MISMATCH_YEAR"
                 result["reason"] = f"Year divergence ({ml_year} vs {tmdb_year})"
                 return result

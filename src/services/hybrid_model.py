@@ -56,20 +56,37 @@ class HybridModel:
         self.X = self.vec.fit_transform([_doc(m) for m in self.cat])
         self.content_sim = cosine_similarity(self.X)
 
-        # collaborative
-        r = load_ratings()
-        mids = np.sort(r.movieId.unique())
-        self.midx = {m: i for i, m in enumerate(mids)}
-        uidx = {u: i for i, u in enumerate(r.userId.unique())}
-        self.mean = float(r.rating.mean())
-        M = csr_matrix((r.rating - self.mean, (r.userId.map(uidx), r.movieId.map(self.midx))),
-                       shape=(len(uidx), len(mids)))
-        svd = TruncatedSVD(n_components=min(k, min(M.shape) - 1), random_state=42).fit(M)
-        self.V = svd.components_                                   # k x n_all
-        cols = [self.midx[i] for i in self.ids]
-        self.Vcat = self.V[:, cols]                                # k x n_catalog
-        Vn = self.Vcat.T / (np.linalg.norm(self.Vcat.T, axis=1, keepdims=True) + 1e-9)
-        self.item_sim = Vn @ Vn.T
+        # collaborative with graceful fallback
+        self.has_collab = False
+        try:
+            r = load_ratings()
+            if r is not None and len(r) >= 50:
+                mids = np.sort(r.movieId.unique())
+                self.midx = {m: i for i, m in enumerate(mids)}
+                uidx = {u: i for i, u in enumerate(r.userId.unique())}
+                self.mean = float(r.rating.mean())
+                M = csr_matrix((r.rating - self.mean, (r.userId.map(uidx), r.movieId.map(self.midx))),
+                               shape=(len(uidx), len(mids)))
+                n_comp = min(k, min(M.shape) - 1)
+                if n_comp >= 2:
+                    svd = TruncatedSVD(n_components=n_comp, random_state=42).fit(M)
+                    self.V = svd.components_                                   # k x n_all
+                    cols = [self.midx[i] for i in self.ids if i in self.midx]
+                    if len(cols) == len(self.ids):
+                        self.Vcat = self.V[:, cols]                                # k x n_catalog
+                        Vn = self.Vcat.T / (np.linalg.norm(self.Vcat.T, axis=1, keepdims=True) + 1e-9)
+                        self.item_sim = Vn @ Vn.T
+                        self.has_collab = True
+        except Exception:
+            self.has_collab = False
+
+        if not self.has_collab:
+            self.V = np.zeros((1, len(self.ids)))
+            self.Vcat = np.zeros((1, len(self.ids)))
+            self.midx = {}
+            self.mean = 3.5
+            self.item_sim = self.content_sim.copy()
+
         self._similar_cache = {}
         self._query_cache = {}
 

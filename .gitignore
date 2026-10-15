@@ -26,3 +26,5 @@ Thumbs.db
 .env
 *.local
 data/user_data.json
+data/user_state.json
+data/*.tmp
